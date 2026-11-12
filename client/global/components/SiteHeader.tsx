@@ -96,7 +96,7 @@ function AccountMenu() {
           {customer.firstName.charAt(0).toUpperCase()}
         </span>
         <span className="hidden sm:inline">{customer.firstName}</span>
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className="hidden h-4 w-4 min-[380px]:block" />
       </button>
       {open && (
         <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-zinc-200 bg-white py-1 shadow-pop">
