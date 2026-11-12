@@ -13,7 +13,10 @@ const display = Jost({ subsets: ["latin"], variable: "--font-display", display: 
 
 export const metadata: Metadata = {
   // Absolute base for Open Graph images and canonical URLs. Set SITE_URL in production.
-  metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.SITE_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000")
+  ),
   title: { default: "Serene Heights Nathia Gali | Book your mountain stay", template: "%s | Serene Heights Nathia Gali" },
   description:
     "Book fully furnished one-bedroom hotel apartments at Serene Heights, Nathia Gali: 7,906 ft, heated infinity pool, rooftop dining and 50+ resort facilities.",

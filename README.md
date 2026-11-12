@@ -32,6 +32,7 @@ Search live availability, compare apartment types and rates, book in minutes and
 - [Tech stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting started](#getting-started)
+- [Deploy to Vercel](#deploy-to-vercel)
 - [Configuration](#configuration)
 - [Scripts](#scripts)
 - [Project structure](#project-structure)
@@ -168,6 +169,83 @@ cd client && npm run dev
 
 ---
 
+## Deploy to Vercel
+
+Two Vercel projects from this one repository, plus a managed Postgres database:
+
+| Vercel project | Root directory | Framework preset | Serves |
+| --- | --- | --- | --- |
+| `serene-booking-api` | `server` | Other | Express API as a serverless function (`server/api/index.js`, `server/vercel.json`) |
+| `serene-booking-web` | `client` | Next.js | The website; it proxies `/api/v1/*` to the API, so cookies stay first-party |
+| Postgres | — | — | [Neon](https://neon.tech), available in the Vercel Marketplace (free tier available) |
+
+> Put Neon and both Vercel projects in the **same region** (e.g. Singapore `sin1` / AWS ap-southeast-1, or Frankfurt `fra1` / eu-central-1). Set it in Vercel under **Project → Settings → Functions → Region**.
+
+### 1. Create the database (Neon)
+
+Create a Neon project and copy **two** connection strings:
+
+- **Pooled** (the host contains `-pooler`): used by the API on Vercel. Append `&pgbouncer=true&connection_limit=1`.
+- **Direct** (no `-pooler`): used only from your machine for migrations.
+
+### 2. Migrate and seed from your machine (direct URL)
+
+```bash
+cd server
+# PowerShell:  $env:DATABASE_URL="postgresql://USER:PASS@HOST/DB?sslmode=require"
+# bash:        export DATABASE_URL="postgresql://USER:PASS@HOST/DB?sslmode=require"
+npm run db:migrate            # creates tables + the no-double-booking constraint
+npm run db:seed               # dry run: shows what will be created
+npm run db:seed -- --apply    # 5 apartment types, 130 apartments, rate plans, seasons
+```
+
+Do **not** add demo bookings to the live database. `db:demo` refuses non-local databases anyway.
+
+### 3. Generate two secrets
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
+
+Run it twice: once for `JWT_ACCESS_SECRET` and once for `PROXY_SECRET`.
+
+### 4. API project (`server`)
+
+Vercel → **Add New → Project** → import the repo → **Root Directory: `server`**, Framework: **Other**. Add these environment variables:
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Neon **pooled** URL `…?sslmode=require&pgbouncer=true&connection_limit=1` |
+| `JWT_ACCESS_SECRET` | secret #1 |
+| `PROXY_SECRET` | secret #2 (must match the website) |
+| `CLIENT_ORIGIN` | the website URL (fill in after step 5, then redeploy) |
+| *(optional)* `TAX_PERCENT`, `WEEKEND_UPLIFT_PERCENT`, `PAYMENTS_ENABLED`… | see [Configuration](#configuration) |
+
+Deploy, then open `https://<api-project>.vercel.app/api/v1/health`. It should return `{"success":true,...}`.
+
+### 5. Website project (`client`)
+
+Vercel → **Add New → Project** → same repo → **Root Directory: `client`**, Framework: **Next.js**. Add these environment variables:
+
+| Variable | Value |
+| --- | --- |
+| `API_URL` | `https://<api-project>.vercel.app` (**required**: the build fails without it) |
+| `PROXY_SECRET` | secret #2 (same as the API) |
+| `SITE_URL` | `https://<web-project>.vercel.app` or your custom domain |
+
+Deploy, then set the API's `CLIENT_ORIGIN` to this URL and **redeploy the API**.
+
+### 6. Go-live checklist
+
+- [ ] Search, book, find booking and cancel work on the live URL
+- [ ] Real nightly rates, policies and WhatsApp number confirmed (see [placeholders](#content--placeholders))
+- [ ] Custom domain added to the website project, then `SITE_URL` and `CLIENT_ORIGIN` updated to it
+- [ ] `PAYMENTS_ENABLED` stays `false` until a gateway is integrated
+
+**Serverless notes:** each API function instance keeps its own in-memory cache, which is fine at hotel scale. Add `REDIS_URL` if you later need a shared cache. Rate limits are per instance and keyed on the real visitor IP via `PROXY_SECRET`.
+
+---
+
 ## Configuration
 
 `server/.env` (copy from `server/.env.example`):
@@ -189,14 +267,16 @@ cd client && npm run dev
 | `MAX_ROOMS_PER_BOOKING` | `5` | Apartments per booking |
 | `PAYMENTS_ENABLED` | `false` | Enables online payment methods (gateway not yet connected) |
 | `REVIEWS_ENABLED` | `true` | Allows reviews after completed stays |
+| `PROXY_SECRET` | *(empty)* | Shared with the website so the API trusts the forwarded visitor IP (rate limits, audit). **Required on Vercel.** |
 | `RATE_LIMIT_LOCAL` | `false` | Dev only: when `false`, requests from this machine skip rate limits (so tests can be repeated). Production always rate-limits. |
-| `SITE_URL` *(client)* | `http://localhost:3000` | Public site URL for share-preview images and canonical links. Set this in production. |
 
 `client/.env.local` (optional):
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `API_URL` | `http://localhost:4000` | Where Next.js proxies `/api/v1/*` |
+| `API_URL` | `http://localhost:4000` | Where Next.js proxies `/api/v1/*`. **Required on Vercel** (the build fails without it). |
+| `SITE_URL` | Vercel production domain, else `http://localhost:3000` | Public URL for share previews and canonical links |
+| `PROXY_SECRET` | *(empty)* | Same value as the API's `PROXY_SECRET` |
 
 ---
 

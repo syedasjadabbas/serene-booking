@@ -18,6 +18,8 @@ const env = {
   singleSessionPerPlatform: bool(process.env.SINGLE_SESSION_PER_PLATFORM, true),
 
   clientOrigin: (process.env.CLIENT_ORIGIN || "http://localhost:3000").split(",").map((s) => s.trim()),
+  // Shared with the website's proxy so the API can trust the forwarded visitor IP (see middlewares/clientIp.js).
+  proxySecret: process.env.PROXY_SECRET || "",
   redisUrl: process.env.REDIS_URL || "",
 
   currency: process.env.CURRENCY || "PKR",
@@ -35,8 +37,15 @@ const env = {
   timezone: "Asia/Karachi",
 };
 
-if (env.isProd && env.jwtAccessSecret === "dev-only-insecure-secret") {
-  throw new Error("JWT_ACCESS_SECRET must be set in production");
+if (env.isProd) {
+  const missing = [];
+  if (env.jwtAccessSecret === "dev-only-insecure-secret") missing.push("JWT_ACCESS_SECRET");
+  if (!env.databaseUrl) missing.push("DATABASE_URL");
+  if (missing.length) throw new Error(`Missing required production env: ${missing.join(", ")}`);
+  if (!env.proxySecret) {
+    // Not fatal, but rate limits would then be keyed on the proxy's IP (shared by all visitors).
+    console.warn("PROXY_SECRET is not set: visitor IPs can't be trusted through the website proxy.");
+  }
 }
 
 module.exports = env;

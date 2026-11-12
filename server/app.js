@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const env = require("./config/env");
 const logger = require("./lib/logger");
 const { apiLimiter } = require("./middlewares/rateLimit");
+const { clientIp } = require("./middlewares/clientIp");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
 const authRoutes = require("./modules/auth/auth.routes");
@@ -23,6 +24,7 @@ app.set("trust proxy", 1);
 app.disable("x-powered-by");
 app.use(helmet());
 app.use(cors({ origin: env.clientOrigin, credentials: true }));
+app.use(clientIp); // real visitor IP when proxied by the website (before logging and rate limits)
 app.use(express.json({ limit: "100kb" }));
 app.use(cookieParser());
 app.use(
