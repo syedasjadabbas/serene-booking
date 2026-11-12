@@ -45,7 +45,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
               <Link
                 key={t.href}
                 href={t.href}
-                className={cn("rounded-full px-4 py-2 text-sm font-semibold transition", pathname === t.href ? "bg-lime text-ink" : "text-white/80 hover:text-white")}
+                className={cn("rounded-full px-4 py-2 text-sm font-semibold transition", pathname === t.href ? "bg-white text-ink" : "text-white/80 hover:text-white")}
               >
                 {t.label}
               </Link>

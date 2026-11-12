@@ -35,7 +35,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
         {/* Fixed size (the frame is a clip mask, so nothing re-lays out while scrolling). */}
         <div className="flex h-full min-h-[640px] flex-col items-center justify-center px-4 pb-14 pt-32 text-center">
           <p className="fade-up inline-flex items-center gap-2 rounded-full bg-white/20 py-1.5 pl-1.5 pr-4 text-xs font-medium text-white ring-1 ring-white/25" style={{ animationDelay: "150ms" }}>
-            <span className="rounded-full bg-lime px-2 py-0.5 text-[11px] font-bold text-ink">7,906 ft</span>
+            <span className="rounded-full bg-pine px-2 py-0.5 text-[11px] font-bold text-white">7,906 ft</span>
             Pakistan&apos;s first winter resort<span className="hidden sm:inline"> · Nathia Gali</span>
           </p>
           <h1 className="mt-6 max-w-4xl text-4xl font-bold leading-[1.1] text-white sm:text-6xl">

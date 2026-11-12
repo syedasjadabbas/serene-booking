@@ -95,7 +95,7 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
             <span className="text-sm font-medium text-zinc-500"> / night</span>
           </p>
           <span
-            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-ink pl-4 pr-3 text-sm font-semibold text-white transition duration-300 group-hover:bg-brand-600"
+            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-pine pl-4 pr-3 text-sm font-semibold text-white transition duration-300 group-hover:bg-pine-hover"
             aria-hidden
           >
             View

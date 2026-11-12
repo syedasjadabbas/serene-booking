@@ -59,7 +59,7 @@ export default function ContactPage() {
           {cards.map(({ Icon, title, value, href, cta, external }) => (
             <Tilt key={title} className="h-full" max={7}>
               <div className="flex h-full flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-card">
-                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-lime text-ink"><Icon className="h-5 w-5" /></span>
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-pine text-white"><Icon className="h-5 w-5" /></span>
                 <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-zinc-500">{title}</p>
                 <p className="mt-1 flex-1 font-semibold leading-snug text-ink">{value}</p>
                 {href && (
@@ -88,7 +88,7 @@ export default function ContactPage() {
               {route.map((d, i) => (
                 <div key={d.place} className="relative flex gap-4 pb-7">
                   {i < route.length - 1 && <span className="absolute left-[15px] top-8 h-full w-0.5 bg-ink/15" aria-hidden />}
-                  <span className={cn("relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold", i === route.length - 1 ? "bg-lime text-ink" : "bg-white text-ink ring-1 ring-ink/15")}>
+                  <span className={cn("relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold", i === route.length - 1 ? "bg-pine text-white" : "bg-white text-ink ring-1 ring-ink/15")}>
                     {i === route.length - 1 ? <MapPin className="h-4 w-4" /> : <Car className="h-4 w-4" />}
                   </span>
                   <div>

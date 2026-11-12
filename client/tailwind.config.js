@@ -24,9 +24,11 @@ module.exports = {
         },
         cream: { DEFAULT: "#f3f1ec", dark: "#e7e3da" }, // logo cream
         gold: { DEFAULT: "#b8955a", light: "#e9dcc3" },
-        // Accent (kept under the name "lime" so existing classes keep working): the group's sage green
-        // for CTAs and highlights; deep ink for text/dark panels; soft mist sections.
+        // Soft accent (kept under the name "lime" so existing classes keep working): the group's sage green
+        // for highlights on dark panels; deep ink for text/dark panels; soft mist sections.
         lime: { DEFAULT: "#a9c7b8", dark: "#93b8a6", soft: "#dfece4" },
+        // Buttons and solid accents: the dark green of the Serene Heights Group site (its --night section colour)
+        pine: { DEFAULT: "#0f241e", hover: "#284840" },
         ink: "#0f1f1b",
         mist: "#ecf2ee",
       },

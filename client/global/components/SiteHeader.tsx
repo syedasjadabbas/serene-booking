@@ -104,7 +104,7 @@ function AccountMenu() {
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen((o) => !o)} className="btn-secondary py-1.5 pl-1.5 pr-3" aria-expanded={open} aria-haspopup="menu">
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-lime text-xs font-bold text-ink">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-pine text-xs font-bold text-white">
           {customer.firstName.charAt(0).toUpperCase()}
         </span>
         <span className="hidden sm:inline">{customer.firstName}</span>

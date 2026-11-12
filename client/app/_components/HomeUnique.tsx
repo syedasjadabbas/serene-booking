@@ -33,7 +33,7 @@ export default function HomeUnique() {
           <Stagger className="mt-10 space-y-7" step={110}>
             {POINTS.map((pt) => (
               <div key={pt.title} className="flex max-w-md gap-4">
-                <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-lime ring-4 ring-lime/30" />
+                <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-pine ring-4 ring-lime/40" />
                 <div>
                   <h3 className="text-base font-bold text-ink">{pt.title}</h3>
                   <p className="mt-1 text-sm text-zinc-600">{pt.text}</p>
@@ -59,7 +59,7 @@ export default function HomeUnique() {
             <Star className="h-3.5 w-3.5 fill-lime text-ink" /> 50+ resort facilities
           </span>
           <span className="float-slower absolute bottom-[40%] left-[28%] inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-3 text-xs font-semibold text-ink shadow-pop">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-lime"><Building2 className="h-3.5 w-3.5" /></span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-pine text-white"><Building2 className="h-3.5 w-3.5" /></span>
             {p ? `${p.stats.apartments} apartments` : "Hotel apartments"}
           </span>
         </div>
