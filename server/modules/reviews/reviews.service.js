@@ -4,6 +4,7 @@ const { AppError } = require("../../lib/customError");
 const { cached, invalidate } = require("../../lib/cache");
 const { audit } = require("../../lib/audit");
 const { todayInHotelTz, toDbDate } = require("../../lib/dates");
+const { scoped } = require("../../lib/scope");
 
 function list({ page, pageSize }) {
   return cached(
@@ -59,11 +60,12 @@ function list({ page, pageSize }) {
 
 async function create(customerId, input, meta) {
   if (!env.reviewsEnabled) throw new AppError(403, "Reviews are not open yet.", true, "REVIEWS_DISABLED");
-  const booking = await prisma.booking.findUnique({
-    where: { reference: input.bookingReference },
-    select: { id: true, customerId: true, status: true, checkOut: true, review: { select: { id: true } } },
+  // Only the customer's own bookings are reviewable (shared data scope).
+  const booking = await prisma.booking.findFirst({
+    where: scoped({ customerId }, { reference: input.bookingReference }),
+    select: { id: true, status: true, checkOut: true, review: { select: { id: true } } },
   });
-  if (!booking || booking.customerId !== customerId) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
+  if (!booking) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
   if (booking.status === "CANCELLED" || booking.status === "NO_SHOW") throw new AppError(400, "Only completed stays can be reviewed.", true, "NOT_REVIEWABLE");
   if (booking.checkOut > toDbDate(todayInHotelTz())) throw new AppError(400, "You can review your stay after check-out.", true, "NOT_REVIEWABLE");
   if (booking.review) throw new AppError(409, "You've already reviewed this stay.", true, "ALREADY_REVIEWED");

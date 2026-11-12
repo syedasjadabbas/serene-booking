@@ -1,6 +1,7 @@
-// Seeds room types, apartments, rate plans and seasonal rates. Idempotent (upserts).
-// Refuses to run against production unless --yes is passed.
-//   npm run db:seed
+// Seeds room types, apartments, rate plans and seasonal rates. Idempotent (upserts), one transaction.
+// Dry run by default: prints what would be created/updated. Production also needs --yes.
+//   npm run db:seed                 dry run
+//   npm run db:seed -- --apply      write
 //
 // PLACEHOLDERS: nightly rates, breakfast price, seasons, occupancy limits and the sofa bed are not
 // published on the official site (it lists sale prices per sq ft). Confirm with Serene Heights management.
@@ -147,36 +148,64 @@ const seasons = [
   { name: "Summer peak 2027", startDate: "2027-06-01", endDate: "2027-08-31", multiplierPct: 125 },
 ];
 
+const APPLY = process.argv.includes("--apply");
+
 async function main() {
-  if (process.env.NODE_ENV === "production" && !process.argv.includes("--yes")) {
+  if (APPLY && process.env.NODE_ENV === "production" && !process.argv.includes("--yes")) {
     console.error("Refusing to seed a production database without --yes");
     process.exit(1);
   }
 
+  // ── Plan: what would be created vs updated ──────────────────────────────
+  const [types, rooms, plans, seasonRows] = await Promise.all([
+    prisma.roomType.findMany({ select: { slug: true } }),
+    prisma.room.findMany({ select: { number: true } }),
+    prisma.ratePlan.findMany({ select: { code: true } }),
+    prisma.seasonalRate.findMany({ where: { name: { in: seasons.map((s) => s.name) } }, select: { name: true } }),
+  ]);
+  const has = (rows, key) => new Set(rows.map((r) => r[key]));
+  const split = (items, existing, key) => ({ create: items.filter((i) => !existing.has(i[key])).length, update: items.filter((i) => existing.has(i[key])).length });
+  const plan = {
+    roomTypes: split(roomTypes, has(types, "slug"), "slug"),
+    apartments: split(apartments, has(rooms, "number"), "number"),
+    ratePlans: split(ratePlans, has(plans, "code"), "code"),
+    seasons: { replace: seasonRows.length, create: seasons.length },
+  };
+  console.log(`Seed plan (${APPLY ? "applying" : "dry run"}):`);
+  for (const [k, v] of Object.entries(plan)) console.log(`  ${k.padEnd(11)} ${JSON.stringify(v)}`);
+
+  if (!APPLY) {
+    console.log("\nDry run: nothing written. Re-run with --apply (npm run db:seed -- --apply).");
+    return;
+  }
+
+  // ── Apply in one transaction (all or nothing) ──────────────────────────
   const typeIds = {};
-  for (const { extra, ...t } of roomTypes) {
-    const data = { ...t, bedrooms: 1, bathrooms: 1, features: [...extra, ...commonFeatures] };
-    const row = await prisma.roomType.upsert({ where: { slug: t.slug }, create: data, update: data, select: { id: true } });
-    typeIds[t.slug] = row.id;
-  }
-
-  for (const a of apartments) {
-    const { roomTypeSlug, ...rest } = a;
-    const data = { ...rest, roomTypeId: typeIds[roomTypeSlug] };
-    await prisma.room.upsert({ where: { number: a.number }, create: data, update: data });
-  }
-
-  for (const p of ratePlans) {
-    await prisma.ratePlan.upsert({ where: { code: p.code }, create: p, update: p });
-  }
-
-  await prisma.seasonalRate.deleteMany({ where: { name: { in: seasons.map((s) => s.name) } } });
-  await prisma.seasonalRate.createMany({
-    data: seasons.map((s) => ({ ...s, startDate: new Date(`${s.startDate}T00:00:00Z`), endDate: new Date(`${s.endDate}T00:00:00Z`) })),
-  });
+  await prisma.$transaction(
+    async (tx) => {
+      for (const { extra, ...t } of roomTypes) {
+        const data = { ...t, bedrooms: 1, bathrooms: 1, features: [...extra, ...commonFeatures] };
+        const row = await tx.roomType.upsert({ where: { slug: t.slug }, create: data, update: data, select: { id: true } });
+        typeIds[t.slug] = row.id;
+      }
+      for (const a of apartments) {
+        const { roomTypeSlug, ...rest } = a;
+        const data = { ...rest, roomTypeId: typeIds[roomTypeSlug] };
+        await tx.room.upsert({ where: { number: a.number }, create: data, update: data });
+      }
+      for (const p of ratePlans) {
+        await tx.ratePlan.upsert({ where: { code: p.code }, create: p, update: p });
+      }
+      await tx.seasonalRate.deleteMany({ where: { name: { in: seasons.map((s) => s.name) } } });
+      await tx.seasonalRate.createMany({
+        data: seasons.map((s) => ({ ...s, startDate: new Date(`${s.startDate}T00:00:00Z`), endDate: new Date(`${s.endDate}T00:00:00Z`) })),
+      });
+    },
+    { timeout: 60_000 }
+  );
 
   const counts = await prisma.room.groupBy({ by: ["roomTypeId"], _count: { _all: true } });
-  console.log(`Seeded ${roomTypes.length} room types, ${apartments.length} apartments, ${ratePlans.length} rate plans, ${seasons.length} seasons.`);
+  console.log(`\nSeeded ${roomTypes.length} room types, ${apartments.length} apartments, ${ratePlans.length} rate plans, ${seasons.length} seasons.`);
   for (const [slug, id] of Object.entries(typeIds)) {
     console.log(`  ${slug.padEnd(24)} ${counts.find((c) => c.roomTypeId === id)?._count._all ?? 0} apartments`);
   }

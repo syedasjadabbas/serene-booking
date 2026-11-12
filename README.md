@@ -189,6 +189,8 @@ cd client && npm run dev
 | `MAX_ROOMS_PER_BOOKING` | `5` | Apartments per booking |
 | `PAYMENTS_ENABLED` | `false` | Enables online payment methods (gateway not yet connected) |
 | `REVIEWS_ENABLED` | `true` | Allows reviews after completed stays |
+| `RATE_LIMIT_LOCAL` | `false` | Dev only: when `false`, requests from this machine skip rate limits (so tests can be repeated). Production always rate-limits. |
+| `SITE_URL` *(client)* | `http://localhost:3000` | Public site URL for share-preview images and canonical links. Set this in production. |
 
 `client/.env.local` (optional):
 
@@ -206,12 +208,12 @@ cd client && npm run dev
 | --- | --- |
 | `npm run dev` | API with file watching (source folders only) |
 | `npm start` | API in production mode |
-| `npm run db:setup` | Apply migrations + seed |
+| `npm run db:setup` | Apply migrations + seed (writes) |
 | `npm run db:migrate` | Apply migrations only (`prisma migrate deploy`) |
-| `npm run db:seed` | Seed / refresh inventory, rate plans and seasons (idempotent) |
+| `npm run db:seed` | **Dry run:** shows what the seed would create or update. Add `-- --apply` to write (one transaction, idempotent). Production also needs `--yes`. |
 | `npm run db:demo -- --apply` | Add **demo bookings** across the 130 floor-plan apartments (past 45 + next 120 days, busier at weekends and in peak seasons) so availability and occupancy look live. Dry run without flags; `--replace` regenerates; **`--clear` removes them all, so run it before going live.** Local databases only. |
-| `npm run check` | Pricing & inventory checks (no database needed) |
-| `npm run smoke -- --yes` | End-to-end API test against a **local** server. It creates and then cancels test bookings, and refuses any non-localhost URL. |
+| `npm run check` | Pricing, inventory and data-scope checks (no database needed) |
+| `npm run smoke -- --yes` | End-to-end API test against a **local** server: booking flow and race, guest lookup, data scope, reviews, profile and session rules. It creates and then cancels test bookings, and refuses any non-localhost URL. |
 
 **client/**
 
@@ -247,7 +249,7 @@ serene-booking/
 └── server/                         # Express API
     ├── app.js  server.js
     ├── config/                     # env, prisma client
-    ├── lib/                        # pricing, dates, cache, sessions, jwt, audit, validate …
+    ├── lib/                        # pricing, scope, dates, cache, sessions, jwt, audit, validate …
     ├── middlewares/                # auth, rate limits, error handler
     ├── modules/<feature>/          # routes · validators · controller · service
     │   └── auth · property · rooms · bookings · reviews
@@ -305,6 +307,7 @@ Stay parameters: `checkIn`, `checkOut` (`YYYY-MM-DD`, hotel time zone), `adults`
 ## Engineering notes
 
 - **No double bookings, even under races.** Free apartments are locked with `FOR UPDATE SKIP LOCKED`, and a Postgres **exclusion constraint** on `BookingRoom` (`daterange` overlap, active rows only) makes overlapping holds impossible at the database level. The smoke test fires 6 parallel bookings at the 4 corner suites; exactly 4 succeed.
+- **One data-scope rule** (`server/lib/scope.js`): every query that reads or changes a booking or review merges `bookingScope(actor)` into its `where`. A customer sees only their own bookings; a guest proves ownership with the booking email; anything else matches nothing. Out-of-scope bookings return 404, so references can't be probed.
 - **Pricing is a pure function** (`server/lib/pricing.js`): base rate × seasonal multiplier × weekend uplift per night, then rate-plan discount, breakfast per guest per night, and tax.
 - **Availability is aggregated in SQL** (grouped counts, `generate_series` for the calendar). Rows are never loaded into JS to be counted.
 - **Caching:** stale-while-revalidate with single-flight for reads such as room types, rate plans, the calendar and property content. Every query parameter is part of the cache key.
@@ -324,8 +327,8 @@ Stay parameters: `checkIn`, `checkOut` (`YYYY-MM-DD`, hotel time zone), `adults`
 ## Quality checks
 
 ```bash
-cd server && npm run check            # 8 pricing & inventory checks
-cd server && npm run smoke -- --yes   # 12 end-to-end API checks (local server must be running)
+cd server && npm run check            # 8 pricing & inventory + 6 data-scope checks
+cd server && npm run smoke -- --yes   # 20 end-to-end API checks (local server must be running)
 cd client && npm run typecheck        # TypeScript
 ```
 

@@ -6,6 +6,7 @@ const { audit } = require("../../lib/audit");
 const { quoteStay } = require("../../lib/pricing");
 const { toDbDate, fromDbDate, todayInHotelTz } = require("../../lib/dates");
 const { invalidate } = require("../../lib/cache");
+const { scoped, actorFrom } = require("../../lib/scope");
 const rooms = require("../rooms/rooms.service");
 const property = require("../property/property.data");
 
@@ -197,12 +198,13 @@ async function createBooking(input, auth, meta) {
 
 async function listMine(customerId, { status, page, pageSize }) {
   const today = toDbDate(todayInHotelTz());
-  const where =
+  const byTab =
     status === "upcoming"
-      ? { customerId, status: "CONFIRMED", checkOut: { gt: today } }
+      ? { status: "CONFIRMED", checkOut: { gt: today } }
       : status === "past"
-        ? { customerId, OR: [{ status: { in: ["COMPLETED", "NO_SHOW"] } }, { status: "CONFIRMED", checkOut: { lte: today } }] }
-        : { customerId, status: "CANCELLED" };
+        ? { OR: [{ status: { in: ["COMPLETED", "NO_SHOW"] } }, { status: "CONFIRMED", checkOut: { lte: today } }] }
+        : { status: "CANCELLED" };
+  const where = scoped({ customerId }, byTab);
 
   const [total, rows] = await Promise.all([
     prisma.booking.count({ where }),
@@ -217,16 +219,20 @@ async function listMine(customerId, { status, page, pageSize }) {
   return { items: rows.map(toPublic), page, pageSize, total, totalPages: Math.ceil(total / pageSize) };
 }
 
+// All reads/mutations of a specific booking go through the shared data scope (lib/scope.js).
+// Out-of-scope and non-existent bookings both return 404, so references can't be probed.
+const findScoped = (reference, actor) => prisma.booking.findFirst({ where: scoped(actor, { reference }), select: bookingSelect });
+
 async function getMine(customerId, reference) {
-  const b = await prisma.booking.findUnique({ where: { reference }, select: bookingSelect });
-  if (!b || b.customerId !== customerId) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
+  const b = await findScoped(reference, { customerId });
+  if (!b) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
   return toPublic(b);
 }
 
 // Guests without an account prove ownership with reference + the email used to book.
 async function lookup({ reference, email }, meta) {
-  const b = await prisma.booking.findUnique({ where: { reference }, select: bookingSelect });
-  if (!b || b.guestEmail !== email) {
+  const b = await findScoped(reference, { guestEmail: email });
+  if (!b) {
     audit({ actorType: "guest", action: "booking.lookup_failed", ip: meta.ip, meta: { reference } });
     throw new AppError(404, "We couldn't find a booking with that reference and email.", true, "BOOKING_NOT_FOUND");
   }
@@ -234,9 +240,8 @@ async function lookup({ reference, email }, meta) {
 }
 
 async function cancel(reference, { auth, email, reason }, meta) {
-  const b = await prisma.booking.findUnique({ where: { reference }, select: bookingSelect });
-  const owns = b && ((auth && b.customerId === auth.customerId) || (email && b.guestEmail === email));
-  if (!owns) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
+  const b = await findScoped(reference, actorFrom(auth, email));
+  if (!b) throw new AppError(404, "Booking not found.", true, "BOOKING_NOT_FOUND");
 
   const view = toPublic(b);
   if (!view.canCancel) throw new AppError(400, "This booking can no longer be cancelled online. Please contact the front desk.", true, "CANNOT_CANCEL");

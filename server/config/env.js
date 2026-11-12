@@ -26,6 +26,9 @@ const env = {
   maxStayNights: int(process.env.MAX_STAY_NIGHTS, 30),
   maxRoomsPerBooking: int(process.env.MAX_ROOMS_PER_BOOKING, 5),
 
+  // Dev only: when false (default), loopback requests skip rate limits. Production always limits.
+  rateLimitLocal: bool(process.env.RATE_LIMIT_LOCAL, false),
+
   paymentsEnabled: bool(process.env.PAYMENTS_ENABLED, false),
   reviewsEnabled: bool(process.env.REVIEWS_ENABLED, true),
 
