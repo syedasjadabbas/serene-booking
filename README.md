@@ -33,6 +33,7 @@ Search live availability, compare apartment types and rates, book in minutes and
 - [Architecture](#architecture)
 - [Getting started](#getting-started)
 - [Deploy to Vercel](#deploy-to-vercel)
+- [Serving inside the Serene Heights Group site](#serving-inside-the-serene-heights-group-site-booking)
 - [Configuration](#configuration)
 - [Scripts](#scripts)
 - [Project structure](#project-structure)
@@ -245,6 +246,27 @@ Deploy, then set the API's `CLIENT_ORIGIN` to this URL and **redeploy the API**.
 **Serverless notes:** each API function instance keeps its own in-memory cache, which is fine at hotel scale. Add `REDIS_URL` if you later need a shared cache. Rate limits are per instance and keyed on the real visitor IP via `PROXY_SECRET`.
 
 ---
+
+## Serving inside the Serene Heights Group site (`/booking`)
+
+The website is built with `basePath: "/booking"` so it can live at **sereneheightsgroup.com/booking** while
+staying its own repo and Vercel project (Next.js Multi-Zones). The group site rewrites `/booking` and
+`/booking/:path*` to this deployment (`BOOKING_ORIGIN` in the group site's Vercel settings).
+
+| What | Under `/booking` |
+|---|---|
+| Pages and links | `next/link`, the router and `_next` assets get the prefix automatically |
+| Images, icons | go through `asset()` in `client/global/lib/asset.ts` (Next does not prefix string `src`) |
+| API | the browser calls `/booking/api/v1/…`; `next.config.mjs` rewrites it to `API_URL` |
+| Refresh cookie | set on `/booking/api/v1/auth` (`AUTH_COOKIE_PATH`) so the browser sends it back |
+| This app's own domain | `/` redirects to `/booking` |
+
+`npm run check` (server) includes `check-base-path.js`, which fails if the website base path and the cookie
+path ever disagree. To run the site at its root again, set `NEXT_PUBLIC_BASE_PATH=` (empty) on the website
+and `AUTH_COOKIE_PATH=/api/v1/auth` on the API.
+
+**Deploy order:** API → website (both as below) → group site with `BOOKING_ORIGIN` set to the website's URL.
+On the API, add the group domain to `CLIENT_ORIGIN` (comma-separated) and keep `AUTH_COOKIE_PATH` at its default.
 
 ## Configuration
 

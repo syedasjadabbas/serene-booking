@@ -2,12 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 // Mark from the official Serene Heights logo, with the wordmark set in Jost to stay legible at header size.
 export default function Logo({ tone = "green", className }: { tone?: "green" | "cream"; className?: string }) {
   const cream = tone === "cream";
   return (
     <Link href="/" className={cn("flex items-center gap-2.5", className)} aria-label="Serene Bookings, Nathia Gali, home">
-      <Image src={cream ? "/brand/mark-cream.png" : "/brand/mark-green.png"} alt="" width={30} height={40} priority className="h-9 w-auto shrink-0 sm:h-10" />
+      <Image src={asset(cream ? "/brand/mark-cream.png" : "/brand/mark-green.png")} alt="" width={30} height={40} priority className="h-9 w-auto shrink-0 sm:h-10" />
       <span className="whitespace-nowrap leading-none">
         <span className={cn("block font-logo text-[13px] font-normal tracking-[0.08em] min-[380px]:text-[15px] min-[380px]:tracking-[0.14em] sm:text-lg sm:tracking-[0.18em]", cream ? "text-cream" : "text-brand-600")}>SERENE BOOKINGS</span>
         <span className={cn("mt-1 block text-[9px] font-medium tracking-[0.2em] min-[380px]:text-[9px] min-[380px]:tracking-[0.3em] sm:text-[10px] sm:tracking-[0.32em]", cream ? "text-cream/80" : "text-brand-500")}>NATHIA GALI</span>

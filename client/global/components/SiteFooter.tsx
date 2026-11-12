@@ -5,6 +5,9 @@ import { Facebook, Instagram, Linkedin, MapPin, MessageCircle, Youtube } from "l
 import Logo from "./Logo";
 import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
 
+
+// The parent site. On the group domain "/" is the group home; override for other setups.
+const GROUP_URL = process.env.NEXT_PUBLIC_GROUP_URL || "/";
 // Dark inset footer card with a large contact line (reference design).
 export default function SiteFooter() {
   const { data: p } = usePropertyQuery();
@@ -25,6 +28,8 @@ export default function SiteFooter() {
               <li><Link className="inline-block py-1.5 hover:text-lime" href="/floor-plans">Floor plans</Link></li>
               <li><Link className="inline-block py-1.5 hover:text-lime" href="/manage">Manage a booking</Link></li>
               <li><Link className="inline-block py-1.5 hover:text-lime" href="/account">My account</Link></li>
+              {/* Plain <a>: the group site sits outside this app's /booking base path. */}
+              <li><a className="inline-block py-1.5 hover:text-lime" href={GROUP_URL}>Serene Heights Group ↗</a></li>
             </ul>
           </nav>
           <div className="flex flex-col items-start md:items-center md:text-center">

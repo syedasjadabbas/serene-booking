@@ -18,6 +18,10 @@ const env = {
   singleSessionPerPlatform: bool(process.env.SINGLE_SESSION_PER_PLATFORM, true),
 
   clientOrigin: (process.env.CLIENT_ORIGIN || "http://localhost:3000").split(",").map((s) => s.trim()),
+  // The website is served under /booking (inside the Serene Heights Group site), so the browser sees auth
+  // calls at /booking/api/v1/auth. The refresh cookie must use that path or the browser never sends it back.
+  // Set to "/api/v1/auth" if the website is ever run at its root again.
+  authCookiePath: process.env.AUTH_COOKIE_PATH || "/booking/api/v1/auth",
   // Shared with the website's proxy so the API can trust the forwarded visitor IP (see middlewares/clientIp.js).
   proxySecret: process.env.PROXY_SECRET || "",
   redisUrl: process.env.REDIS_URL || "",

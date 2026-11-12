@@ -8,12 +8,25 @@ if (process.env.VERCEL && !process.env.API_URL) {
   throw new Error("API_URL is not set. Add it in Vercel → Project → Settings → Environment Variables (the API project's URL).");
 }
 
+// Serene Booking lives inside the Serene Heights Group site at /booking (Next.js Multi-Zones):
+// sereneheightsgroup.com/booking/* is rewritten by the group site to this deployment.
+// Set NEXT_PUBLIC_BASE_PATH="" to run at the root instead.
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/booking";
+
 const nextConfig = {
   reactStrictMode: true,
+  basePath: BASE_PATH || undefined,
+  // Same value for client code (global/lib/asset.ts) so image, icon and API paths match the base path.
+  env: { NEXT_PUBLIC_BASE_PATH: BASE_PATH },
+  // On this app's own domain, the bare root forwards to /booking (the group site owns "/" on its domain).
+  async redirects() {
+    return BASE_PATH ? [{ source: "/", destination: BASE_PATH, basePath: false, permanent: false }] : [];
+  },
   poweredByHeader: false,
   // Lets a production build run beside `next dev` without clobbering its .next folder.
   distDir: process.env.NEXT_DIST_DIR || ".next",
-  // The browser talks to /api/v1 on this origin; Next proxies to the Express API.
+  // The browser talks to {basePath}/api/v1 on this origin; Next proxies to the Express API
+  // (rewrite sources are prefixed with basePath automatically).
   // Same-origin keeps the httpOnly refresh cookie first-party (no third-party cookie problems).
   async rewrites() {
     return [{ source: "/api/v1/:path*", destination: `${API_URL.replace(/\/$/, "")}/api/v1/:path*` }];

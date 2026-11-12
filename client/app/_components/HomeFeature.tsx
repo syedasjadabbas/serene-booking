@@ -9,6 +9,7 @@ import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
 import { money } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 // Full-bleed image band with a floating booking card and experience thumbnails (reference design's "acclaimed" section).
 export default function HomeFeature() {
   const { data: p } = usePropertyQuery();
@@ -40,7 +41,7 @@ export default function HomeFeature() {
       {/* Background crossfades between renders and drifts with scroll */}
       <Parallax speed={-0.08} className="absolute inset-x-0 -top-[8%] -z-10 h-[116%]">
         <div key={bg} className="fade-in absolute inset-0">
-          <Image src={bg} alt={ordered[active]?.title ?? "Resort experience"} fill sizes="100vw" className="object-cover" />
+          <Image src={asset(bg)} alt={ordered[active]?.title ?? "Resort experience"} fill sizes="100vw" className="object-cover" />
         </div>
       </Parallax>
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/20" />
@@ -60,7 +61,7 @@ export default function HomeFeature() {
                 aria-label={`Show ${s.title}`}
                 aria-pressed={i === active}
               >
-                <Image src={s.image} alt="" fill sizes="64px" className="object-cover" />
+                <Image src={asset(s.image)} alt="" fill sizes="64px" className="object-cover" />
               </button>
             ))}
           </div>
@@ -71,7 +72,7 @@ export default function HomeFeature() {
           <Tilt max={6}>
           <div className="rounded-3xl bg-white p-3 shadow-pop">
             <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
-              <Image src={featured.images[0]} alt={featured.name} fill sizes="340px" className="object-cover" />
+              <Image src={asset(featured.images[0])} alt={featured.name} fill sizes="340px" className="object-cover" />
             </div>
             <div className="px-2 pb-2 pt-4">
               <p className="font-bold text-ink">{featured.name} – Nathia Gali</p>

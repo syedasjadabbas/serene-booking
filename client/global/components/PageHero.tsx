@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { Parallax, SplitLines } from "./motion";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 type Crumb = { href?: string; label: string };
 
 // Inner-page banner in the same language as the home hero: inset rounded panel, slow-zoom photo
@@ -33,7 +34,7 @@ export default function PageHero({
     <section className="panel relative isolate mt-2.5 sm:mt-4 lg:mt-6">
       <Parallax speed={-0.1} className="absolute inset-x-0 -top-[10%] -z-10 h-[120%]">
         <div className="ken-burns relative h-full w-full">
-          <Image src={image} alt={imageAlt} fill priority sizes="100vw" className="object-cover" />
+          <Image src={asset(image)} alt={imageAlt} fill priority sizes="100vw" className="object-cover" />
         </div>
       </Parallax>
       <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-ink/85 via-ink/45 to-ink/10" />

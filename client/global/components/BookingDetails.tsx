@@ -11,6 +11,7 @@ import { Alert, StatusPill } from "./ui";
 import Modal from "./Modal";
 import { fmtDate, fmtDateTime, guestsLabel, money, plural } from "@/global/lib/format";
 
+import { asset } from "@/global/lib/asset";
 const PAYMENT_LABEL = { PAY_AT_PROPERTY: "Pay at the property", CARD: "Card", BANK_TRANSFER: "Bank transfer" } as const;
 const PAYMENT_STATUS = { UNPAID: "Not paid yet", PENDING: "Payment pending", PAID: "Paid", REFUNDED: "Refunded" } as const;
 
@@ -36,7 +37,7 @@ export default function BookingDetails({ booking: b, guestEmail, onChange }: { b
         <section className="card overflow-hidden">
           <div className="grid sm:grid-cols-[220px_1fr]">
             <div className="relative aspect-[4/3] bg-zinc-100 sm:aspect-auto">
-              {b.roomType.image && <Image src={b.roomType.image} alt={b.roomType.name} fill sizes="220px" className="object-cover" />}
+              {b.roomType.image && <Image src={asset(b.roomType.image)} alt={b.roomType.name} fill sizes="220px" className="object-cover" />}
             </div>
             <div className="p-5">
               <div className="flex flex-wrap items-center gap-2">

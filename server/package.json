@@ -14,7 +14,7 @@
     "db:seed": "node prisma/seed.js",
     "db:setup": "node ./node_modules/prisma/build/index.js migrate deploy && node prisma/seed.js --apply",
     "db:demo": "node scripts/seed-demo-bookings.js",
-    "check": "node scripts/check-pricing.js && node scripts/check-scope.js && node scripts/check-proxy-ip.js",
+    "check": "node scripts/check-pricing.js && node scripts/check-scope.js && node scripts/check-proxy-ip.js && node scripts/check-base-path.js",
     "smoke": "node scripts/smoke-api.js"
   },
   "engines": {

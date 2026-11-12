@@ -8,6 +8,7 @@ import type { RoomType } from "@/global/api/types";
 import { money } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 /** True only on devices with a real hover pointer (mouse/trackpad). Phones never load the hover photo. */
 function useCanHover() {
   const [canHover, setCanHover] = useState(false);
@@ -34,9 +35,9 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
     >
       {/* Photo */}
       <div className={cn("relative overflow-hidden bg-zinc-100", wide ? "h-60 sm:h-72" : "h-60")}>
-        <Image src={type.images[0]} alt={type.name} fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover transition duration-700 group-hover:scale-105" />
+        <Image src={asset(type.images[0])} alt={type.name} fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover transition duration-700 group-hover:scale-105" />
         {hoverImage && (
-          <Image src={hoverImage} alt="" fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className="object-cover opacity-0 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
+          <Image src={asset(hoverImage)} alt="" fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className="object-cover opacity-0 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/40 to-transparent" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">

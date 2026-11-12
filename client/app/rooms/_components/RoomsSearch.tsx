@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarSearch, Flame, SlidersHorizontal } from "lucide-react";
 import SearchBar from "@/global/components/SearchBar";
@@ -55,7 +56,7 @@ export default function RoomsSearch() {
       </div>
       <div className="container-page py-6">
         <nav aria-label="Breadcrumb" className="text-xs text-zinc-500">
-          <a href="/" className="text-brand-700 hover:underline">Home</a> › Nathia Gali › Serene Heights › <span className="text-zinc-700">Apartments</span>
+          <Link href="/" className="text-brand-700 hover:underline">Home</Link> › Nathia Gali › Serene Heights › <span className="text-zinc-700">Apartments</span>
         </nav>
         {pastStay && <Alert tone="warning" title="Those dates have passed" className="mt-4">Pick new dates above to see availability.</Alert>}
         {stay && !pastStay ? <Results stay={stay} filters={filters} onFilters={(f) => setUrl(stay, f)} /> : !pastStay && <Browse />}

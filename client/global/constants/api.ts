@@ -1,4 +1,7 @@
-export const API_BASE = "/api/v1";
+import { BASE_PATH } from "@/global/lib/asset";
+
+// Under /booking the browser calls /booking/api/v1, which next.config rewrites to the Express API.
+export const API_BASE = `${BASE_PATH}/api/v1`;
 
 export const EP = {
   auth: {

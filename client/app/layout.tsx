@@ -6,6 +6,7 @@ import Providers from "./providers";
 import SiteHeader from "@/global/components/SiteHeader";
 import SiteFooter from "@/global/components/SiteFooter";
 
+import { asset } from "@/global/lib/asset";
 // Plus Jakarta Sans for everything (geometric grotesk like the reference design);
 // Jost only for the logo wordmark, which matches the Serene Heights logo lettering.
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap", weight: ["400", "500", "600", "700", "800"] });
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   title: { default: "Serene Heights Nathia Gali | Book your mountain stay", template: "%s | Serene Heights Nathia Gali" },
   description:
     "Book fully furnished one-bedroom hotel apartments at Serene Heights, Nathia Gali: 7,906 ft, heated infinity pool, rooftop dining and 50+ resort facilities.",
-  icons: { icon: "/brand/mark-green.png" },
+  icons: { icon: asset("/brand/mark-green.png") },
 };
 
 export const viewport: Viewport = { themeColor: "#36564f" };

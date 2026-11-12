@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 
+import { asset } from "@/global/lib/asset";
 const PERKS = ["See every booking in one place", "Book faster with saved details", "Review your stay after check-out"];
 
 export default function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
@@ -9,7 +10,7 @@ export default function AuthShell({ title, subtitle, children }: { title: string
     <div className="grid min-h-[calc(100vh-4rem)] gap-6 p-2.5 sm:p-4 lg:grid-cols-2 lg:p-6">
       <div className="relative hidden overflow-hidden rounded-[36px] lg:block">
         <div className="ken-burns absolute inset-0">
-          <Image src="/images/resort/night-facade-portrait.jpg" alt="Serene Heights lit up on a snowy evening" fill sizes="50vw" className="object-cover" />
+          <Image src={asset("/images/resort/night-facade-portrait.jpg")} alt="Serene Heights lit up on a snowy evening" fill sizes="50vw" className="object-cover" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent" />
         <div className="absolute bottom-10 left-10 right-10 text-white">

@@ -21,6 +21,7 @@ import PhotoGrid from "./PhotoGrid";
 import { Reveal } from "@/global/components/motion";
 import AvailabilityTable from "./AvailabilityTable";
 
+import { asset } from "@/global/lib/asset";
 const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "availability", label: "Info & prices" },
@@ -219,7 +220,7 @@ export default function RoomDetail() {
               {floorPlans.slice(0, 4).map((f) => (
                 <Link key={f.key} href={`/floor-plans#floor-${f.key}`} className="card overflow-hidden hover:shadow-pop">
                   <div className="relative aspect-[3/2] bg-white">
-                    <Image src={f.plans[0]} alt={`${f.label} plan`} fill sizes="(min-width: 1280px) 20vw, 50vw" className="object-contain p-2" />
+                    <Image src={asset(f.plans[0])} alt={`${f.label} plan`} fill sizes="(min-width: 1280px) 20vw, 50vw" className="object-contain p-2" />
                   </div>
                   <p className="border-t border-zinc-100 px-4 py-2 text-sm font-medium">{f.label} plan →</p>
                 </Link>

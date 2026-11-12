@@ -8,7 +8,19 @@ import HomeFeature from "./_components/HomeFeature";
 import HomeReviews from "./_components/HomeReviews";
 import HomeLocation from "./_components/HomeLocation";
 
-export default function HomePage() {
+import { asset } from "@/global/lib/asset";
+import { isPastStay, parseStay } from "@/global/lib/stay";
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function HomePage({ searchParams }: { searchParams: SearchParams }) {
+  // Dates and guests can arrive in the URL (?checkIn&checkOut&adults…), e.g. from the Serene Heights Group
+  // site's "Check availability" form; pre-fill the hero search with them. Past or invalid dates are ignored.
+  const raw = await searchParams;
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(raw)) if (typeof v === "string") params.set(k, v);
+  const parsed = parseStay(params);
+  const initial = parsed && !isPastStay(parsed) ? parsed : null;
+
   return (
     <>
       {/* Hero: starts full-bleed, then insets into a rounded white-framed card as you scroll (ScrollInset).
@@ -16,7 +28,7 @@ export default function HomePage() {
       <ScrollInset>
         <Parallax speed={-0.12} className="absolute inset-x-0 -top-[8%] -z-10 h-[116%]">
           <div className="ken-burns relative h-full w-full">
-            <Image src="/images/resort/hero-tower-mist.jpg" alt="Serene Heights tower rising above the pines and mist" fill priority sizes="100vw" className="object-cover object-[50%_35%]" />
+            <Image src={asset("/images/resort/hero-tower-mist.jpg")} alt="Serene Heights tower rising above the pines and mist" fill priority sizes="100vw" className="object-cover object-[50%_35%]" />
           </div>
         </Parallax>
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/65 via-ink/30 to-ink/60" />
@@ -33,7 +45,7 @@ export default function HomePage() {
             Fully furnished hotel apartments with a heated infinity pool and rooftop dining. Book in minutes, pay at the property.
           </p>
           <div className="fade-up mt-10 w-full max-w-4xl text-left" style={{ animationDelay: "800ms" }}>
-            <SearchBar variant="hero" submitLabel="Search" />
+            <SearchBar variant="hero" submitLabel="Search" initial={initial} />
           </div>
         </div>
       </ScrollInset>

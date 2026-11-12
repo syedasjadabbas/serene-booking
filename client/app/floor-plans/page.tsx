@@ -13,6 +13,7 @@ import { Reveal, Stagger, Tilt } from "@/global/components/motion";
 import { areaRange, money } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 export default function FloorPlansPage() {
   const { data: p, isLoading } = usePropertyQuery();
   const { data: types } = useRoomTypesQuery();
@@ -97,7 +98,7 @@ export default function FloorPlansPage() {
         <Tilt max={3} glare={false}>
           <button onClick={() => setZoom(idx)} className="group relative block w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-card" aria-label={`Enlarge ${current.label} plan`}>
             <div key={current.key} className="fade-in relative aspect-[3/2]">
-              <Image src={current.plans[0]} alt={`${current.label} floor plan`} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-contain p-4" />
+              <Image src={asset(current.plans[0])} alt={`${current.label} floor plan`} fill sizes="(min-width: 1024px) 70vw, 100vw" className="object-contain p-4" />
             </div>
             <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-ink/80 px-3 py-1.5 text-xs font-semibold text-white opacity-0 transition group-hover:opacity-100">
               <Maximize2 className="h-3.5 w-3.5" /> Click to zoom
@@ -122,7 +123,7 @@ export default function FloorPlansPage() {
                 <Tilt key={t.id} className="h-full" max={6}>
                   <Link href={`/rooms/${t.slug}`} className="zoom-img block h-full overflow-hidden rounded-3xl bg-white shadow-card">
                     <div className="relative aspect-[4/3]">
-                      <Image src={t.images[0]} alt={t.name} fill sizes="(min-width: 1024px) 20vw, 50vw" className="object-cover" />
+                      <Image src={asset(t.images[0])} alt={t.name} fill sizes="(min-width: 1024px) 20vw, 50vw" className="object-cover" />
                     </div>
                     <div className="p-4">
                       <p className="font-bold leading-tight text-ink">{t.name}</p>

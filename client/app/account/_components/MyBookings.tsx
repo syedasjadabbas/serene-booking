@@ -13,6 +13,7 @@ import { fmtDate, guestsLabel, money, plural } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
 import ReviewModal from "./ReviewModal";
 
+import { asset } from "@/global/lib/asset";
 const TABS: { key: BookingTab; label: string }[] = [
   { key: "upcoming", label: "Upcoming" },
   { key: "past", label: "Past" },
@@ -52,7 +53,7 @@ export default function MyBookings() {
         {data?.items.map((b) => (
           <article key={b.reference} className="card grid overflow-hidden sm:grid-cols-[180px_1fr_auto]">
             <div className="relative aspect-[16/9] bg-zinc-100 sm:aspect-auto">
-              {b.roomType.image && <Image src={b.roomType.image} alt="" fill sizes="180px" className="object-cover" />}
+              {b.roomType.image && <Image src={asset(b.roomType.image)} alt="" fill sizes="180px" className="object-cover" />}
             </div>
             <div className="p-4">
               <div className="flex flex-wrap items-center gap-2">

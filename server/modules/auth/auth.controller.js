@@ -7,7 +7,7 @@ const cookieOptions = () => ({
   httpOnly: true,
   secure: env.isProd,
   sameSite: "lax",
-  path: "/api/v1/auth",
+  path: env.authCookiePath,
   maxAge: env.refreshTokenTtlDays * 86400_000,
 });
 
@@ -41,7 +41,7 @@ exports.refresh = async (req, res, next) => {
     const result = await service.refresh(req.cookies[COOKIE]);
     successResponse(res, withSession(res, result), "Session refreshed");
   } catch (err) {
-    res.clearCookie(COOKIE, { path: "/api/v1/auth" });
+    res.clearCookie(COOKIE, { path: env.authCookiePath });
     next(err);
   }
 };
@@ -49,7 +49,7 @@ exports.refresh = async (req, res, next) => {
 exports.logout = async (req, res, next) => {
   try {
     await service.logout(req.auth);
-    res.clearCookie(COOKIE, { path: "/api/v1/auth" });
+    res.clearCookie(COOKIE, { path: env.authCookiePath });
     successResponse(res, null, "Signed out");
   } catch (err) {
     next(err);

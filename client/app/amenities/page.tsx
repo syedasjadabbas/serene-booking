@@ -14,6 +14,7 @@ import Lightbox from "@/global/components/Lightbox";
 import { Reveal, Stagger, Tilt } from "@/global/components/motion";
 import { cn } from "@/global/lib/cn";
 
+import { asset } from "@/global/lib/asset";
 const ICONS: Record<string, LucideIcon> = {
   pool: Waves, spa: Bath, gym: Dumbbell, restaurant: Utensils, roomService: Coffee, housekeeping: Sparkles, concierge: Building,
   business: Briefcase, conference: Presentation, banquet: PartyPopper, lawn: Trees, golf: Flag, zipline: Mountain, climbing: Mountain,
@@ -74,7 +75,7 @@ export default function AmenitiesPage() {
           {p.experiences.map((e, i) => (
             <Tilt key={e.image} className="h-full" max={5}>
               <button onClick={() => setLightbox({ set: "exp", i })} className="zoom-img group relative block h-full w-full overflow-hidden rounded-3xl text-left" aria-label={`Open ${e.title}`}>
-                <Image src={e.image} alt={e.title} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
+                <Image src={asset(e.image)} alt={e.title} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
                 <span className="absolute bottom-0 left-0 flex w-full items-end justify-between gap-2 p-4">
                   <span className="text-base font-bold text-white sm:text-lg">{e.title}</span>
@@ -131,7 +132,7 @@ export default function AmenitiesPage() {
         <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:px-[max(1.5rem,calc((100vw-80rem)/2+2rem))]">
           {galPhotos.map((g, i) => (
             <button key={g.src} onClick={() => setLightbox({ set: "gal", i })} className="zoom-img relative h-[320px] w-[78vw] max-w-[520px] shrink-0 snap-start overflow-hidden rounded-3xl sm:h-[380px]">
-              <Image src={g.src} alt={g.alt} fill sizes="520px" className="object-cover" />
+              <Image src={asset(g.src)} alt={g.alt} fill sizes="520px" className="object-cover" />
               <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-4 pt-12 text-left text-sm font-medium text-white">{g.alt}</span>
             </button>
           ))}
