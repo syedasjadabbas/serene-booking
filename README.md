@@ -1,75 +1,361 @@
-# Serene Booking
+<div align="center">
 
-Guest-facing booking website for **Serene Heights Nathia Gali**: Booking.com / Hilton-style search, rates, checkout and "manage my booking", for a single property.
-Admin (rates, inventory, booking operations) lives in **Serene Management**, a separate project. This repo is the user panel only.
+<img src="client/public/brand/logo-green-tight.png" alt="Serene Heights Hotels & Resorts" width="150" />
 
-It follows the same conventions as the Serene Management CRM: Express + Prisma + Postgres modules on the server, and Next.js App Router + RTK Query + Tailwind on the client.
+# Serene Bookings
 
-## Run it locally
+**Direct booking platform for Serene Heights, Nathia Gali**: Pakistan's first winter resort at 7,906 ft.
 
-Prerequisites: Node 20+, PostgreSQL (Redis optional).
+Search live availability, compare apartment types and rates, book in minutes and manage the stay online.
+
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-4169E1?logo=postgresql&logoColor=white)
+
+</div>
+
+<br />
+
+<img src="client/public/images/resort/hero-tower-mist.jpg" alt="Serene Heights tower rising above the pines and mist" width="100%" />
+
+---
+
+## Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting started](#getting-started)
+- [Configuration](#configuration)
+- [Scripts](#scripts)
+- [Project structure](#project-structure)
+- [API reference](#api-reference)
+- [Data model](#data-model)
+- [Engineering notes](#engineering-notes)
+- [Quality checks](#quality-checks)
+- [Content & placeholders](#content--placeholders)
+- [Roadmap](#roadmap)
+
+---
+
+## Overview
+
+Serene Bookings is the **guest-facing website** for Serene Heights Hotels & Resorts, Nathia Gali. It brings Booking.com / Hilton-style booking to a single property:
+
+- **130 one-bedroom hotel apartments**, transcribed from the official floor plans and grouped into **5 bookable apartment types**
+- **Live availability and pricing** with seasonal and weekend rates and three rate plans
+- **Book without an account** (or with one), pay at the property, and cancel online on flexible rates
+
+Administration (rates, inventory, booking operations) lives in **Serene Management**, a separate CRM. This repository is the **user panel** and follows the same conventions as that CRM, so the two can share data. Every booking change is written to an `Outbox` table for Serene Management to pick up.
+
+---
+
+## Features
+
+### For guests
+
+| | |
+| --- | --- |
+| 🔎 **Search & availability** | Date range picker that shows the nightly price on each day and blocks sold-out nights; guests and apartments selector; live availability per apartment type. |
+| 🧭 **Results** | Filter sidebar with live counts (free cancellation, breakfast, budget, balcony/terrace, size, sleeps) and sort chips. The meal and cancellation filters change the price shown. Urgency badges use real data only ("Only 2 left", "73% booked", "N booked in 24 h"). |
+| 🏔️ **Apartment pages** | Photo grid with a full-screen lightbox, sticky section navigation, a rates table with "I'll reserve" on each row, facilities, every apartment of the type with its floor and area, floor plans, house rules, map and reviews. |
+| 🧾 **Checkout** | Progress steps, guest details, arrival time, special requests, a price breakdown (nightly, discount, breakfast, tax) and the payment UI. |
+| ✅ **Manage booking** | Confirmation page with print, free-cancellation deadline and online cancellation. Guests find bookings by reference + email; customers see upcoming, past and cancelled stays. |
+| 👤 **Accounts** | Register, sign in, profile, change password (signs out other devices), and reviews after a completed stay. |
+| 🗺️ **Content pages** | Amenities (bento grid, grouped facilities, gallery), interactive floor plans, and location & contact (journey timeline, map, FAQ). |
+
+### Experience
+
+- **Design:** inset rounded hero panels, pill-shaped controls, Plus Jakarta Sans, a forest-green and lime palette taken from the Serene Heights brand.
+- **Motion:** scroll reveals, staggered grids, 3D pointer-tilt cards, parallax and slow-zoom imagery, count-up stats, page transitions. All hand-built (no animation library) and all switched off for users who prefer reduced motion.
+- **Responsive:** checked at 320 px, 375 px and desktop widths, with no horizontal overflow.
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| **Web** | Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 3 |
+| **State & data** | Redux Toolkit **RTK Query** (server data), Zustand (auth & session state), React Hook Form + Zod |
+| **UI** | lucide-react icons, react-day-picker, date-fns, `next/image` (AVIF/WebP) |
+| **API** | Node.js 20+, Express 4, Zod validation, Helmet, CORS, express-rate-limit, Pino logging |
+| **Database** | PostgreSQL with Prisma 6 (migrations + seed) |
+| **Auth** | JWT access tokens + rotating, hashed refresh tokens in an httpOnly cookie |
+| **Cache** | In-memory stale-while-revalidate cache (Redis optional via `REDIS_URL`) |
+
+---
+
+## Architecture
+
+```
+ Browser ──► Next.js (client/, :3000)
+               │  /api/v1/*  ── rewrite (same-origin, cookie-friendly)
+               ▼
+            Express API (server/, :4000)
+               route → auth → rate limit → zod validation → controller → service → Prisma
+               ▼
+            PostgreSQL  ── Booking / BookingRoom (exclusion constraint) / Outbox / AuditLog
+                              │
+                              └─► Outbox ► Serene Management (admin CRM, separate project)
+```
+
+- **Thin controllers, logic in services.** Every route validates its input with Zod, and errors are thrown as `AppError` and handled by one global handler.
+- **Responses** always use the envelope `{ success, message, data }`.
+- **The client never calls `fetch` in components.** One RTK Query `baseApi` handles a single in-flight refresh on 401, a retry on 429/503, and unwrapping the envelope. Endpoints are injected per feature.
+- **URL is the source of truth for search state** (`checkIn`, `checkOut`, `adults`, `children`, `rooms`, plus filters), so searches are shareable, refresh-safe and work with the back button.
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- **Node.js 20+**
+- **PostgreSQL 14+** (tested on 18)
+- Redis is **optional**
+
+### 1. Clone & install
 
 ```bash
-# 1. Database
-#    In psql or pgAdmin:  CREATE DATABASE serene_booking;
-#    Then put your Postgres password into server/.env -> DATABASE_URL
+git clone https://github.com/syedasjadabbas/serene-booking.git
+cd serene-booking
+cd server && npm install && cd ../client && npm install && cd ..
+```
 
-# 2. API (http://localhost:4000/api/v1)
+### 2. Configure the API
+
+```bash
+cp server/.env.example server/.env
+```
+
+Set `DATABASE_URL` (your Postgres credentials) and a long random `JWT_ACCESS_SECRET` in `server/.env`. See [Configuration](#configuration).
+
+### 3. Create the database, migrate and seed
+
+```bash
 cd server
-npm install
-npm run db:setup      # applies migrations + seeds 130 apartments, 5 apartment types, 3 rate plans
-npm run check         # pricing + inventory checks (no DB needed)
-npm run dev
-
-# 3. Website (http://localhost:3000)
-cd ../client
-npm install
-npm run dev
+npm run db:setup     # creates serene_booking if needed, applies migrations, seeds inventory
 ```
 
-The folder path contains `&` (`WEBS & APPS`), which breaks npm's Windows `.bin` shims. Because of that, the npm scripts call `node ./node_modules/...` directly. Keep that pattern when adding scripts.
+The seed loads 5 apartment types, 130 apartments, 3 rate plans and 2 seasons. It is idempotent, so you can re-run it safely.
 
-## What's in the user panel
+### 4. Run
 
-| Page | Route |
+```bash
+# terminal 1 — API on http://localhost:4000/api/v1
+cd server && npm run dev
+
+# terminal 2 — web on http://localhost:3000
+cd client && npm run dev
+```
+
+> **Windows note:** if the project path contains `&` (e.g. `WEBS & APPS`), npm's `.bin` shims break. All npm scripts therefore call `node ./node_modules/...` directly; keep that pattern when adding scripts.
+
+---
+
+## Configuration
+
+`server/.env` (copy from `server/.env.example`):
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | none | Postgres connection string. Add `&connection_limit=N` to size the pool. |
+| `PORT` | `4000` | API port |
+| `JWT_ACCESS_SECRET` | none | **Required in production.** Signs access tokens. |
+| `ACCESS_TOKEN_TTL` | `15m` | Access-token lifetime |
+| `REFRESH_TOKEN_TTL_DAYS` | `30` | Refresh-session lifetime |
+| `SINGLE_SESSION_PER_PLATFORM` | `true` | One active session per customer per platform |
+| `CLIENT_ORIGIN` | `http://localhost:3000` | Allowed CORS origin(s), comma-separated |
+| `REDIS_URL` | *(empty)* | Optional shared cache; in-memory if empty |
+| `CURRENCY` | `PKR` | Display/booking currency |
+| `TAX_PERCENT` | `16` | Tax applied to stays |
+| `WEEKEND_UPLIFT_PERCENT` | `10` | Friday & Saturday night uplift |
+| `MAX_STAY_NIGHTS` | `30` | Longest online stay |
+| `MAX_ROOMS_PER_BOOKING` | `5` | Apartments per booking |
+| `PAYMENTS_ENABLED` | `false` | Enables online payment methods (gateway not yet connected) |
+| `REVIEWS_ENABLED` | `true` | Allows reviews after completed stays |
+
+`client/.env.local` (optional):
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `API_URL` | `http://localhost:4000` | Where Next.js proxies `/api/v1/*` |
+
+---
+
+## Scripts
+
+**server/**
+
+| Command | What it does |
 | --- | --- |
-| Home: hero search, highlights, apartment types, experiences, reviews, location | `/` |
-| Search results with live availability, sort and filters (all in the URL) | `/rooms?checkIn&checkOut&adults&children&rooms` |
-| Apartment type: gallery, facts, apartments on each floor, floor plans, house rules, live rates | `/rooms/[slug]` |
-| Checkout: guest details, arrival time, requests, payment UI, price breakdown | `/book` |
-| Confirmation / manage / cancel / print | `/booking/[reference]` |
-| Find a booking as a guest (reference + email) | `/manage` |
-| Sign in, register | `/login`, `/register` |
-| My bookings (upcoming / past / cancelled), write a review | `/account` |
-| Profile and password | `/account/profile` |
-| Amenities, floor plans, location & contact | `/amenities`, `/floor-plans`, `/contact` |
+| `npm run dev` | API with file watching (source folders only) |
+| `npm start` | API in production mode |
+| `npm run db:setup` | Apply migrations + seed |
+| `npm run db:migrate` | Apply migrations only (`prisma migrate deploy`) |
+| `npm run db:seed` | Seed / refresh inventory, rate plans and seasons (idempotent) |
+| `npm run check` | Pricing & inventory checks (no database needed) |
+| `npm run smoke -- --yes` | End-to-end API test against a **local** server. It creates and then cancels test bookings, and refuses any non-localhost URL. |
 
-## How the important parts work
+**client/**
 
-- **Inventory:** 130 one-bedroom apartments transcribed from the official floor plans (`server/prisma/inventory.js`), grouped by size into 5 bookable types.
-- **Availability:** computed in SQL per type (`rooms.service.js`). A booking locks free apartments with `FOR UPDATE SKIP LOCKED`, and a Postgres **exclusion constraint** (`booking_room_no_overlap`) makes double-booking an apartment impossible, even under races.
-- **Pricing:** a pure function (`server/lib/pricing.js`): base rate × seasonal multiplier × weekend uplift, then rate-plan discount, breakfast and tax. It is checked by `npm run check`.
-- **Auth:** a 15-minute JWT access token held in memory, and a rotating refresh token in an httpOnly cookie, stored hashed. Sessions are checked on every request and cached. One session per customer per platform (`SINGLE_SESSION_PER_PLATFORM`).
-- **Guests can book without an account** and manage the booking with its reference + email. The lookup is a POST, so the email never appears in a URL.
-- **Payments:** UI only. Card, bank and wallet options are visible but disabled until `PAYMENTS_ENABLED=true` and a gateway is connected. Card fields are never sent anywhere.
-- **Serene Management hand-off:** every booking and cancellation writes an `Outbox` row (`booking.created`, `booking.cancelled`) for a future worker to sync. Security-relevant actions write `AuditLog` rows.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Next.js dev server on :3000 |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run typecheck` | TypeScript check |
 
-## Placeholders to confirm with management
+---
 
-These are **not published on the official site** and were filled with reasonable defaults:
+## Project structure
 
-- Nightly base rates per type (`server/prisma/seed.js`): Rs 18,000 / 22,000 / 26,000 / 34,000 / 30,000
-- Breakfast price (Rs 1,500 per guest per night), saver discount (10%), free-cancel window (48 h)
-- Seasons: snow season ×1.15, summer peak ×1.25; weekend uplift 10%; tax 16% (`server/.env`)
+```
+serene-booking/
+├── client/                         # Next.js user panel
+│   ├── app/
+│   │   ├── page.tsx                # Home
+│   │   ├── template.tsx            # Page transitions
+│   │   ├── rooms/                  # Search results  ·  rooms/[slug] apartment page
+│   │   ├── book/                   # Checkout
+│   │   ├── booking/[reference]/    # Confirmation & manage
+│   │   ├── manage/ account/ login/ register/
+│   │   └── amenities/ floor-plans/ contact/
+│   ├── global/
+│   │   ├── api/                    # baseApi, endpoints/<feature>Api.ts, types
+│   │   ├── components/             # SearchBar, PriceCalendar, PageHero, Lightbox, motion …
+│   │   ├── lib/  stores/  constants/
+│   └── public/
+│       ├── brand/                  # Official logo & mark
+│       └── images/                 # resort/ dining/ activities/ floor-plans/
+│
+└── server/                         # Express API
+    ├── app.js  server.js
+    ├── config/                     # env, prisma client
+    ├── lib/                        # pricing, dates, cache, sessions, jwt, audit, validate …
+    ├── middlewares/                # auth, rate limits, error handler
+    ├── modules/<feature>/          # routes · validators · controller · service
+    │   └── auth · property · rooms · bookings · reviews
+    ├── prisma/                     # schema, migrations, inventory.js, seed.js
+    └── scripts/                    # check-pricing.js, smoke-api.js
+```
+
+---
+
+## API reference
+
+Base URL: `/api/v1`. All responses use the envelope `{ success, message, data }`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/property` | none | Property content, amenities, floors, gallery, stats |
+| `GET` | `/property/config` | none | Public config (currency, tax, limits, feature flags) |
+| `GET` | `/rooms` | none | Apartment types with inventory stats |
+| `GET` | `/rooms/availability` | none | Availability + every rate plan's price for a stay |
+| `GET` | `/rooms/calendar` | none | Nightly lowest price & availability for a date window |
+| `GET` | `/rooms/:slug` | none | Apartment type detail, apartments, floors, rate plans |
+| `GET` | `/rooms/:slug/rates` | none | Live quotes per rate plan for a stay |
+| `POST` | `/bookings` | Optional | Create a booking (guest or signed in) |
+| `POST` | `/bookings/lookup` | none | Find a booking by reference + email |
+| `POST` | `/bookings/:reference/cancel` | Owner or email | Cancel a booking |
+| `GET` | `/bookings/mine` | Required | Customer's bookings (`upcoming` / `past` / `cancelled`) |
+| `GET` | `/bookings/mine/:reference` | Required | One of the customer's bookings |
+| `GET` | `/reviews` | none | Published reviews + score summary |
+| `POST` | `/reviews` | Required | Review a completed stay |
+| `POST` | `/auth/register` · `/auth/login` | none | Create account / sign in (sets refresh cookie) |
+| `POST` | `/auth/refresh` · `/auth/logout` | Cookie | Rotate session / sign out |
+| `GET` `PATCH` | `/auth/me` | Required | Profile |
+| `POST` | `/auth/change-password` | Required | Change password (revokes other sessions) |
+
+Stay parameters: `checkIn`, `checkOut` (`YYYY-MM-DD`, hotel time zone), `adults`, `children`, `rooms`.
+
+---
+
+## Data model
+
+| Model | Purpose |
+| --- | --- |
+| `RoomType` | Bookable apartment type (name, occupancy, base rate, features, images) |
+| `Room` | A physical apartment (number, floor, area, outdoor space) |
+| `RatePlan` | Flexible, Flexible with breakfast, Non-refundable saver |
+| `SeasonalRate` | Date-range price multipliers (all types or one type) |
+| `Booking` | Stay, guest, totals, nightly breakdown, payment & status |
+| `BookingRoom` | Apartment held by a booking for its dates |
+| `Customer` · `Session` | Accounts and hashed, rotating refresh sessions |
+| `Review` | One per completed stay |
+| `AuditLog` · `Outbox` | Security audit trail · events for Serene Management |
+
+---
+
+## Engineering notes
+
+- **No double bookings, even under races.** Free apartments are locked with `FOR UPDATE SKIP LOCKED`, and a Postgres **exclusion constraint** on `BookingRoom` (`daterange` overlap, active rows only) makes overlapping holds impossible at the database level. The smoke test fires 6 parallel bookings at the 4 corner suites; exactly 4 succeed.
+- **Pricing is a pure function** (`server/lib/pricing.js`): base rate × seasonal multiplier × weekend uplift per night, then rate-plan discount, breakfast per guest per night, and tax.
+- **Availability is aggregated in SQL** (grouped counts, `generate_series` for the calendar). Rows are never loaded into JS to be counted.
+- **Caching:** stale-while-revalidate with single-flight for reads such as room types, rate plans, the calendar and property content. Every query parameter is part of the cache key.
+- **Security:**
+  - Rate limits on auth, booking and lookup.
+  - Booking lookup is a `POST`, so emails never appear in URLs.
+  - Guest bookings are not auto-linked to new accounts, because emails are unverified.
+  - Open-redirect-safe `next` parameters.
+  - Card fields in the payment preview are disabled and never submitted.
+- **Accessibility:**
+  - Semantic landmarks, labelled controls and visible focus rings.
+  - Keyboard-operable popovers, dialogs and lightbox.
+  - `prefers-reduced-motion` respected throughout.
+
+---
+
+## Quality checks
+
+```bash
+cd server && npm run check            # 8 pricing & inventory checks
+cd server && npm run smoke -- --yes   # 12 end-to-end API checks (local server must be running)
+cd client && npm run typecheck        # TypeScript
+```
+
+---
+
+## Content & placeholders
+
+- **Content sources:**
+  - Property content comes from the official site, [sereneheightsnathiagali.com](https://www.sereneheightsnathiagali.com/nathiagali).
+  - Imagery comes from the official Serene Heights 3D renders and animation frames.
+  - Apartments and areas are transcribed from the published floor plans (`server/prisma/inventory.js`).
+
+The following are **sensible defaults awaiting confirmation** from Serene Heights management:
+
+- Nightly base rates per apartment type, breakfast price, saver discount, seasons, tax and weekend uplift
 - Occupancy limits and the sofa bed in the sitting room
-- Check-in 2:00 PM / check-out 12:00 PM, and the child, pet, smoking and ID policies (`server/modules/property/property.data.js`)
-- WhatsApp number: the site shows +92 300 8497999, but its links point to +92 321 4979447
-- **Photos:** images are the official 3D renders and animation frames from the Serene Heights "3D Animation" Drive folder (resized to ≤2400px, JPEG q84) in `client/public/images/{resort,dining,activities}`. There are still **no apartment interior renders**; when available, add them first in each type's `images` in the seed.
-- 5th-floor apartments (501–504) have no printed areas on the floor plan.
+- Check-in / check-out times and the child, pet, smoking and ID policies (`server/modules/property/property.data.js`)
+- The current WhatsApp number (the official site shows two different numbers)
+- Areas for the 5th-floor apartments (501–504), which are not printed on the plans
+- **Apartment interior renders.** None are published yet; add them first in each type's `images` in `server/prisma/seed.js`.
 
-## Layout
+---
 
-```
-server/  app.js · config/ · lib/ · middlewares/ · modules/{auth,property,rooms,bookings,reviews} · prisma/ · scripts/
-client/  app/<route>/{page.tsx,_components,_lib} · global/{api,components,lib,stores,constants}
-```
+## Roadmap
+
+- [ ] Connect to **Serene Management** (worker that processes the `Outbox`)
+- [ ] Confirmation & reminder **emails / WhatsApp**
+- [ ] **Forgot password** and email verification
+- [ ] **Payment gateway** (cards, JazzCash, Easypaisa)
+- [ ] Change dates on an existing booking
+- [ ] Promo codes, Urdu localisation
+- [ ] Production deployment (hosting, domain, HTTPS)
+
+---
+
+<div align="center">
+
+**Serene Bookings** · Serene Heights Hotels & Resorts, Nathia Gali
+
+© Serene Heights Nathia Gali. All rights reserved.
+
+</div>
