@@ -12,6 +12,8 @@ const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans", di
 const display = Jost({ subsets: ["latin"], variable: "--font-display", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
+  // Absolute base for Open Graph images and canonical URLs. Set SITE_URL in production.
+  metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
   title: { default: "Serene Heights Nathia Gali | Book your mountain stay", template: "%s | Serene Heights Nathia Gali" },
   description:
     "Book fully furnished one-bedroom hotel apartments at Serene Heights, Nathia Gali: 7,906 ft, heated infinity pool, rooftop dining and 50+ resort facilities.",

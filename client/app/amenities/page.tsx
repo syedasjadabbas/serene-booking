@@ -54,7 +54,7 @@ export default function AmenitiesPage() {
       >
         <div className="flex flex-wrap gap-2">
           {["Glass-roof pool", "Rooftop dining", "Ski slope", "Spa & sauna", "24/7 concierge"].map((t) => (
-            <span key={t} className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25 backdrop-blur">{t}</span>
+            <span key={t} className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25">{t}</span>
           ))}
         </div>
       </PageHero>

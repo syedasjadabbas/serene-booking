@@ -8,29 +8,60 @@ import { cn } from "@/global/lib/cn";
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Calls back once when the element scrolls into view. */
-function useInView<T extends Element>(rootMargin = "0px 0px -10% 0px") {
+// Safety net for reveals: IntersectionObserver can miss an element when the page jumps past it in one
+// go (fast fling, End key, anchor link). One shared, rAF-throttled scroll check reveals anything whose
+// top has reached the viewport — including elements already scrolled past — so content never stays hidden.
+const pendingReveals = new Map<Element, () => void>();
+let revealRaf = 0;
+let revealTimer = 0;
+function checkPendingReveals() {
+  cancelAnimationFrame(revealRaf);
+  clearTimeout(revealTimer);
+  revealRaf = 0;
+  revealTimer = 0;
+  const limit = window.innerHeight * 0.92;
+  for (const [el, reveal] of pendingReveals) {
+    if (el.getBoundingClientRect().top < limit) {
+      pendingReveals.delete(el);
+      reveal();
+    }
+  }
+  if (!pendingReveals.size) {
+    window.removeEventListener("scroll", scheduleRevealCheck);
+    window.removeEventListener("resize", scheduleRevealCheck);
+  }
+}
+function scheduleRevealCheck() {
+  if (revealRaf || revealTimer) return;
+  revealRaf = requestAnimationFrame(checkPendingReveals);
+  // Backup in case animation frames are throttled (background tab, low-power mode).
+  revealTimer = window.setTimeout(checkPendingReveals, 150);
+}
+function watchReveal(el: Element, reveal: () => void) {
+  if (!pendingReveals.size) {
+    window.addEventListener("scroll", scheduleRevealCheck, { passive: true });
+    window.addEventListener("resize", scheduleRevealCheck);
+  }
+  pendingReveals.set(el, reveal);
+  scheduleRevealCheck();
+  return () => {
+    pendingReveals.delete(el);
+  };
+}
+
+/** Calls back once when the element scrolls into view (or has already been scrolled past). */
+function useInView<T extends Element>() {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (reducedMotion() || !("IntersectionObserver" in window)) {
+    if (reducedMotion()) {
       setInView(true);
       return;
     }
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin, threshold: 0.12 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [rootMargin]);
+    return watchReveal(el, () => setInView(true));
+  }, []);
   return { ref, inView };
 }
 
@@ -130,7 +161,8 @@ export function Parallax({ children, className, speed = 0.15 }: { children: Reac
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
-    if (!el || reducedMotion()) return;
+    // Skip on touch devices: per-frame scroll work there costs smoothness for a barely visible effect.
+    if (!el || reducedMotion() || window.matchMedia("(pointer: coarse)").matches) return;
     let raf = 0;
     const update = () => {
       const r = el.parentElement?.getBoundingClientRect() ?? el.getBoundingClientRect();

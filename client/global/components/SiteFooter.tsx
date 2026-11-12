@@ -19,12 +19,12 @@ export default function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-[1fr_auto_1fr]">
           <nav aria-label="Footer">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Quick links</p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><Link className="hover:text-lime" href="/rooms">Apartments & rates</Link></li>
-              <li><Link className="hover:text-lime" href="/amenities">Amenities</Link></li>
-              <li><Link className="hover:text-lime" href="/floor-plans">Floor plans</Link></li>
-              <li><Link className="hover:text-lime" href="/manage">Manage a booking</Link></li>
-              <li><Link className="hover:text-lime" href="/account">My account</Link></li>
+            <ul className="mt-3 space-y-0.5 text-sm">
+              <li><Link className="inline-block py-1.5 hover:text-lime" href="/rooms">Apartments & rates</Link></li>
+              <li><Link className="inline-block py-1.5 hover:text-lime" href="/amenities">Amenities</Link></li>
+              <li><Link className="inline-block py-1.5 hover:text-lime" href="/floor-plans">Floor plans</Link></li>
+              <li><Link className="inline-block py-1.5 hover:text-lime" href="/manage">Manage a booking</Link></li>
+              <li><Link className="inline-block py-1.5 hover:text-lime" href="/account">My account</Link></li>
             </ul>
           </nav>
           <div className="flex flex-col items-start md:items-center md:text-center">
@@ -33,7 +33,7 @@ export default function SiteFooter() {
           </div>
           <div className="md:justify-self-end">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Social</p>
-            <ul className="mt-4 space-y-2 text-sm">
+            <ul className="mt-3 space-y-0.5 text-sm">
               {p &&
                 [
                   { href: p.contact.social.instagram, Icon: Instagram, label: "Instagram" },
@@ -42,7 +42,7 @@ export default function SiteFooter() {
                   { href: p.contact.social.linkedin, Icon: Linkedin, label: "LinkedIn" },
                 ].map(({ href, Icon, label }) => (
                   <li key={label}>
-                    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-lime">
+                    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 py-1.5 hover:text-lime">
                       <Icon className="h-4 w-4" /> {label}
                     </a>
                   </li>

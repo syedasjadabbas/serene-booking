@@ -48,7 +48,7 @@ export default function FloorPlansPage() {
             { Icon: Layers, text: `${p.floors.length} floor plans` },
             ...(types?.length ? [{ Icon: Ruler, text: `${minArea}–${maxArea} sq ft` }] : []),
           ].map(({ Icon, text }) => (
-            <span key={text} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25 backdrop-blur">
+            <span key={text} className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/25">
               <Icon className="h-3.5 w-3.5" /> {text}
             </span>
           ))}
@@ -56,7 +56,7 @@ export default function FloorPlansPage() {
       </PageHero>
 
       {/* Sticky floor selector */}
-      <div className="sticky top-16 z-30 mt-6 border-y border-zinc-200 bg-white/95 backdrop-blur">
+      <div className="sticky top-16 z-30 mt-6 border-y border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
         <div className="container-page flex gap-2 overflow-x-auto py-3" role="tablist" aria-label="Floors">
           {p.floors.map((f) => (
             <button
@@ -115,7 +115,7 @@ export default function FloorPlansPage() {
                 <h2 className="section-title">Apartment Types</h2>
                 <p className="section-sub">Every layout on these plans is one of five bookable types.</p>
               </div>
-              <Link href="/rooms" className="inline-flex items-center gap-1 text-sm font-semibold text-ink hover:underline">Compare all <ArrowRight className="h-4 w-4" /></Link>
+              <Link href="/rooms" className="tap inline-flex items-center gap-1 text-sm font-semibold text-ink hover:underline">Compare all <ArrowRight className="h-4 w-4" /></Link>
             </Reveal>
             <Stagger className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5" step={70} itemClassName="h-full">
               {types.map((t) => (

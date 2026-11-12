@@ -10,7 +10,7 @@ export default function Logo({ tone = "green", className }: { tone?: "green" | "
       <Image src={cream ? "/brand/mark-cream.png" : "/brand/mark-green.png"} alt="" width={30} height={40} priority className="h-9 w-auto shrink-0 sm:h-10" />
       <span className="whitespace-nowrap leading-none">
         <span className={cn("block font-logo text-[13px] font-normal tracking-[0.08em] min-[380px]:text-[15px] min-[380px]:tracking-[0.14em] sm:text-lg sm:tracking-[0.18em]", cream ? "text-cream" : "text-brand-600")}>SERENE BOOKINGS</span>
-        <span className={cn("mt-1 block text-[8px] font-medium tracking-[0.24em] min-[380px]:text-[9px] min-[380px]:tracking-[0.3em] sm:text-[10px] sm:tracking-[0.32em]", cream ? "text-cream/80" : "text-brand-500")}>NATHIA GALI</span>
+        <span className={cn("mt-1 block text-[9px] font-medium tracking-[0.2em] min-[380px]:text-[9px] min-[380px]:tracking-[0.3em] sm:text-[10px] sm:tracking-[0.32em]", cream ? "text-cream/80" : "text-brand-500")}>NATHIA GALI</span>
       </span>
     </Link>
   );

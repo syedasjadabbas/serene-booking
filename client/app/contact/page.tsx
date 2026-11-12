@@ -63,7 +63,7 @@ export default function ContactPage() {
                 <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-zinc-500">{title}</p>
                 <p className="mt-1 flex-1 font-semibold leading-snug text-ink">{value}</p>
                 {href && (
-                  <a href={href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
+                  <a href={href} {...(external ? { target: "_blank", rel: "noreferrer" } : {})} className="tap mt-5 inline-flex w-fit items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
                     {cta} <ArrowRight className="h-4 w-4" />
                   </a>
                 )}

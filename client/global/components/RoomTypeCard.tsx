@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Bath, BedDouble, Building2, Maximize2, Trees, Users } from "lucide-react";
@@ -5,9 +8,23 @@ import type { RoomType } from "@/global/api/types";
 import { money } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
 
+/** True only on devices with a real hover pointer (mouse/trackpad). Phones never load the hover photo. */
+function useCanHover() {
+  const [canHover, setCanHover] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setCanHover(mq.matches);
+    const on = () => setCanHover(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return canHover;
+}
+
 // Apartment-type card: photo on top (second photo fades in on hover), clean details panel below.
 export default function RoomTypeCard({ type, href, wide = false }: { type: RoomType; href: string; wide?: boolean }) {
-  const hoverImage = type.images.find((src, i) => i > 0 && !src.includes("floor-plans"));
+  const canHover = useCanHover();
+  const hoverImage = canHover ? type.images.find((src, i) => i > 0 && !src.includes("floor-plans")) : undefined;
   const size = type.maxAreaSqft ? (type.minAreaSqft === type.maxAreaSqft ? `${type.maxAreaSqft}` : `${type.minAreaSqft}–${type.maxAreaSqft}`) : null;
 
   return (
@@ -23,10 +40,10 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
         )}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/40 to-transparent" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm backdrop-blur">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
             <Trees className="h-3 w-3 text-brand-600" /> {type.outdoorSpace}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-ink/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+          <span className="inline-flex items-center gap-1 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-semibold text-white">
             <Building2 className="h-3 w-3" /> {type.totalApartments} apartments
           </span>
         </div>

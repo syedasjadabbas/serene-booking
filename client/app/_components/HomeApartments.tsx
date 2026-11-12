@@ -48,7 +48,7 @@ export default function HomeApartments() {
             </button>
           ))}
         </div>
-        <Link href="/rooms" className="inline-flex items-center gap-1 text-sm font-semibold text-ink hover:underline">
+        <Link href="/rooms" className="tap inline-flex items-center gap-1 text-sm font-semibold text-ink hover:underline">
           See all <ArrowRight className="h-4 w-4" />
         </Link>
       </Reveal>

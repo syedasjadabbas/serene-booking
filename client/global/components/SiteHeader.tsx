@@ -24,7 +24,7 @@ export default function SiteHeader() {
   const overlay = pathname === "/" && !open;
 
   const header = (
-    <header className={cn("z-40", overlay ? "hero-header pointer-events-auto sticky top-0" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
+    <header className={cn("z-40", overlay ? "hero-header pointer-events-auto sticky top-0" : "sticky top-0 border-b border-zinc-200/80 bg-white sm:bg-white/90 sm:backdrop-blur")}>
       <div className={cn("container-page flex h-16 items-center justify-between gap-4", overlay && "h-20")}>
         <Logo tone={overlay ? "cream" : "green"} />
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
@@ -47,7 +47,7 @@ export default function SiteHeader() {
             Find booking
           </Link>
           <AccountMenu />
-          <button className={cn("rounded-full p-2 lg:hidden", overlay ? "text-white hover:bg-white/15" : "text-zinc-700 hover:bg-zinc-100")} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">
+          <button className={cn("rounded-full p-2.5 lg:hidden", overlay ? "text-white hover:bg-white/15" : "text-zinc-700 hover:bg-zinc-100")} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>

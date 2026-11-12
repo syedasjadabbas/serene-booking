@@ -39,7 +39,7 @@ export default function PageHero({
       <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-ink/85 via-ink/45 to-ink/10" />
       <div className={cn("container-page flex flex-col justify-end text-white", size === "sm" ? "min-h-[300px] py-10" : "min-h-[440px] py-12 sm:min-h-[480px]")}>
         {crumbs.length > 0 && (
-          <nav aria-label="Breadcrumb" className="fade-up mb-5 inline-flex w-fit flex-wrap items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 text-xs text-white/85 ring-1 ring-white/20 backdrop-blur">
+          <nav aria-label="Breadcrumb" className="fade-up mb-5 inline-flex w-fit flex-wrap items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs text-white/85 ring-1 ring-white/20">
             <Link href="/" className="hover:text-lime">Home</Link>
             {crumbs.map((c) => (
               <span key={c.label} className="inline-flex items-center gap-1">

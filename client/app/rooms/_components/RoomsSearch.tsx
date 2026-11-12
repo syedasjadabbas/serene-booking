@@ -48,7 +48,7 @@ export default function RoomsSearch() {
   return (
     <div className="bg-zinc-50/60">
       {/* Sticky search under the site header, like Booking.com */}
-      <div className="sticky top-16 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur">
+      <div className="sticky top-16 z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
         <div className="container-page py-3">
           <SearchBar initial={stay} onSearch={(s) => setUrl(s, filters, true)} submitLabel="Search" />
         </div>

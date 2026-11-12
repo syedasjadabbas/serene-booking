@@ -80,7 +80,7 @@ export default function RoomDetail() {
   return (
     <div>
       {/* Sticky in-page navigation, like Booking.com's property tabs */}
-      <nav aria-label="Page sections" className="sticky top-16 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur">
+      <nav aria-label="Page sections" className="sticky top-16 z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
         <div className="container-page flex gap-1 overflow-x-auto">
           {SECTIONS.map((s) => (
             <a key={s.id} href={`#${s.id}`} className="shrink-0 border-b-2 border-transparent px-3 py-3 text-sm font-medium text-zinc-600 hover:border-brand-600 hover:text-brand-700">
@@ -103,7 +103,7 @@ export default function RoomDetail() {
               <h1 className="mt-1.5 text-3xl font-semibold">{t.name}</h1>
               <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-zinc-600">
                 <MapPin className="h-4 w-4 text-brand-600" /> {property?.address ?? "Kala Bagh Air Base Road, Nathia Gali"} –{" "}
-                <a href="#location" className="font-medium text-brand-700 underline">Show on map</a>
+                <a href="#location" className="tap font-medium text-brand-700 underline">Show on map</a>
               </p>
             </div>
             <div className="flex items-center gap-4">

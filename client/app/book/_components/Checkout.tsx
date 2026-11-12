@@ -97,7 +97,7 @@ export default function Checkout() {
   return (
     <div className="bg-zinc-50/60">
       <div className="container-page py-8">
-        <Link href={backHref} className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">
+        <Link href={backHref} className="tap inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to rates
         </Link>
         <div className="mt-4 max-w-2xl">

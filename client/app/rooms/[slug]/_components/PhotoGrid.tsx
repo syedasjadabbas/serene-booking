@@ -30,7 +30,7 @@ export default function PhotoGrid({ photos }: { photos: Photo[] }) {
         ))}
       </div>
       <div className="mt-2 flex justify-end">
-        <button onClick={() => setIndex(0)} className="flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">
+        <button onClick={() => setIndex(0)} className="tap flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">
           <Images className="h-4 w-4" /> Show all {photos.length} photos
         </button>
       </div>

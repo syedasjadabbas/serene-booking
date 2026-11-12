@@ -31,7 +31,7 @@ export default function PriceSummary({ stay, roomName, ratePlan, quote: q }: { s
       </dl>
       <div className="space-y-2 p-5 text-sm">
         <Row label={`${plural(stay.rooms, "apartment")} × ${plural(q.nights, "night")}`} value={money(q.roomSubtotal, q.currency)} />
-        <button type="button" onClick={() => setShowNights((s) => !s)} className="text-xs font-medium text-brand-700 hover:underline">
+        <button type="button" onClick={() => setShowNights((s) => !s)} className="tap text-xs font-medium text-brand-700 hover:underline">
           {showNights ? "Hide" : "Show"} nightly rates
         </button>
         {showNights && (
