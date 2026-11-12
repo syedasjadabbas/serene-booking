@@ -12,6 +12,7 @@
     "db:migrate": "node ./node_modules/prisma/build/index.js migrate deploy",
     "db:seed": "node prisma/seed.js",
     "db:setup": "node ./node_modules/prisma/build/index.js migrate deploy && node prisma/seed.js",
+    "db:demo": "node scripts/seed-demo-bookings.js",
     "check": "node scripts/check-pricing.js",
     "smoke": "node scripts/smoke-api.js"
   },

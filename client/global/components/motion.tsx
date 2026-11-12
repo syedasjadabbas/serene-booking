@@ -157,6 +157,80 @@ export function Parallax({ children, className, speed = 0.15 }: { children: Reac
   );
 }
 
+/**
+ * Pinned hero that starts full-bleed (no frame, square corners). While the user scrolls through the
+ * first `distance` px the section stays pinned on screen and insets into a rounded, white-framed card;
+ * it then holds for `hold` px before the page continues to the next section.
+ *
+ * How: the section is `position: sticky` inside a track that is `distance + hold` px taller than the
+ * section, so the page doesn't move on while the effect plays. Progress drives the CSS var --inset
+ * (0 → 1; geometry in `.scroll-inset`, globals.css). The track height is published as
+ * --hero-pin-height so the floating site header can stay pinned with the hero.
+ */
+export function ScrollInset({ children, className, distance = 320, hold = 220 }: { children: ReactNode; className?: string; distance?: number; hold?: number }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
+  const [pin, setPin] = useState(true);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const el = ref.current;
+    if (!track || !el) return;
+    const root = document.documentElement;
+
+    // Reduced motion: no pinning, show the framed card straight away.
+    if (reducedMotion()) {
+      setPin(false);
+      el.style.setProperty("--inset", "1");
+      return;
+    }
+
+    const publishHeight = () => root.style.setProperty("--hero-pin-height", `${track.offsetHeight}px`);
+    let raf = 0;
+    let last = -1;
+    const update = () => {
+      const scrolled = -track.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, scrolled / distance));
+      const eased = 1 - Math.pow(1 - p, 2); // ease-out: frame appears quickly, settles gently
+      if (Math.abs(eased - last) > 0.001) {
+        el.style.setProperty("--inset", eased.toFixed(3));
+        last = eased;
+      }
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    const onResize = () => {
+      publishHeight();
+      onScroll();
+    };
+    publishHeight();
+    update();
+    const ro = new ResizeObserver(publishHeight);
+    ro.observe(track);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      root.style.removeProperty("--hero-pin-height");
+    };
+  }, [distance]);
+
+  return (
+    <div ref={trackRef} className="relative">
+      <section ref={ref} className={cn("scroll-inset isolate overflow-hidden", pin ? "sticky top-0" : "relative", className)}>
+        {children}
+      </section>
+      {/* Scroll runway: while it passes, the hero above stays pinned (shrink, then hold). */}
+      {pin && <div aria-hidden style={{ height: distance + hold }} />}
+    </div>
+  );
+}
+
 /** Counts up to `to` when scrolled into view. */
 export function CountUp({ to, duration = 1400, prefix = "", suffix = "", className }: { to: number; duration?: number; prefix?: string; suffix?: string; className?: string }) {
   const { ref, inView } = useInView<HTMLSpanElement>();

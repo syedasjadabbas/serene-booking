@@ -23,8 +23,8 @@ export default function SiteHeader() {
   // On the home page the header floats inside the rounded hero card (reference design); elsewhere it's a sticky white bar.
   const overlay = pathname === "/" && !open;
 
-  return (
-    <header className={cn("z-40", overlay ? "absolute inset-x-0 top-0 px-2 pt-2 sm:px-3 sm:pt-3" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
+  const header = (
+    <header className={cn("z-40", overlay ? "pointer-events-auto sticky top-0 px-2 pt-2 sm:px-3 sm:pt-3" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
       <div className={cn("container-page flex h-16 items-center justify-between gap-4", overlay && "h-20")}>
         <Logo tone={overlay ? "cream" : "green"} />
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
@@ -65,6 +65,18 @@ export default function SiteHeader() {
       )}
     </header>
   );
+
+  // Home: the header rides along with the pinned hero. Its track is exactly as tall as the hero's pin
+  // section (--hero-pin-height, set by <ScrollInset>), so it stays on the hero while it shrinks and then
+  // scrolls away with it.
+  if (overlay) {
+    return (
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-40" style={{ height: "var(--hero-pin-height, auto)" }}>
+        {header}
+      </div>
+    );
+  }
+  return header;
 }
 
 function AccountMenu() {

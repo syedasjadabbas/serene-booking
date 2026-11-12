@@ -1,32 +1,59 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Bath, BedDouble, Maximize2, Users } from "lucide-react";
+import { ArrowUpRight, Bath, BedDouble, Building2, Maximize2, Trees, Users } from "lucide-react";
 import type { RoomType } from "@/global/api/types";
 import { money } from "@/global/lib/format";
+import { cn } from "@/global/lib/cn";
 
-// Photo card with details overlaid on a dark gradient and a lime price (reference design).
-export default function RoomTypeCard({ type, href }: { type: RoomType; href: string }) {
+// Apartment-type card: photo on top (second photo fades in on hover), clean details panel below.
+export default function RoomTypeCard({ type, href, wide = false }: { type: RoomType; href: string; wide?: boolean }) {
+  const hoverImage = type.images.find((src, i) => i > 0 && !src.includes("floor-plans"));
+  const size = type.maxAreaSqft ? (type.minAreaSqft === type.maxAreaSqft ? `${type.maxAreaSqft}` : `${type.minAreaSqft}–${type.maxAreaSqft}`) : null;
+
   return (
-    <Link href={href} className="group relative block aspect-[4/5] overflow-hidden rounded-3xl bg-zinc-200 sm:aspect-[5/6]">
-      <Image src={type.images[0]} alt={type.name} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition duration-500 group-hover:scale-105" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
-      <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-ink transition group-hover:bg-lime">
-        <ArrowUpRight className="h-4 w-4" />
-      </span>
-      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-ink">{type.outdoorSpace}</span>
-      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-        <h3 className="text-lg font-bold text-white">{type.name}</h3>
-        <p className="text-sm text-white/75">Nathia Gali, Pakistan</p>
-        <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/85">
-          <li className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{type.maxOccupancy} Guests</li>
-          <li className="flex items-center gap-1"><BedDouble className="h-3.5 w-3.5" />{type.bedrooms} Bed</li>
-          <li className="flex items-center gap-1"><Bath className="h-3.5 w-3.5" />{type.bathrooms} Bath</li>
-          {type.maxAreaSqft && <li className="flex items-center gap-1"><Maximize2 className="h-3.5 w-3.5" />{type.minAreaSqft === type.maxAreaSqft ? type.maxAreaSqft : `${type.minAreaSqft}–${type.maxAreaSqft}`} ft²</li>}
+    <Link
+      href={href}
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-card transition duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-pop"
+    >
+      {/* Photo */}
+      <div className={cn("relative overflow-hidden bg-zinc-100", wide ? "h-60 sm:h-72" : "h-60")}>
+        <Image src={type.images[0]} alt={type.name} fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover transition duration-700 group-hover:scale-105" />
+        {hoverImage && (
+          <Image src={hoverImage} alt="" fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className="object-cover opacity-0 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
+        )}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/40 to-transparent" />
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm backdrop-blur">
+            <Trees className="h-3 w-3 text-brand-600" /> {type.outdoorSpace}
+          </span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-ink/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+            <Building2 className="h-3 w-3" /> {type.totalApartments} apartments
+          </span>
+        </div>
+      </div>
+
+      {/* Details */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-lg font-bold leading-snug text-ink">{type.name}</h3>
+        <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{type.tagline}</p>
+
+        <ul className="mb-5 mt-4 flex flex-wrap gap-1.5 text-xs font-medium text-zinc-700">
+          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Users className="h-3.5 w-3.5 text-brand-600" />{type.maxOccupancy} guests</li>
+          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><BedDouble className="h-3.5 w-3.5 text-brand-600" />{type.bedrooms} bedroom</li>
+          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Bath className="h-3.5 w-3.5 text-brand-600" />{type.bathrooms} bath</li>
+          {size && <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Maximize2 className="h-3.5 w-3.5 text-brand-600" />{size} ft²</li>}
         </ul>
-        <p className="mt-3 text-lg font-bold text-lime">
-          {money(type.baseRate)}
-          <span className="text-sm font-medium text-white/80">/night</span>
-        </p>
+
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-zinc-100 pt-4">
+          <p className="leading-tight">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-400">From</span>
+            <span className="text-xl font-extrabold text-ink">{money(type.baseRate)}</span>
+            <span className="text-sm font-medium text-zinc-500"> /night</span>
+          </p>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-lime text-ink transition duration-300 group-hover:rotate-45 group-hover:bg-ink group-hover:text-lime" aria-hidden>
+            <ArrowUpRight className="h-5 w-5" />
+          </span>
+        </div>
       </div>
     </Link>
   );

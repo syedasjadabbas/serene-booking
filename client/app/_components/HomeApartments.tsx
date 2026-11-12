@@ -19,6 +19,16 @@ const CHIPS: { key: string; label: string; test: (t: RoomType) => boolean }[] = 
   { key: "large", label: "700 ft² +", test: (t) => (t.maxAreaSqft ?? 0) >= 700 },
 ];
 
+// Balanced 6-column grid on desktop: rows of three cards; a leftover pair goes two-wide so there's no gap,
+// and a single leftover card is centred.
+const isWide = (i: number, n: number) => n % 3 === 2 && i >= n - 2;
+function spanFor(i: number, n: number) {
+  if (n === 1) return "lg:col-span-2 lg:col-start-3";
+  if (isWide(i, n)) return "lg:col-span-3";
+  if (n % 3 === 1 && i === n - 1) return "lg:col-span-2 lg:col-start-3";
+  return "lg:col-span-2";
+}
+
 export default function HomeApartments() {
   const { data, isLoading, error } = useRoomTypesQuery();
   const [chip, setChip] = useState("all");
@@ -45,13 +55,13 @@ export default function HomeApartments() {
       {error && <Alert tone="error" className="mt-8">{errorMessage(error)}</Alert>}
       {isLoading ? (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => <div key={i} className="aspect-[5/6] animate-pulse rounded-3xl bg-zinc-100" />)}
+          {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-[420px] animate-pulse rounded-3xl bg-zinc-100" />)}
         </div>
       ) : (
-        <Stagger key={chip} className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {shown.map((t) => (
-            <Tilt key={t.id}>
-              <RoomTypeCard type={t} href={`/rooms/${t.slug}`} />
+        <Stagger key={chip} className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-6" itemClassName={(i) => cn("h-full", spanFor(i, shown.length))}>
+          {shown.map((t, i) => (
+            <Tilt key={t.id} className="h-full" max={5}>
+              <RoomTypeCard type={t} href={`/rooms/${t.slug}`} wide={isWide(i, shown.length)} />
             </Tilt>
           ))}
         </Stagger>

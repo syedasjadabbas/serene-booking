@@ -26,7 +26,9 @@ async function call(method, path, body, token) {
 }
 
 const stamp = Date.now().toString(36);
-const stay = { checkIn: "2027-03-10", checkOut: "2027-03-12", adults: 2, children: 0, rooms: 1 };
+// ~300 days out: beyond the demo-bookings window (db:demo defaults to 120 days), so every apartment is free.
+const isoIn = (days) => new Date(Date.now() + days * 86400_000).toISOString().slice(0, 10);
+const stay = { checkIn: isoIn(300), checkOut: isoIn(302), adults: 2, children: 0, rooms: 1 };
 const guest = { firstName: "Smoke", lastName: "Test", email: `smoke+${stamp}@example.test`, phone: "+92 300 0000000" };
 const qs = (o) => new URLSearchParams(o).toString();
 const made = [];

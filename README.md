@@ -146,6 +146,14 @@ npm run db:setup     # creates serene_booking if needed, applies migrations, see
 
 The seed loads 5 apartment types, 130 apartments, 3 rate plans and 2 seasons. It is idempotent, so you can re-run it safely.
 
+Optional: fill the calendar with realistic demo occupancy (around 3,400 stays, removable with `--clear`):
+
+```bash
+npm run db:demo -- --apply
+```
+
+Demo guests use the `@demo.serenebookings.test` email domain and fake `+92 000` phone numbers.
+
 ### 4. Run
 
 ```bash
@@ -201,6 +209,7 @@ cd client && npm run dev
 | `npm run db:setup` | Apply migrations + seed |
 | `npm run db:migrate` | Apply migrations only (`prisma migrate deploy`) |
 | `npm run db:seed` | Seed / refresh inventory, rate plans and seasons (idempotent) |
+| `npm run db:demo -- --apply` | Add **demo bookings** across the 130 floor-plan apartments (past 45 + next 120 days, busier at weekends and in peak seasons) so availability and occupancy look live. Dry run without flags; `--replace` regenerates; **`--clear` removes them all, so run it before going live.** Local databases only. |
 | `npm run check` | Pricing & inventory checks (no database needed) |
 | `npm run smoke -- --yes` | End-to-end API test against a **local** server. It creates and then cancels test bookings, and refuses any non-localhost URL. |
 

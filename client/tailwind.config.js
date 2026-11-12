@@ -1,12 +1,14 @@
-import path from "node:path";
-import type { Config } from "tailwindcss";
+// CommonJS on purpose: Node 24 loads tailwind.config.ts as an ES module (no __dirname), which crashed
+// the dev server on config reload. Absolute content paths let `next dev client` run from any folder.
+const path = require("path");
 
-// Small token set: brand green + cream from the Serene Heights logo, zinc neutrals, one gold accent.
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [path.join(__dirname, "app/**/*.{ts,tsx}"), path.join(__dirname, "global/**/*.{ts,tsx}")],
   theme: {
     extend: {
       colors: {
+        // Brand green + cream from the Serene Heights logo
         brand: {
           50: "#f1f5f4",
           100: "#dde7e4",
@@ -42,5 +44,3 @@ const config: Config = {
   },
   plugins: [],
 };
-
-export default config;
