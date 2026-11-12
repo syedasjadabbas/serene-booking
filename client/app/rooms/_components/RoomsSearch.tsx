@@ -18,6 +18,7 @@ import type { Stay } from "@/global/api/types";
 import { activeFilterCount, applyFilters, DEFAULT_FILTERS, filtersToParams, parseFilters, type ResultFilters, type SortKey } from "../_lib/filters";
 import ResultCard from "./ResultCard";
 import FilterSidebar from "./FilterSidebar";
+import { Stagger } from "@/global/components/motion";
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "recommended", label: "Our top picks" },
@@ -128,9 +129,13 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
               Try different dates, fewer guests per apartment, or fewer filters.
             </EmptyState>
           )}
-          {shown.map((r) => (
-            <ResultCard key={r.roomType.id} result={r} stay={stay} filters={filters} />
-          ))}
+          {shown.length > 0 && (
+            <Stagger className="space-y-4" step={80}>
+              {shown.map((r) => (
+                <ResultCard key={r.roomType.id} result={r} stay={stay} filters={filters} />
+              ))}
+            </Stagger>
+          )}
         </div>
       </div>
 

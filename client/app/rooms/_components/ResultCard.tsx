@@ -17,7 +17,7 @@ export default function ResultCard({ result, stay, filters }: { result: Availabi
 
   return (
     <article className={cn("card grid overflow-hidden sm:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr_220px]", !bookable && "opacity-80")}>
-      <Link href={href} className="relative block aspect-[4/3] bg-zinc-100 sm:aspect-auto sm:min-h-[240px]" aria-label={`${t.name} photos`}>
+      <Link href={href} className="zoom-img relative block aspect-[4/3] overflow-hidden bg-zinc-100 sm:aspect-auto sm:min-h-[240px]" aria-label={`${t.name} photos`}>
         <Image src={t.images[0]} alt={t.name} fill sizes="(min-width: 640px) 240px, 100vw" className="object-cover" />
         <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 text-xs text-white">
           <Images className="h-3.5 w-3.5" /> {t.images.length}

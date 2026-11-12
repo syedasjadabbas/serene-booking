@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useReviewsQuery } from "@/global/api/endpoints/reviewsApi";
 import { cn } from "@/global/lib/cn";
+import { Reveal } from "@/global/components/motion";
 
 // Lime band from the reference design. Shows real guest reviews as a carousel; until the first review
 // is published it invites guests to plan a stay instead (no invented testimonials).
@@ -20,7 +21,7 @@ export default function HomeReviews() {
         <path d="M0 300 C 200 200, 300 380, 520 260 S 760 120, 800 160" fill="none" stroke="#16211f" strokeWidth="1" />
         <path d="M0 120 C 180 60, 340 200, 560 90 S 740 40, 800 70" fill="none" stroke="#16211f" strokeWidth="1" />
       </svg>
-      <div className="container-page relative py-16 text-center sm:py-20">
+      <Reveal from="zoom" className="container-page relative py-16 text-center sm:py-20">
         {r ? (
           <>
             <h2 className="section-title">What Our Guests Say</h2>
@@ -59,7 +60,7 @@ export default function HomeReviews() {
             </div>
           </>
         )}
-      </div>
+      </Reveal>
     </section>
   );
 }

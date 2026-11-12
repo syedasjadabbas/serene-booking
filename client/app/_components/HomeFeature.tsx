@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Parallax, Reveal, Tilt } from "@/global/components/motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRoomTypesQuery } from "@/global/api/endpoints/roomsApi";
@@ -20,17 +21,37 @@ export default function HomeFeature() {
   const ordered = [...shots.filter((s) => s.image.includes(lead)), ...shots.filter((s) => !s.image.includes(lead))].slice(0, 7);
   const bg = ordered[active]?.image ?? "/images/resort/aerial-snow-resort.jpg";
 
+  // Auto-advance every 6s; pauses while hovered or focused, and when motion is reduced.
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    if (paused || ordered.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setActive((a) => (a + 1) % ordered.length), 6000);
+    return () => clearInterval(t);
+  }, [paused, ordered.length]);
+
   return (
-    <section className="panel relative isolate mt-6 sm:mt-8">
-      <Image key={bg} src={bg} alt={ordered[active]?.title ?? "Resort experience"} fill sizes="100vw" className="-z-10 object-cover" />
+    <section
+      className="panel relative isolate mt-6 sm:mt-8"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      {/* Background crossfades between renders and drifts with scroll */}
+      <Parallax speed={-0.08} className="absolute inset-x-0 -top-[8%] -z-10 h-[116%]">
+        <div key={bg} className="fade-in absolute inset-0">
+          <Image src={bg} alt={ordered[active]?.title ?? "Resort experience"} fill sizes="100vw" className="object-cover" />
+        </div>
+      </Parallax>
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/20" />
-      <div className="container-page grid min-h-[560px] gap-10 py-14 lg:grid-cols-[1fr_340px] lg:items-center">
-        <div className="text-white">
-          <h2 className="max-w-lg text-3xl font-bold leading-tight text-white sm:text-4xl">Pakistan&apos;s First Winter Resort, Open All Year</h2>
-          <p className="mt-3 max-w-md text-sm text-white/80">
+      <div className="container-page grid min-h-[600px] gap-10 py-16 lg:grid-cols-[1fr_340px] lg:items-center">
+        <Reveal from="left" className="text-white">
+          <h2 className="max-w-lg text-3xl font-bold leading-tight text-white sm:text-5xl">Pakistan&apos;s First Winter Resort, Open All Year</h2>
+          <p className="mt-4 max-w-md text-sm text-white/80 sm:text-base">
             Heated infinity pool, sauna and massage, rooftop dining, zipline, mini golf and stargazing, all a short walk from your apartment.
           </p>
-          <div className="mt-10 flex flex-wrap gap-2.5">
+          <p key={`cap-${active}`} className="fade-up mt-8 text-xs font-semibold uppercase tracking-widest text-lime">{ordered[active]?.title}</p>
+          <div className="mt-3 flex flex-wrap gap-2.5">
             {ordered.map((s, i) => (
               <button
                 key={s.image}
@@ -43,9 +64,11 @@ export default function HomeFeature() {
               </button>
             ))}
           </div>
-        </div>
+        </Reveal>
 
         {featured && (
+          <Reveal from="right" delay={150}>
+          <Tilt max={6}>
           <div className="rounded-3xl bg-white p-3 shadow-pop">
             <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
               <Image src={featured.images[0]} alt={featured.name} fill sizes="340px" className="object-cover" />
@@ -60,6 +83,8 @@ export default function HomeFeature() {
               <Link href={`/rooms/${featured.slug}`} className="btn-primary mt-4 w-full">Book Now</Link>
             </div>
           </div>
+          </Tilt>
+          </Reveal>
         )}
       </div>
     </section>

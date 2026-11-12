@@ -18,6 +18,7 @@ import ReviewScore from "@/global/components/ReviewScore";
 import { areaRange, fmtDate } from "@/global/lib/format";
 import { isPastStay, parseStay, stayToQuery } from "@/global/lib/stay";
 import PhotoGrid from "./PhotoGrid";
+import { Reveal } from "@/global/components/motion";
 import AvailabilityTable from "./AvailabilityTable";
 
 const SECTIONS = [
@@ -95,7 +96,7 @@ export default function RoomDetail() {
         </nav>
 
         {/* Overview */}
-        <section id="overview" className="scroll-mt-32">
+        <Reveal as="section"id="overview" className="scroll-mt-32">
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
             <div>
               <span className="pill bg-gold-light text-[11px] text-zinc-800">Hotel apartment</span>
@@ -144,10 +145,10 @@ export default function RoomDetail() {
               <a href="#availability" className="btn-primary mt-5 w-full">Reserve</a>
             </aside>
           </div>
-        </section>
+        </Reveal>
 
         {/* Availability */}
-        <section id="availability" className="mt-12 scroll-mt-32">
+        <Reveal as="section"id="availability" className="mt-12 scroll-mt-32">
           <h2 className="text-2xl font-semibold">Availability</h2>
           <p className="mt-1 text-sm text-zinc-500">Prices are for the whole stay and include taxes. Pick dates to see live prices; the calendar shows the nightly price for this apartment type.</p>
           <div className="mt-4">
@@ -158,10 +159,10 @@ export default function RoomDetail() {
             {stay && !isPastStay(stay) && <AvailabilityTable type={t} stay={stay} />}
             {!stay && <Alert tone="info" title="Select dates to see this apartment's availability and prices" />}
           </div>
-        </section>
+        </Reveal>
 
         {/* Facilities */}
-        <section id="facilities" className="mt-12 scroll-mt-32">
+        <Reveal as="section"id="facilities" className="mt-12 scroll-mt-32">
           <h2 className="text-2xl font-semibold">Facilities of Serene Heights</h2>
           <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div>
@@ -180,10 +181,10 @@ export default function RoomDetail() {
                 </div>
               ))}
           </div>
-        </section>
+        </Reveal>
 
         {/* Apartments & floor plans */}
-        <section id="apartments" className="mt-12 scroll-mt-32">
+        <Reveal as="section"id="apartments" className="mt-12 scroll-mt-32">
           <h2 className="text-2xl font-semibold">Apartments & floor plans</h2>
           <p className="mt-1 text-sm text-zinc-500">
             {t.totalApartments} apartments of this type across {t.floors.map((f) => f.label).join(", ")}. Your apartment number is assigned at check-in.
@@ -225,11 +226,11 @@ export default function RoomDetail() {
               ))}
             </div>
           </div>
-        </section>
+        </Reveal>
 
         {/* House rules */}
         {property && (
-          <section id="rules" className="mt-12 scroll-mt-32">
+          <Reveal as="section"id="rules" className="mt-12 scroll-mt-32">
             <h2 className="text-2xl font-semibold">House rules</h2>
             <p className="mt-1 text-sm text-zinc-500">Serene Heights takes special requests – add them in the next step.</p>
             <dl className="mt-4 divide-y divide-zinc-200 rounded-2xl border border-zinc-200">
@@ -249,12 +250,12 @@ export default function RoomDetail() {
                 </div>
               ))}
             </dl>
-          </section>
+          </Reveal>
         )}
 
         {/* Location */}
         {property && (
-          <section id="location" className="mt-12 scroll-mt-32">
+          <Reveal as="section"id="location" className="mt-12 scroll-mt-32">
             <h2 className="text-2xl font-semibold">Location</h2>
             <div className="mt-4 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
               <div className="min-h-[340px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
@@ -269,11 +270,11 @@ export default function RoomDetail() {
                 ))}
               </ul>
             </div>
-          </section>
+          </Reveal>
         )}
 
         {/* Reviews */}
-        <section id="reviews" className="mt-12 scroll-mt-32">
+        <Reveal as="section"id="reviews" className="mt-12 scroll-mt-32">
           <h2 className="text-2xl font-semibold">Guest reviews</h2>
           {reviews && reviews.summary.total > 0 ? (
             <>
@@ -297,7 +298,7 @@ export default function RoomDetail() {
               No reviews yet. Guests who stay with us can review their stay from their account after check-out.
             </p>
           )}
-        </section>
+        </Reveal>
       </div>
     </div>
   );
