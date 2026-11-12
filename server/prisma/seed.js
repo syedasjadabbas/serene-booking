@@ -4,7 +4,8 @@
 //
 // PLACEHOLDERS: nightly rates, breakfast price, seasons, occupancy limits and the sofa bed are not
 // published on the official site (it lists sale prices per sq ft). Confirm with Serene Heights management.
-// Room photos: the site has no apartment interior photos, so types use exterior renders + their floor plan.
+// Room photos: official 3D renders (Serene Heights Drive "3D Animation" folder) + the type's floor plan.
+// There are still no apartment interior renders; add them first in each list when available.
 
 require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 const { PrismaClient } = require("@prisma/client");
@@ -35,7 +36,7 @@ const roomTypes = [
     maxChildren: 1,
     maxOccupancy: 3,
     baseRate: 18000,
-    images: ["/images/hero/hero-exterior.png", "/images/exterior/render-snow.png", "/images/floor-plans/floor-1.png"],
+    images: ["/images/resort/tower-front.jpg", "/images/dining/rooftop-restaurant.jpg", "/images/resort/tower-snow-night.jpg", "/images/floor-plans/floor-1.png"],
     extra: ["Private balcony"],
     sortOrder: 1,
   },
@@ -51,7 +52,7 @@ const roomTypes = [
     maxChildren: 2,
     maxOccupancy: 4,
     baseRate: 22000,
-    images: ["/images/hero/tower-view.png", "/images/exterior/render-night.png", "/images/floor-plans/floor-2.png"],
+    images: ["/images/resort/tower-day.jpg", "/images/dining/sky-lounge.jpg", "/images/resort/glass-roof-pool.jpg", "/images/floor-plans/floor-2.png"],
     extra: ["Private balcony", "Sofa bed in sitting room"],
     sortOrder: 2,
   },
@@ -67,7 +68,7 @@ const roomTypes = [
     maxChildren: 2,
     maxOccupancy: 4,
     baseRate: 26000,
-    images: ["/images/exterior/render-facade.png", "/images/hero/hero-exterior.png", "/images/floor-plans/floor-6.png"],
+    images: ["/images/resort/tower-top.jpg", "/images/dining/sunset-terrace.jpg", "/images/resort/aerial-snow-resort.jpg", "/images/floor-plans/floor-6.png"],
     extra: ["Wide private balcony", "Sofa bed in sitting room"],
     sortOrder: 3,
   },
@@ -83,7 +84,7 @@ const roomTypes = [
     maxChildren: 2,
     maxOccupancy: 4,
     baseRate: 34000,
-    images: ["/images/exterior/render-night.png", "/images/hero/tower-view.png", "/images/floor-plans/floor-3.png"],
+    images: ["/images/resort/aerial-rooftop-pool.jpg", "/images/dining/rooftop-dining-glass.jpg", "/images/resort/tower-sunset-forest.jpg", "/images/floor-plans/floor-3.png"],
     extra: ["Corner position, dual aspect", "Sofa bed in sitting room"],
     sortOrder: 4,
   },
@@ -99,7 +100,7 @@ const roomTypes = [
     maxChildren: 2,
     maxOccupancy: 4,
     baseRate: 30000,
-    images: ["/images/exterior/render-rooftop.png", "/images/hero/tower-view.png", "/images/floor-plans/floor-8.png"],
+    images: ["/images/resort/rooftop-crown.jpg", "/images/resort/rooftop-sunset.jpg", "/images/dining/sunset-terrace.jpg", "/images/floor-plans/floor-8.png"],
     extra: ["Private terrace", "Top floor", "Sofa bed in sitting room"],
     sortOrder: 5,
   },

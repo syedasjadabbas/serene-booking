@@ -14,10 +14,11 @@ export default function HomeFeature() {
   const { data: types } = useRoomTypesQuery();
   const [active, setActive] = useState(0);
   const featured = types?.find((t) => t.slug === "terrace-apartment") ?? types?.[0];
-  // High-resolution gallery photos only (the experience tiles are small and have titles printed on them).
-  const shots = (p?.gallery ?? []).map((g) => ({ image: g.src, title: g.alt })).filter((s) => !s.image.includes("render-"));
-  const ordered = [...shots.filter((s) => s.image.includes("infinity-pool")), ...shots.filter((s) => !s.image.includes("infinity-pool"))];
-  const bg = ordered[active]?.image ?? "/images/gallery/infinity-pool.png";
+  // Gallery renders, leading with the snowy aerial of the whole resort; skip the hero shot used above.
+  const shots = (p?.gallery ?? []).map((g) => ({ image: g.src, title: g.alt })).filter((s) => !s.image.includes("hero-tower-mist"));
+  const lead = "aerial-snow-resort";
+  const ordered = [...shots.filter((s) => s.image.includes(lead)), ...shots.filter((s) => !s.image.includes(lead))].slice(0, 7);
+  const bg = ordered[active]?.image ?? "/images/resort/aerial-snow-resort.jpg";
 
   return (
     <section className="panel relative isolate mt-6 sm:mt-8">

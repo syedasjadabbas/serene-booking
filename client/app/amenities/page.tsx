@@ -23,7 +23,7 @@ export default function AmenitiesPage() {
   return (
     <div>
       <section className="relative isolate">
-        <Image src="/images/gallery/infinity-pool.png" alt="Infinity pool" fill priority sizes="100vw" className="-z-10 object-cover" />
+        <Image src="/images/resort/aerial-rooftop-pool.jpg" alt="Aerial view with the glass-roof rooftop pool" fill priority sizes="100vw" className="-z-10 object-cover" />
         <div className="absolute inset-0 -z-10 bg-brand-900/60" />
         <div className="container-page py-20 text-white">
           <p className="eyebrow text-gold-light">Amenities</p>
@@ -59,9 +59,10 @@ export default function AmenitiesPage() {
           <h2 className="section-title">Experiences</h2>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {p.experiences.map((e) => (
-              <div key={e.image} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-                <Image src={e.image} alt={e.title} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
-              </div>
+              <figure key={e.image} className="group relative aspect-[4/3] overflow-hidden rounded-3xl">
+                <Image src={e.image} alt={e.title} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent p-3 pt-10 text-sm font-semibold text-white">{e.title}</figcaption>
+              </figure>
             ))}
           </div>
         </section>

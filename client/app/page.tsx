@@ -11,8 +11,8 @@ export default function HomePage() {
     <>
       {/* Hero: inset rounded card with the header floating inside it */}
       <section className="panel relative isolate mt-2 sm:mt-3">
-        <Image src="/images/hero/hero-exterior.png" alt="Serene Heights Nathia Gali among the pines" fill priority sizes="100vw" className="-z-10 object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/60 via-ink/25 to-ink/55" />
+        <Image src="/images/resort/hero-tower-mist.jpg" alt="Serene Heights tower rising above the pines and mist" fill priority sizes="100vw" className="-z-10 object-cover object-[50%_35%]" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/65 via-ink/30 to-ink/60" />
         <div className="flex min-h-[640px] flex-col items-center justify-center px-4 pb-14 pt-32 text-center sm:min-h-[700px]">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/15 py-1.5 pl-1.5 pr-4 text-xs font-medium text-white ring-1 ring-white/25 backdrop-blur">
             <span className="rounded-full bg-lime px-2 py-0.5 text-[11px] font-bold text-ink">7,906 ft</span>

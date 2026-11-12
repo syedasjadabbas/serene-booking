@@ -32,10 +32,10 @@ export default function HomeUnique() {
         {/* Collage with floating badges */}
         <div className="relative mx-auto h-[440px] w-full max-w-lg">
           <div className="absolute right-0 top-0 h-[380px] w-[72%] overflow-hidden rounded-3xl">
-            <Image src="/images/hero/tower-view.png" alt="Serene Heights tower in the snow" fill sizes="(min-width: 1024px) 30vw, 70vw" className="object-cover" />
+            <Image src="/images/resort/aerial-pool-portrait.jpg" alt="The tower and its glass-roof rooftop pool above the misty pines" fill sizes="(min-width: 1024px) 30vw, 70vw" className="object-cover" />
           </div>
           <div className="absolute bottom-0 left-0 h-[200px] w-[48%] overflow-hidden rounded-3xl border-[6px] border-mist">
-            <Image src="/images/exterior/render-rooftop.png" alt="Rooftop terraces at dusk" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
+            <Image src="/images/dining/rooftop-restaurant.jpg" alt="Rooftop restaurant with glass walls" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
           </div>
           <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink shadow-card">
             <Star className="h-3.5 w-3.5 fill-lime text-ink" /> 50+ resort facilities

@@ -5,7 +5,7 @@ export default function AuthShell({ title, subtitle, children }: { title: string
   return (
     <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
       <div className="relative hidden lg:block">
-        <Image src="/images/hero/tower-view.png" alt="Serene Heights tower in the snow" fill sizes="50vw" className="object-cover" />
+        <Image src="/images/resort/night-facade-portrait.jpg" alt="Serene Heights lit up on a snowy evening" fill sizes="50vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 to-transparent" />
         <div className="absolute bottom-10 left-10 right-10 text-cream">
           <p className="eyebrow text-gold-light">Serene Heights Nathia Gali</p>

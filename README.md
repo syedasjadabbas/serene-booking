@@ -64,7 +64,7 @@ These are **not published on the official site** and were filled with reasonable
 - Occupancy limits and the sofa bed in the sitting room
 - Check-in 2:00 PM / check-out 12:00 PM, and the child, pet, smoking and ID policies (`server/modules/property/property.data.js`)
 - WhatsApp number: the site shows +92 300 8497999, but its links point to +92 321 4979447
-- **Photos:** the site has no apartment interior photos, so apartment types use the building renders and their floor plan. Add interior photos to `client/public/images` and to `images` in the seed.
+- **Photos:** images are the official 3D renders and animation frames from the Serene Heights "3D Animation" Drive folder (resized to ≤2400px, JPEG q84) in `client/public/images/{resort,dining,activities}`. There are still **no apartment interior renders**; when available, add them first in each type's `images` in the seed.
 - 5th-floor apartments (501–504) have no printed areas on the floor plan.
 
 ## Layout
