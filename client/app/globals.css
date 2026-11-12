@@ -25,7 +25,7 @@
   .container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-  /* Card / pill / button language from the reference design: very round, pill CTAs, lime accent. */
+  /* Card / pill / button language from the reference design: very round, pill CTAs, sage accent (group green). */
   .card {
     @apply rounded-3xl border border-zinc-200/80 bg-white shadow-card;
   }
@@ -237,10 +237,10 @@ html { scroll-behavior: smooth; }
 
 /* react-day-picker theming */
 .rdp-root {
-  --rdp-accent-color: #36564f;
-  --rdp-accent-background-color: #dde7e4;
-  --rdp-range_middle-background-color: #dde7e4;
-  --rdp-range_middle-color: #1d2e2b;
+  --rdp-accent-color: #37584f;
+  --rdp-accent-background-color: #dfece4;
+  --rdp-range_middle-background-color: #dfece4;
+  --rdp-range_middle-color: #0f241e;
   --rdp-day-height: 40px;
   --rdp-day-width: 40px;
   --rdp-day_button-height: 38px;
@@ -255,7 +255,7 @@ html { scroll-behavior: smooth; }
   --rdp-day_button-height: 50px;
   --rdp-day_button-width: 44px;
   --rdp-day_button-border-radius: 10px;
-  --rdp-selected-border: 2px solid #36564f;
+  --rdp-selected-border: 2px solid #37584f;
 }
 .price-day {
   flex-direction: column;

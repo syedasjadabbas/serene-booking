@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   icons: { icon: asset("/brand/mark-green.png") },
 };
 
-export const viewport: Viewport = { themeColor: "#36564f" };
+export const viewport: Viewport = { themeColor: "#18332a" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

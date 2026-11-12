@@ -18,8 +18,8 @@ export default function HomeReviews() {
   return (
     <section className="panel relative mt-6 bg-lime sm:mt-10">
       <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-30" viewBox="0 0 800 400" preserveAspectRatio="none">
-        <path d="M0 300 C 200 200, 300 380, 520 260 S 760 120, 800 160" fill="none" stroke="#16211f" strokeWidth="1" />
-        <path d="M0 120 C 180 60, 340 200, 560 90 S 740 40, 800 70" fill="none" stroke="#16211f" strokeWidth="1" />
+        <path d="M0 300 C 200 200, 300 380, 520 260 S 760 120, 800 160" fill="none" stroke="#0f1f1b" strokeWidth="1" />
+        <path d="M0 120 C 180 60, 340 200, 560 90 S 740 40, 800 70" fill="none" stroke="#0f1f1b" strokeWidth="1" />
       </svg>
       <Reveal from="zoom" className="container-page relative py-16 text-center sm:py-20">
         {r ? (

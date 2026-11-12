@@ -8,25 +8,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Brand green + cream from the Serene Heights logo
+        // Greens shared with the Serene Heights Group site (pine #18332a, brand #37584f, sage #a9c7b8,
+        // mist #dfece4) so /booking feels like part of the group.
         brand: {
-          50: "#f1f5f4",
-          100: "#dde7e4",
-          200: "#bccfca",
-          300: "#93b0a9",
-          400: "#6a8d85",
-          500: "#4f716a",
-          600: "#36564f", // logo green
-          700: "#2d4842",
-          800: "#253a36",
-          900: "#1d2e2b",
+          50: "#f1f6f3",
+          100: "#dfece4", // group mist
+          200: "#c4d9cf",
+          300: "#a9c7b8", // group sage
+          400: "#7fa797",
+          500: "#5d8576",
+          600: "#37584f", // group brand green (logo)
+          700: "#284840",
+          800: "#18332a", // group pine
+          900: "#0f241e", // group night
         },
         cream: { DEFAULT: "#f3f1ec", dark: "#e7e3da" }, // logo cream
         gold: { DEFAULT: "#b8955a", light: "#e9dcc3" },
-        // Reference-design accents: lime CTA, deep ink for text/dark panels, soft mist sections.
-        lime: { DEFAULT: "#dcf26b", dark: "#cbe352", soft: "#f2fbc8" },
-        ink: "#16211f",
-        mist: "#eef3f1",
+        // Accent (kept under the name "lime" so existing classes keep working): the group's sage green
+        // for CTAs and highlights; deep ink for text/dark panels; soft mist sections.
+        lime: { DEFAULT: "#a9c7b8", dark: "#93b8a6", soft: "#dfece4" },
+        ink: "#0f1f1b",
+        mist: "#ecf2ee",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

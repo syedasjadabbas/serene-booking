@@ -7,8 +7,8 @@ import { ArrowUpRight, Bath, BedDouble, Building2, Maximize2, Trees, Users } fro
 import type { RoomType } from "@/global/api/types";
 import { money } from "@/global/lib/format";
 import { cn } from "@/global/lib/cn";
-
 import { asset } from "@/global/lib/asset";
+
 /** True only on devices with a real hover pointer (mouse/trackpad). Phones never load the hover photo. */
 function useCanHover() {
   const [canHover, setCanHover] = useState(false);
@@ -22,54 +22,84 @@ function useCanHover() {
   return canHover;
 }
 
-// Apartment-type card: photo on top (second photo fades in on hover), clean details panel below.
+// Apartment-type card: a tall photo carrying the name (second photo fades in on hover), a single
+// line of specs, and a price row with one consistent "View" button.
 export default function RoomTypeCard({ type, href, wide = false }: { type: RoomType; href: string; wide?: boolean }) {
   const canHover = useCanHover();
   const hoverImage = canHover ? type.images.find((src, i) => i > 0 && !src.includes("floor-plans")) : undefined;
   const size = type.maxAreaSqft ? (type.minAreaSqft === type.maxAreaSqft ? `${type.maxAreaSqft}` : `${type.minAreaSqft}–${type.maxAreaSqft}`) : null;
+  const sizes = wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw";
+
+  const specs = [
+    { icon: Users, label: `${type.maxOccupancy} guests` },
+    { icon: BedDouble, label: `${type.bedrooms} bedroom` },
+    { icon: Bath, label: `${type.bathrooms} bath` },
+    ...(size ? [{ icon: Maximize2, label: `${size} ft²` }] : []),
+  ];
 
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-card transition duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-pop"
+      className="group flex h-full flex-col overflow-hidden rounded-[28px] bg-white shadow-card ring-1 ring-ink/[0.06] transition duration-500 hover:-translate-y-1 hover:shadow-pop hover:ring-brand-300/60"
     >
-      {/* Photo */}
-      <div className={cn("relative overflow-hidden bg-zinc-100", wide ? "h-60 sm:h-72" : "h-60")}>
-        <Image src={asset(type.images[0])} alt={type.name} fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover transition duration-700 group-hover:scale-105" />
+      {/* Photo with the name on it */}
+      <div className={cn("relative overflow-hidden bg-brand-100", wide ? "aspect-[16/10] sm:aspect-[16/8]" : "aspect-[4/3.4]")}>
+        <Image
+          src={asset(type.images[0])}
+          alt={type.name}
+          fill
+          sizes={sizes}
+          className="object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.06]"
+        />
         {hoverImage && (
-          <Image src={asset(hoverImage)} alt="" fill sizes={wide ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"} className="object-cover opacity-0 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
+          <Image
+            src={asset(hoverImage)}
+            alt=""
+            fill
+            sizes={sizes}
+            className="object-cover opacity-0 transition duration-[1200ms] ease-out group-hover:scale-[1.06] group-hover:opacity-100"
+          />
         )}
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/40 to-transparent" />
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
-            <Trees className="h-3 w-3 text-brand-600" /> {type.outdoorSpace}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-900/90 via-brand-900/25 to-brand-900/10" />
+
+        <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-900/55 px-3 py-1.5 text-[11px] font-semibold text-white ring-1 ring-white/15 backdrop-blur-md">
+            <Trees className="h-3.5 w-3.5" /> {type.outdoorSpace}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-semibold text-white">
-            <Building2 className="h-3 w-3" /> {type.totalApartments} apartments
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-900/55 px-3 py-1.5 text-[11px] font-semibold text-white ring-1 ring-white/15 backdrop-blur-md">
+            <Building2 className="h-3.5 w-3.5" /> {type.totalApartments} apartments
           </span>
+        </div>
+
+        <div className="absolute inset-x-5 bottom-5">
+          <h3 className="text-xl font-bold leading-tight tracking-tight text-white sm:text-2xl">{type.name}</h3>
+          <p className="mt-1 line-clamp-1 text-sm text-white/80">{type.tagline}</p>
         </div>
       </div>
 
-      {/* Details */}
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-bold leading-snug text-ink">{type.name}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{type.tagline}</p>
-
-        <ul className="mb-5 mt-4 flex flex-wrap gap-1.5 text-xs font-medium text-zinc-700">
-          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Users className="h-3.5 w-3.5 text-brand-600" />{type.maxOccupancy} guests</li>
-          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><BedDouble className="h-3.5 w-3.5 text-brand-600" />{type.bedrooms} bedroom</li>
-          <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Bath className="h-3.5 w-3.5 text-brand-600" />{type.bathrooms} bath</li>
-          {size && <li className="inline-flex items-center gap-1 rounded-full bg-mist px-2.5 py-1"><Maximize2 className="h-3.5 w-3.5 text-brand-600" />{size} ft²</li>}
+      {/* Specs + price */}
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+        <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-zinc-600">
+          {specs.map(({ icon: Icon, label }) => (
+            <li key={label} className="inline-flex items-center gap-1.5">
+              <Icon className="h-4 w-4 text-brand-500" />
+              {label}
+            </li>
+          ))}
         </ul>
 
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-zinc-100 pt-4">
+        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
           <p className="leading-tight">
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-400">From</span>
-            <span className="text-xl font-extrabold text-ink">{money(type.baseRate)}</span>
-            <span className="text-sm font-medium text-zinc-500"> /night</span>
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">From</span>
+            <span className="text-2xl font-bold tracking-tight text-ink">{money(type.baseRate)}</span>
+            <span className="text-sm font-medium text-zinc-500"> / night</span>
           </p>
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-lime text-ink transition duration-300 group-hover:rotate-45 group-hover:bg-ink group-hover:text-lime" aria-hidden>
-            <ArrowUpRight className="h-5 w-5" />
+          <span
+            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-ink pl-4 pr-3 text-sm font-semibold text-white transition duration-300 group-hover:bg-brand-600"
+            aria-hidden
+          >
+            View
+            <ArrowUpRight className="h-4 w-4 transition duration-300 group-hover:rotate-45" />
           </span>
         </div>
       </div>

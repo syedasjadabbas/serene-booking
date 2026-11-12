@@ -15,8 +15,8 @@ export default function SiteFooter() {
   return (
     <footer className="panel relative mb-2.5 mt-16 bg-ink text-white/80 sm:mb-4 lg:mb-6">
       <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" viewBox="0 0 800 400" preserveAspectRatio="none">
-        <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#dcf26b" strokeWidth="1" />
-        <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#dcf26b" strokeWidth="1" />
+        <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#a9c7b8" strokeWidth="1" />
+        <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#a9c7b8" strokeWidth="1" />
       </svg>
       <div className="container-page relative py-14">
         <div className="grid gap-10 md:grid-cols-[1fr_auto_1fr]">
