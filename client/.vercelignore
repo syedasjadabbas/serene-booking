@@ -1,0 +1,8 @@
+# Never upload local env files or build output from CLI deploys
+.env
+.env.local
+.env.*.local
+.next
+.next-*
+node_modules
+*.tsbuildinfo

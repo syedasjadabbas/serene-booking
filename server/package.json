@@ -9,7 +9,7 @@
     "start": "node server.js",
     "prisma": "node ./node_modules/prisma/build/index.js",
     "prisma:generate": "node ./node_modules/prisma/build/index.js generate",
-    "vercel-build": "node ./node_modules/prisma/build/index.js generate",
+    "vercel-build": "node vercel-build.js",
     "db:migrate": "node ./node_modules/prisma/build/index.js migrate deploy",
     "db:seed": "node prisma/seed.js",
     "db:setup": "node ./node_modules/prisma/build/index.js migrate deploy && node prisma/seed.js --apply",
