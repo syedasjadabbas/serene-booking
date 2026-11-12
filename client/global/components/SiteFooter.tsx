@@ -10,7 +10,7 @@ export default function SiteFooter() {
   const { data: p } = usePropertyQuery();
   const phone = p?.contact.phone ?? "042-111-111-744";
   return (
-    <footer className="panel relative mb-2 mt-16 bg-ink text-white/80 sm:mb-3">
+    <footer className="panel relative mb-3 mt-16 bg-ink text-white/80 sm:mb-6 lg:mb-10">
       <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" viewBox="0 0 800 400" preserveAspectRatio="none">
         <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#dcf26b" strokeWidth="1" />
         <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#dcf26b" strokeWidth="1" />

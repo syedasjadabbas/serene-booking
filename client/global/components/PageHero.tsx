@@ -30,7 +30,7 @@ export default function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="panel relative isolate mt-2 sm:mt-3">
+    <section className="panel relative isolate mt-3 sm:mt-6 lg:mt-8">
       <Parallax speed={-0.1} className="absolute inset-x-0 -top-[10%] -z-10 h-[120%]">
         <div className="ken-burns relative h-full w-full">
           <Image src={image} alt={imageAlt} fill priority sizes="100vw" className="object-cover" />

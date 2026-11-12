@@ -24,7 +24,7 @@ export default function SiteHeader() {
   const overlay = pathname === "/" && !open;
 
   const header = (
-    <header className={cn("z-40", overlay ? "pointer-events-auto sticky top-0 px-2 pt-2 sm:px-3 sm:pt-3" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
+    <header className={cn("z-40", overlay ? "hero-header pointer-events-auto sticky top-0" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
       <div className={cn("container-page flex h-16 items-center justify-between gap-4", overlay && "h-20")}>
         <Logo tone={overlay ? "cream" : "green"} />
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">

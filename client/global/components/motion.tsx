@@ -182,7 +182,8 @@ export function ScrollInset({ children, className, distance = 320, hold = 220 }:
     if (reducedMotion()) {
       setPin(false);
       el.style.setProperty("--inset", "1");
-      return;
+      root.style.setProperty("--hero-inset", "1");
+      return () => root.style.removeProperty("--hero-inset");
     }
 
     const publishHeight = () => root.style.setProperty("--hero-pin-height", `${track.offsetHeight}px`);
@@ -194,6 +195,7 @@ export function ScrollInset({ children, className, distance = 320, hold = 220 }:
       const eased = 1 - Math.pow(1 - p, 2); // ease-out: frame appears quickly, settles gently
       if (Math.abs(eased - last) > 0.001) {
         el.style.setProperty("--inset", eased.toFixed(3));
+        root.style.setProperty("--hero-inset", eased.toFixed(3)); // lets the floating header follow the frame
         last = eased;
       }
     };
@@ -217,6 +219,7 @@ export function ScrollInset({ children, className, distance = 320, hold = 220 }:
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       root.style.removeProperty("--hero-pin-height");
+      root.style.removeProperty("--hero-inset");
     };
   }, [distance]);
 

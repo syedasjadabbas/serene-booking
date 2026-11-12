@@ -79,7 +79,7 @@
   }
   /* Inset rounded panel used for hero, feature band and footer (page shows a white frame around it). */
   .panel {
-    @apply mx-2 overflow-hidden rounded-[28px] sm:mx-3 sm:rounded-[32px];
+    @apply mx-3 overflow-hidden rounded-[28px] sm:mx-6 sm:rounded-[36px] lg:mx-10 lg:rounded-[44px];
   }
 }
 
@@ -87,18 +87,28 @@
 
 /* Hero that starts full-bleed and insets into a rounded, white-framed card while scrolling.
    --inset (0 → 1) is set from JS by <ScrollInset>; --frame matches .panel's margins. */
+/* --hero-frame matches .panel's side margins (mx-3 / sm:mx-6 / lg:mx-10). */
+:root { --hero-frame: 12px; }
+@media (min-width: 640px) { :root { --hero-frame: 24px; } }
+@media (min-width: 1024px) { :root { --hero-frame: 40px; } }
+
 .scroll-inset {
   --inset: 0;
-  --frame: 8px;
+  --frame: var(--hero-frame);
   margin: calc(var(--inset) * var(--frame)) calc(var(--inset) * var(--frame)) 0;
   border-radius: calc(var(--inset) * 28px);
   will-change: margin, border-radius;
 }
 @media (min-width: 640px) {
-  .scroll-inset {
-    --frame: 12px;
-    border-radius: calc(var(--inset) * 32px);
-  }
+  .scroll-inset { border-radius: calc(var(--inset) * 36px); }
+}
+@media (min-width: 1024px) {
+  .scroll-inset { border-radius: calc(var(--inset) * 44px); }
+}
+
+/* Floating home header follows the hero frame inward (--hero-inset is published by <ScrollInset>). */
+.hero-header {
+  padding: calc(var(--hero-inset, 0) * var(--hero-frame) + 8px) calc(var(--hero-inset, 0) * var(--hero-frame)) 0;
 }
 
 /* Scroll reveal */

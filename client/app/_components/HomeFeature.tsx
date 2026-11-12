@@ -31,7 +31,7 @@ export default function HomeFeature() {
 
   return (
     <section
-      className="panel relative isolate mt-6 sm:mt-8"
+      className="panel relative isolate mt-6 sm:mt-10"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
