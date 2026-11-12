@@ -20,11 +20,8 @@ export default function HomePage() {
           </div>
         </Parallax>
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/65 via-ink/30 to-ink/60" />
-        {/* Fills the screen, minus the white frame (top + bottom) as it appears, so the rounded card is fully visible while pinned. */}
-        <div
-          className="flex flex-col items-center justify-center px-4 pb-14 pt-32 text-center"
-          style={{ minHeight: "max(640px, calc(100svh - var(--inset, 0) * var(--frame, 12px) * 2))" }}
-        >
+        {/* Fixed size (the frame is a clip mask, so nothing re-lays out while scrolling). */}
+        <div className="flex h-full min-h-[640px] flex-col items-center justify-center px-4 pb-14 pt-32 text-center">
           <p className="fade-up inline-flex items-center gap-2 rounded-full bg-white/15 py-1.5 pl-1.5 pr-4 text-xs font-medium text-white ring-1 ring-white/25 backdrop-blur" style={{ animationDelay: "150ms" }}>
             <span className="rounded-full bg-lime px-2 py-0.5 text-[11px] font-bold text-ink">7,906 ft</span>
             Pakistan&apos;s first winter resort<span className="hidden sm:inline"> · Nathia Gali</span>

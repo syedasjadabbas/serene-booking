@@ -27,7 +27,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       {/* Account banner: dark panel with greeting and pill tabs */}
-      <section className="panel relative isolate mt-3 bg-ink sm:mt-6 lg:mt-8">
+      <section className="panel relative isolate mt-2.5 bg-ink sm:mt-4 lg:mt-6">
         <svg aria-hidden className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-[0.15]" viewBox="0 0 800 200" preserveAspectRatio="none">
           <path d="M0 150 C 200 60, 360 190, 560 110 S 760 40, 800 70" fill="none" stroke="#dcf26b" strokeWidth="1" />
           <path d="M0 180 C 180 130, 400 200, 620 150 S 780 110, 800 130" fill="none" stroke="#dcf26b" strokeWidth="1" />

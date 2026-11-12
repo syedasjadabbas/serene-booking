@@ -6,8 +6,8 @@ const PERKS = ["See every booking in one place", "Book faster with saved details
 
 export default function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
-    <div className="grid min-h-[calc(100vh-4rem)] gap-6 p-3 sm:p-6 lg:grid-cols-2 lg:p-10">
-      <div className="relative hidden overflow-hidden rounded-[44px] lg:block">
+    <div className="grid min-h-[calc(100vh-4rem)] gap-6 p-2.5 sm:p-4 lg:grid-cols-2 lg:p-6">
+      <div className="relative hidden overflow-hidden rounded-[36px] lg:block">
         <div className="ken-burns absolute inset-0">
           <Image src="/images/resort/night-facade-portrait.jpg" alt="Serene Heights lit up on a snowy evening" fill sizes="50vw" className="object-cover" />
         </div>

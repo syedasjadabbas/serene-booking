@@ -186,46 +186,54 @@ export function ScrollInset({ children, className, distance = 320, hold = 220 }:
       return () => root.style.removeProperty("--hero-inset");
     }
 
+    root.style.setProperty("--hero-shrink", `${distance}px`);
     const publishHeight = () => root.style.setProperty("--hero-pin-height", `${track.offsetHeight}px`);
-    let raf = 0;
-    let last = -1;
-    const update = () => {
-      const scrolled = -track.getBoundingClientRect().top;
-      const p = Math.min(1, Math.max(0, scrolled / distance));
-      const eased = 1 - Math.pow(1 - p, 2); // ease-out: frame appears quickly, settles gently
-      if (Math.abs(eased - last) > 0.001) {
-        el.style.setProperty("--inset", eased.toFixed(3));
-        root.style.setProperty("--hero-inset", eased.toFixed(3)); // lets the floating header follow the frame
-        last = eased;
-      }
-    };
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    };
-    const onResize = () => {
-      publishHeight();
-      onScroll();
-    };
     publishHeight();
-    update();
     const ro = new ResizeObserver(publishHeight);
     ro.observe(track);
+
+    const cleanupBase = () => {
+      ro.disconnect();
+      root.style.removeProperty("--hero-pin-height");
+      root.style.removeProperty("--hero-shrink");
+      root.style.removeProperty("--hero-inset");
+    };
+
+    // Modern browsers: the scroll-driven CSS animation in globals.css does everything off the main thread.
+    if (typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()")) return cleanupBase;
+
+    // Fallback: glide --inset toward the scroll position (no layout reads/writes per frame, so no jank,
+    // and wheel "ticks" become a smooth motion instead of steps).
+    let raf = 0;
+    let current = -1;
+    const target = () => {
+      const p = Math.min(1, Math.max(0, window.scrollY / distance));
+      return 1 - Math.pow(1 - p, 3); // ease-out
+    };
+    const tick = () => {
+      const t = target();
+      current = current < 0 ? t : current + (t - current) * 0.2;
+      if (Math.abs(t - current) < 0.0015) current = t;
+      const v = current.toFixed(4);
+      el.style.setProperty("--inset", v);
+      root.style.setProperty("--hero-inset", v);
+      raf = current === t ? 0 : requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    tick();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(raf);
-      ro.disconnect();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      root.style.removeProperty("--hero-pin-height");
-      root.style.removeProperty("--hero-inset");
+      cleanupBase();
     };
   }, [distance]);
 
   return (
     <div ref={trackRef} className="relative">
-      <section ref={ref} className={cn("scroll-inset isolate overflow-hidden", pin ? "sticky top-0" : "relative", className)}>
+      <section ref={ref} className={cn("scroll-inset isolate overflow-hidden", pin ? "sticky top-0 h-[max(640px,100svh)]" : "relative", className)}>
         {children}
       </section>
       {/* Scroll runway: while it passes, the hero above stays pinned (shrink, then hold). */}

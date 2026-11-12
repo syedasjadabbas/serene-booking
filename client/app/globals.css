@@ -79,36 +79,50 @@
   }
   /* Inset rounded panel used for hero, feature band and footer (page shows a white frame around it). */
   .panel {
-    @apply mx-3 overflow-hidden rounded-[28px] sm:mx-6 sm:rounded-[36px] lg:mx-10 lg:rounded-[44px];
+    @apply mx-2.5 overflow-hidden rounded-[24px] sm:mx-4 sm:rounded-[30px] lg:mx-6 lg:rounded-[36px];
   }
 }
 
 /* ───────────── Motion ───────────── */
 
 /* Hero that starts full-bleed and insets into a rounded, white-framed card while scrolling.
-   --inset (0 → 1) is set from JS by <ScrollInset>; --frame matches .panel's margins. */
-/* --hero-frame matches .panel's side margins (mx-3 / sm:mx-6 / lg:mx-10). */
-:root { --hero-frame: 12px; }
-@media (min-width: 640px) { :root { --hero-frame: 24px; } }
-@media (min-width: 1024px) { :root { --hero-frame: 40px; } }
+   Performance: nothing here changes layout. The hero keeps its full size and the frame is a
+   clip-path mask; the floating header moves with a transform. Where supported, a scroll-driven
+   CSS animation runs it off the main thread; otherwise <ScrollInset> eases --inset from JS.
+   --hero-frame / --hero-radius match .panel's margins and corners (mx-2.5/sm:mx-4/lg:mx-6). */
+:root { --hero-frame: 10px; --hero-radius: 24px; --hero-shrink: 320px; }
+@media (min-width: 640px) { :root { --hero-frame: 16px; --hero-radius: 30px; } }
+@media (min-width: 1024px) { :root { --hero-frame: 24px; --hero-radius: 36px; } }
 
 .scroll-inset {
   --inset: 0;
-  --frame: var(--hero-frame);
-  margin: calc(var(--inset) * var(--frame)) calc(var(--inset) * var(--frame)) 0;
-  border-radius: calc(var(--inset) * 28px);
-  will-change: margin, border-radius;
+  clip-path: inset(calc(var(--inset) * var(--hero-frame)) round calc(var(--inset) * var(--hero-radius)));
 }
-@media (min-width: 640px) {
-  .scroll-inset { border-radius: calc(var(--inset) * 36px); }
-}
-@media (min-width: 1024px) {
-  .scroll-inset { border-radius: calc(var(--inset) * 44px); }
+.hero-header {
+  padding: 8px var(--hero-frame) 0;
+  transform: translate3d(0, calc(var(--hero-inset, 0) * var(--hero-frame)), 0);
+  will-change: transform;
 }
 
-/* Floating home header follows the hero frame inward (--hero-inset is published by <ScrollInset>). */
-.hero-header {
-  padding: calc(var(--hero-inset, 0) * var(--hero-frame) + 8px) calc(var(--hero-inset, 0) * var(--hero-frame)) 0;
+@keyframes hero-clip {
+  from { clip-path: inset(0px round 0px); }
+  to { clip-path: inset(var(--hero-frame) round var(--hero-radius)); }
+}
+@keyframes hero-header-drop {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, var(--hero-frame), 0); }
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-inset,
+  .hero-header {
+    animation-duration: auto;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); /* ease-out */
+    animation-fill-mode: both;
+    animation-timeline: scroll(root block);
+    animation-range: 0px var(--hero-shrink);
+  }
+  .scroll-inset { animation-name: hero-clip; }
+  .hero-header { animation-name: hero-header-drop; }
 }
 
 /* Scroll reveal */
@@ -201,6 +215,8 @@
 .marquee:hover { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
+  .scroll-inset { animation: none !important; clip-path: inset(var(--hero-frame) round var(--hero-radius)); }
+  .hero-header { animation: none !important; transform: translate3d(0, var(--hero-frame), 0); }
   .reveal, .stagger-item { opacity: 1 !important; transform: none !important; transition: none !important; }
   .line-rise, .ken-burns, .float-slow, .float-slower, .fade-up, .page-in, .fade-in, .marquee { animation: none !important; }
   .tilt { transform: none !important; }
