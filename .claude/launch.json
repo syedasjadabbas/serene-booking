@@ -4,7 +4,15 @@
     {
       "name": "api",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["server/server.js"],
+      "runtimeArgs": [
+        "--watch-path=server/app.js",
+        "--watch-path=server/server.js",
+        "--watch-path=server/config",
+        "--watch-path=server/lib",
+        "--watch-path=server/middlewares",
+        "--watch-path=server/modules",
+        "server/server.js"
+      ],
       "port": 4000
     },
     {

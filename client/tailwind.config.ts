@@ -21,10 +21,18 @@ const config: Config = {
         },
         cream: { DEFAULT: "#f3f1ec", dark: "#e7e3da" }, // logo cream
         gold: { DEFAULT: "#b8955a", light: "#e9dcc3" },
+        // Reference-design accents: lime CTA, deep ink for text/dark panels, soft mist sections.
+        lime: { DEFAULT: "#dcf26b", dark: "#cbe352", soft: "#f2fbc8" },
+        ink: "#16211f",
+        mist: "#eef3f1",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+        display: ["var(--font-sans)", "system-ui", "sans-serif"],
+        logo: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+      },
+      borderRadius: {
+        "4xl": "2rem",
       },
       boxShadow: {
         card: "0 1px 2px rgba(24,24,27,0.04), 0 4px 16px rgba(24,24,27,0.06)",

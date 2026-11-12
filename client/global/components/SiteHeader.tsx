@@ -20,19 +20,22 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [pathname]);
+  // On the home page the header floats inside the rounded hero card (reference design); elsewhere it's a sticky white bar.
+  const overlay = pathname === "/" && !open;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
-        <Logo />
+    <header className={cn("z-40", overlay ? "absolute inset-x-0 top-0 px-2 pt-2 sm:px-3 sm:pt-3" : "sticky top-0 border-b border-zinc-200/80 bg-white/95 backdrop-blur")}>
+      <div className={cn("container-page flex h-16 items-center justify-between gap-4", overlay && "h-20")}>
+        <Logo tone={overlay ? "cream" : "green"} />
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
           {NAV.map((n) => (
             <Link
               key={n.href}
               href={n.href}
               className={cn(
-                "rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
-                pathname.startsWith(n.href) && "text-brand-700"
+                "rounded-full px-3.5 py-2 text-sm font-medium transition",
+                overlay ? "text-white/90 hover:bg-white/15 hover:text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-ink",
+                !overlay && pathname.startsWith(n.href) && "bg-mist text-ink"
               )}
             >
               {n.label}
@@ -40,11 +43,11 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/manage" className="hidden rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 sm:block">
+          <Link href="/manage" className={cn("hidden rounded-full px-3.5 py-2 text-sm font-medium sm:block", overlay ? "text-white/90 hover:bg-white/15" : "text-zinc-600 hover:bg-zinc-100")}>
             Find booking
           </Link>
           <AccountMenu />
-          <button className="rounded-lg p-2 text-zinc-700 hover:bg-zinc-100 lg:hidden" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">
+          <button className={cn("rounded-full p-2 lg:hidden", overlay ? "text-white hover:bg-white/15" : "text-zinc-700 hover:bg-zinc-100")} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -77,7 +80,7 @@ function AccountMenu() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  if (status === "unknown") return <div className="h-9 w-24 animate-pulse rounded-xl bg-zinc-100" aria-hidden />;
+  if (status === "unknown") return <div className="h-9 w-24 animate-pulse rounded-full bg-zinc-100/60" aria-hidden />;
   if (status !== "authenticated" || !customer) {
     return (
       <Link href="/login" className="btn-primary px-4 py-2">
@@ -88,15 +91,15 @@ function AccountMenu() {
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((o) => !o)} className="btn-secondary px-3 py-2" aria-expanded={open} aria-haspopup="menu">
-        <span className="grid h-6 w-6 place-items-center rounded-full bg-brand-600 text-xs font-semibold text-white">
+      <button onClick={() => setOpen((o) => !o)} className="btn-secondary py-1.5 pl-1.5 pr-3" aria-expanded={open} aria-haspopup="menu">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-lime text-xs font-bold text-ink">
           {customer.firstName.charAt(0).toUpperCase()}
         </span>
         <span className="hidden sm:inline">{customer.firstName}</span>
         <ChevronDown className="h-4 w-4" />
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 shadow-pop">
+        <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-zinc-200 bg-white py-1 shadow-pop">
           <Link role="menuitem" href="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-zinc-50">
             <CalendarCheck className="h-4 w-4 text-zinc-500" /> My bookings
           </Link>

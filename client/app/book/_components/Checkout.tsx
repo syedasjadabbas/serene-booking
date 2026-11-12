@@ -19,6 +19,7 @@ import { cn } from "@/global/lib/cn";
 import { ARRIVAL_TIMES, checkoutSchema, type CheckoutValues } from "../_lib/schema";
 import PriceSummary from "./PriceSummary";
 import PaymentSection from "./PaymentSection";
+import BookingSteps from "@/global/components/BookingSteps";
 
 export default function Checkout() {
   const params = useSearchParams();
@@ -99,7 +100,10 @@ export default function Checkout() {
         <Link href={backHref} className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to rates
         </Link>
-        <h1 className="mt-3 text-3xl font-medium">Complete your booking</h1>
+        <div className="mt-4 max-w-2xl">
+          <BookingSteps current={2} />
+        </div>
+        <h1 className="mt-6 text-3xl">Complete your booking</h1>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
           <form onSubmit={onSubmit} noValidate className="space-y-6">

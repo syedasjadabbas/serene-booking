@@ -1,18 +1,30 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CalendarSearch, SlidersHorizontal } from "lucide-react";
+import { CalendarSearch, Flame, SlidersHorizontal } from "lucide-react";
 import SearchBar from "@/global/components/SearchBar";
 import RoomTypeCard from "@/global/components/RoomTypeCard";
+import ReviewScore from "@/global/components/ReviewScore";
+import Modal from "@/global/components/Modal";
 import { Alert, EmptyState } from "@/global/components/ui";
 import { useAvailabilityQuery, useRoomTypesQuery } from "@/global/api/endpoints/roomsApi";
+import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
 import { errorMessage } from "@/global/api/baseApi";
 import { isPastStay, parseStay, stayToQuery } from "@/global/lib/stay";
 import { fmtDate, guestsLabel, plural } from "@/global/lib/format";
+import { cn } from "@/global/lib/cn";
 import type { Stay } from "@/global/api/types";
-import { applyFilters, filtersToParams, parseFilters, type ResultFilters } from "../_lib/filters";
+import { activeFilterCount, applyFilters, DEFAULT_FILTERS, filtersToParams, parseFilters, type ResultFilters, type SortKey } from "../_lib/filters";
 import ResultCard from "./ResultCard";
+import FilterSidebar from "./FilterSidebar";
+
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: "recommended", label: "Our top picks" },
+  { key: "price_asc", label: "Lowest price first" },
+  { key: "price_desc", label: "Highest price first" },
+  { key: "size_desc", label: "Largest first" },
+];
 
 export default function RoomsSearch() {
   const params = useSearchParams();
@@ -26,23 +38,25 @@ export default function RoomsSearch() {
   const filters = useMemo(() => parseFilters(params), [paramsKey]);
   const pastStay = stay ? isPastStay(stay) : false;
 
-  const setUrl = (s: Stay, f: ResultFilters) => router.replace(`${pathname}?${stayToQuery(s, filtersToParams(f))}`, { scroll: false });
+  const setUrl = (s: Stay, f: ResultFilters, push = false) => {
+    const url = `${pathname}?${stayToQuery(s, filtersToParams(f))}`;
+    if (push) router.push(url, { scroll: false });
+    else router.replace(url, { scroll: false });
+  };
 
   return (
     <div className="bg-zinc-50/60">
-      <div className="border-b border-zinc-200 bg-white">
-        <div className="container-page py-6">
-          <h1 className="text-2xl font-medium sm:text-3xl">Apartments at Serene Heights</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            {stay ? `${fmtDate(stay.checkIn, "EEE d MMM")} – ${fmtDate(stay.checkOut, "EEE d MMM yyyy")} · ${guestsLabel(stay.adults, stay.children)} · ${plural(stay.rooms, "apartment")}` : "Choose your dates to see live availability and prices."}
-          </p>
-          <div className="mt-5">
-            <SearchBar initial={stay} onSearch={(s) => router.push(`${pathname}?${stayToQuery(s, filtersToParams(filters))}`)} submitLabel="Update" />
-          </div>
+      {/* Sticky search under the site header, like Booking.com */}
+      <div className="sticky top-16 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur">
+        <div className="container-page py-3">
+          <SearchBar initial={stay} onSearch={(s) => setUrl(s, filters, true)} submitLabel="Search" />
         </div>
       </div>
-      <div className="container-page py-8">
-        {pastStay && <Alert tone="warning" title="Those dates have passed">Pick new dates above to see availability.</Alert>}
+      <div className="container-page py-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-zinc-500">
+          <a href="/" className="text-brand-700 hover:underline">Home</a> › Nathia Gali › Serene Heights › <span className="text-zinc-700">Apartments</span>
+        </nav>
+        {pastStay && <Alert tone="warning" title="Those dates have passed" className="mt-4">Pick new dates above to see availability.</Alert>}
         {stay && !pastStay ? <Results stay={stay} filters={filters} onFilters={(f) => setUrl(stay, f)} /> : !pastStay && <Browse />}
       </div>
     </div>
@@ -51,63 +65,96 @@ export default function RoomsSearch() {
 
 function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilters; onFilters: (f: ResultFilters) => void }) {
   const { data, isFetching, error } = useAvailabilityQuery(stay);
+  const { data: property } = usePropertyQuery();
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const shown = useMemo(() => (data ? applyFilters(data.results, filters) : []), [data, filters]);
+  const nActive = activeFilterCount(filters);
 
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-zinc-600" aria-live="polite">
-          {isFetching ? "Checking availability…" : data ? `${data.summary.bookable} of ${data.summary.roomTypes} apartment types available · ${plural(data.nights, "night")}` : ""}
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-zinc-500" aria-hidden />
-          <label className="sr-only" htmlFor="sort">Sort</label>
-          <select id="sort" className="input w-auto py-2" value={filters.sort} onChange={(e) => onFilters({ ...filters, sort: e.target.value as ResultFilters["sort"] })}>
-            <option value="recommended">Recommended</option>
-            <option value="price_asc">Price: low to high</option>
-            <option value="price_desc">Price: high to low</option>
-            <option value="size_desc">Size: largest first</option>
-          </select>
-          <label className="sr-only" htmlFor="outdoor">Outdoor space</label>
-          <select id="outdoor" className="input w-auto py-2" value={filters.outdoor} onChange={(e) => onFilters({ ...filters, outdoor: e.target.value as ResultFilters["outdoor"] })}>
-            <option value="any">Balcony or terrace</option>
-            <option value="balcony">Balcony</option>
-            <option value="terrace">Private terrace</option>
-          </select>
-          <label className="flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm">
-            <input type="checkbox" className="accent-brand-600" checked={filters.availableOnly} onChange={(e) => onFilters({ ...filters, availableOnly: e.target.checked })} />
-            Available only
-          </label>
+    <div className="mt-4 grid gap-6 lg:grid-cols-[260px_1fr]">
+      <aside className="hidden lg:block">
+        {data && <FilterSidebar results={data.results} filters={filters} onChange={onFilters} />}
+      </aside>
+
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold">
+              Serene Heights Nathia Gali: {data ? `${shown.length} apartment ${shown.length === 1 ? "type" : "types"} found` : "searching…"}
+            </h1>
+            <p className="mt-0.5 text-sm text-zinc-500" aria-live="polite">
+              {fmtDate(stay.checkIn, "EEE d MMM")} – {fmtDate(stay.checkOut, "EEE d MMM")} · {plural(data?.nights ?? 0, "night")} · {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apartment")}
+            </p>
+          </div>
+          {/* Gate on this component's own query so SSR and hydration render the same tree. */}
+          {data && property && <ReviewScore average={property.stats.averageRating} count={property.stats.reviewCount} align="right" />}
+        </div>
+
+        {data && data.summary.bookedLast24h > 0 && (
+          <p className="mt-3 flex items-center gap-2 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
+            <Flame className="h-4 w-4" /> {plural(data.summary.bookedLast24h, "apartment")} booked at Serene Heights in the last 24 hours
+          </p>
+        )}
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button className="btn-secondary py-2 lg:hidden" onClick={() => setFiltersOpen(true)}>
+            <SlidersHorizontal className="h-4 w-4" /> Filters{nActive ? ` (${nActive})` : ""}
+          </button>
+          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Sort results">
+            {SORTS.map((s) => (
+              <button
+                key={s.key}
+                role="tab"
+                aria-selected={filters.sort === s.key}
+                onClick={() => onFilters({ ...filters, sort: s.key })}
+                className={cn("chip", filters.sort === s.key && "chip-active")}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {error && <Alert tone="error" className="mt-6">{errorMessage(error)}</Alert>}
+
+        <div className={cn("mt-5 space-y-4 transition-opacity", isFetching && data && "opacity-60")}>
+          {!data && isFetching && Array.from({ length: 3 }).map((_, i) => <div key={i} className="card h-60 animate-pulse bg-white" />)}
+          {data && shown.length === 0 && (
+            <EmptyState
+              icon={<CalendarSearch className="h-5 w-5" />}
+              title="No apartments match your filters"
+              action={nActive ? <button className="btn-secondary" onClick={() => onFilters({ ...DEFAULT_FILTERS, sort: filters.sort })}>Clear filters</button> : undefined}
+            >
+              Try different dates, fewer guests per apartment, or fewer filters.
+            </EmptyState>
+          )}
+          {shown.map((r) => (
+            <ResultCard key={r.roomType.id} result={r} stay={stay} filters={filters} />
+          ))}
         </div>
       </div>
 
-      {error && <Alert tone="error" className="mt-6">{errorMessage(error)}</Alert>}
-
-      <div className="mt-6 space-y-5">
-        {!data && isFetching && Array.from({ length: 3 }).map((_, i) => <div key={i} className="card h-56 animate-pulse bg-white" />)}
-        {data && shown.length === 0 && (
-          <EmptyState icon={<CalendarSearch className="h-5 w-5" />} title="No apartments match">
-            Try different dates, fewer guests per apartment, or clear the filters.
-          </EmptyState>
-        )}
-        {shown.map((r) => (
-          <ResultCard key={r.roomType.id} result={r} stay={stay} />
-        ))}
-      </div>
-    </>
+      <Modal open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filters">
+        {data && <FilterSidebar results={data.results} filters={filters} onChange={onFilters} />}
+        <button className="btn-primary mt-4 w-full" onClick={() => setFiltersOpen(false)}>
+          Show {plural(shown.length, "result")}
+        </button>
+      </Modal>
+    </div>
   );
 }
 
 function Browse() {
   const { data, isLoading, error } = useRoomTypesQuery();
   return (
-    <>
-      <Alert tone="info" title="Add your dates">Prices change with dates and season. Choose check-in and check-out above to see live availability.</Alert>
+    <div className="mt-4">
+      <h1 className="text-2xl font-semibold">Apartments at Serene Heights</h1>
+      <Alert tone="info" title="Add your dates" className="mt-4">Prices change with dates and season. Choose check-in and check-out above to see live availability.</Alert>
       {error && <Alert tone="error" className="mt-6">{errorMessage(error)}</Alert>}
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="card h-96 animate-pulse bg-white" />)}
         {data?.map((t) => <RoomTypeCard key={t.id} type={t} href={`/rooms/${t.slug}`} />)}
       </div>
-    </>
+    </div>
   );
 }

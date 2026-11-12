@@ -6,7 +6,7 @@ export default function PriceSummary({ stay, roomName, ratePlan, quote: q }: { s
   const [showNights, setShowNights] = useState(false);
   return (
     <div className="card overflow-hidden">
-      <div className="bg-brand-700 px-5 py-4 text-white">
+      <div className="bg-ink px-5 py-4 text-white">
         <p className="text-xs uppercase tracking-widest text-cream/80">Your stay</p>
         <p className="mt-1 font-display text-lg">{roomName}</p>
         <p className="text-sm text-cream/90">{ratePlan.name}</p>

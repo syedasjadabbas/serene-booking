@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DayPicker, type DateRange } from "react-day-picker";
-import { addDays, format, parseISO } from "date-fns";
-import { CalendarDays, Minus, Plus, Search, Users } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+import { format, parseISO } from "date-fns";
+import PriceCalendar from "./PriceCalendar";
+import { CalendarDays, Minus, Navigation, Plus, Search, Users } from "lucide-react";
 import Popover from "./Popover";
 import type { Stay } from "@/global/api/types";
 import { defaultStay, stayToQuery } from "@/global/lib/stay";
@@ -21,9 +22,11 @@ type Props = {
   /** Override the default navigation to /rooms (e.g. stay on the room detail page). */
   onSearch?: (stay: Stay) => void;
   submitLabel?: string;
+  /** Show calendar prices for one apartment type instead of the whole property. */
+  roomType?: string;
 };
 
-export default function SearchBar({ initial, variant = "bar", onSearch, submitLabel = "Search" }: Props) {
+export default function SearchBar({ initial, variant = "bar", onSearch, submitLabel = "Search", roomType }: Props) {
   const router = useRouter();
   const [stay, setStay] = useState<Stay>(initial ?? defaultStay());
   const [openPanel, setOpenPanel] = useState<"dates" | "guests" | null>(null);
@@ -69,24 +72,35 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
     <form
       onSubmit={submit}
       className={cn(
-        "relative grid gap-2 rounded-2xl bg-white text-zinc-800",
-        hero && "p-2 shadow-pop md:grid-cols-[1.4fr_1fr_auto]",
-        variant === "bar" && "border border-zinc-200 p-2 shadow-card md:grid-cols-[1.4fr_1fr_auto]",
-        panel && "grid-cols-1"
+        "relative grid gap-1.5 bg-white text-ink",
+        hero && "rounded-3xl p-2 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
+        variant === "bar" && "rounded-3xl border border-zinc-200 p-1.5 shadow-card md:grid-cols-[1.4fr_1fr_auto] md:items-center",
+        panel && "grid-cols-1 gap-2"
       )}
       aria-label="Search availability"
     >
+      {/* Where: single property, shown for orientation like the reference design */}
+      {hero && (
+        <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
+          <FieldIcon><Navigation className="h-4 w-4" /></FieldIcon>
+          <span className="min-w-0">
+            <span className="block text-[11px] font-medium text-zinc-500">Where</span>
+            <span className="block truncate text-sm font-semibold">Nathia Gali, Pakistan</span>
+          </span>
+        </div>
+      )}
+
       {/* Dates */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "dates" ? null : "dates"))}
-          className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-zinc-50", panel && "border border-zinc-200")}
+          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-zinc-50", panel && "border border-zinc-200", hero && "md:border-l md:border-zinc-100 md:rounded-none md:pl-4")}
           aria-expanded={openPanel === "dates"}
         >
-          <CalendarDays className="h-5 w-5 shrink-0 text-brand-600" />
+          <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-xs font-medium text-zinc-500">Check-in — Check-out</span>
+            <span className="block text-[11px] font-medium text-zinc-500">Check-in — Check-out</span>
             <span className="block truncate text-sm font-semibold">
               {format(parseISO(stay.checkIn), "EEE d MMM")} — {format(parseISO(stay.checkOut), "EEE d MMM")}
               <span className="ml-2 font-normal text-zinc-500">{plural(nights, "night")}</span>
@@ -94,15 +108,14 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
           </span>
         </button>
         <Popover open={openPanel === "dates"} onClose={close} className="w-max max-w-[calc(100vw-2rem)]" align={panel ? "right" : "left"}>
-          <DayPicker
-            mode="range"
-            numberOfMonths={panel ? 1 : months}
-            selected={range}
+          <PriceCalendar
+            range={range}
             onSelect={onSelectRange}
+            numberOfMonths={panel ? 1 : months}
             defaultMonth={parseISO(stay.checkIn)}
-            disabled={[{ before: new Date() }, ...(range?.from && !range.to ? [{ after: addDays(range.from, MAX_NIGHTS) }] : [])]}
-            excludeDisabled
-            min={1}
+            roomType={roomType}
+            rooms={stay.rooms}
+            maxNights={MAX_NIGHTS}
           />
           <div className="mt-2 flex items-center justify-between gap-4 border-t border-zinc-100 pt-3 text-sm">
             <span className="text-zinc-500">{range?.from && range.to ? plural(nightsBetween(stay.checkIn, stay.checkOut), "night") : "Select your check-out date"}</span>
@@ -118,12 +131,12 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "guests" ? null : "guests"))}
-          className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-zinc-50", panel ? "border border-zinc-200" : "md:border-l md:border-zinc-100")}
+          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-zinc-50", panel ? "border border-zinc-200" : "md:rounded-none md:border-l md:border-zinc-100 md:pl-4")}
           aria-expanded={openPanel === "guests"}
         >
-          <Users className="h-5 w-5 shrink-0 text-brand-600" />
+          <FieldIcon><Users className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-xs font-medium text-zinc-500">Guests & apartments</span>
+            <span className="block text-[11px] font-medium text-zinc-500">Guests & apartments</span>
             <span className="block truncate text-sm font-semibold">
               {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apt", "apts")}
             </span>
@@ -145,11 +158,15 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         </Popover>
       </div>
 
-      <button type="submit" className={cn("btn-primary", hero ? "px-8 py-3.5 text-base" : "px-6")}>
+      <button type="submit" className={cn("btn-primary", hero ? "px-7 py-3.5" : "px-6 py-3")}>
         <Search className="h-4 w-4" /> {submitLabel}
       </button>
     </form>
   );
+}
+
+function FieldIcon({ children }: { children: React.ReactNode }) {
+  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-mist text-brand-700">{children}</span>;
 }
 
 function Stepper({ label, hint, value, min, max, onChange }: { label: string; hint?: string; value: number; min: number; max: number; onChange: (v: number) => void }) {

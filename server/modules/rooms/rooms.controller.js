@@ -17,6 +17,15 @@ exports.availability = async (req, res, next) => {
   }
 };
 
+exports.calendar = async (req, res, next) => {
+  try {
+    const { from, to, roomType } = req.validatedQuery;
+    successResponse(res, await service.calendar({ from, to, roomTypeSlug: roomType }));
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.detail = async (req, res, next) => {
   try {
     successResponse(res, await service.getRoomType(req.validatedParams.slug));

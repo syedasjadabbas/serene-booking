@@ -86,19 +86,41 @@ export interface Quote {
   ratePlanCode?: string;
 }
 
+export interface PlanQuote {
+  ratePlan: Pick<RatePlan, "code" | "name" | "refundable" | "freeCancelHours" | "breakfastIncluded" | "discountPercent">;
+  grandTotal: number;
+  avgNightlyPerRoom: number;
+  undiscountedTotal: number;
+}
+
 export interface AvailabilityResult {
   roomType: RoomType;
   available: number;
+  bookedPercent: number;
   soldOut: boolean;
   fitsParty: boolean;
   lowestQuote: Quote | null;
+  quotes: PlanQuote[];
 }
 
 export interface AvailabilityResponse {
   stay: Stay;
   nights: number;
   results: AvailabilityResult[];
-  summary: { roomTypes: number; bookable: number };
+  summary: { roomTypes: number; bookable: number; bookedLast24h: number };
+}
+
+export interface CalendarDay {
+  date: string;
+  available: number;
+  minRate: number | null;
+}
+
+export interface CalendarResponse {
+  from: string;
+  to: string;
+  currency: string;
+  days: CalendarDay[];
 }
 
 export interface Apartment {

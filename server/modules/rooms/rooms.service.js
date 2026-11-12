@@ -2,7 +2,8 @@ const prisma = require("../../config/prisma");
 const { AppError } = require("../../lib/customError");
 const { cached } = require("../../lib/cache");
 const { quoteStay } = require("../../lib/pricing");
-const { toDbDate, fromDbDate } = require("../../lib/dates");
+const { toDbDate, fromDbDate, addDays } = require("../../lib/dates");
+const env = require("../../config/env");
 
 const roomTypeSelect = {
   id: true,
@@ -119,9 +120,18 @@ async function searchAvailability(stay) {
     return {
       roomType: type,
       available,
+      // Share of this type's apartments already taken for the stay (real occupancy, used for "in high demand").
+      bookedPercent: type.totalApartments ? Math.round(((type.totalApartments - available) / type.totalApartments) * 100) : 0,
       soldOut: available < stay.rooms,
       fitsParty: fitsParty(type, stay),
       lowestQuote: cheapest || null,
+      // Every rate plan's price, so the client can filter by meals / cancellation and show the matching price.
+      quotes: plans.map((plan, i) => ({
+        ratePlan: { code: plan.code, name: plan.name, refundable: plan.refundable, freeCancelHours: plan.freeCancelHours, breakfastIncluded: plan.breakfastIncluded, discountPercent: plan.discountPercent },
+        grandTotal: quotes[i].grandTotal,
+        avgNightlyPerRoom: quotes[i].avgNightlyPerRoom,
+        undiscountedTotal: quotes[i].grandTotal + Math.round(quotes[i].discountTotal * (1 + quotes[i].taxPercent / 100)),
+      })),
     };
   });
 
@@ -132,8 +142,69 @@ async function searchAvailability(stay) {
     summary: {
       roomTypes: results.length,
       bookable: results.filter((r) => !r.soldOut && r.fitsParty).length,
+      bookedLast24h: await recentBookingCount(),
     },
   };
+}
+
+// Real demand signal: apartments booked (not cancelled) in the last 24 hours. Cached briefly.
+function recentBookingCount() {
+  return cached(
+    "rooms:recent24h",
+    async () => {
+      const rows = await prisma.$queryRaw`
+        SELECT COALESCE(SUM(b."roomsCount"), 0)::int AS n FROM "Booking" b
+        WHERE b."createdAt" >= now() - interval '24 hours' AND b.status <> 'CANCELLED'`;
+      return rows[0]?.n ?? 0;
+    },
+    { ttlMs: 60_000, staleMs: 300_000 }
+  );
+}
+
+// Per-night availability and "from" price for a date window (date picker). One grouped SQL query.
+// Price = cheapest nightly room rate (room-only, before tax) among types with a free apartment that night.
+async function calendar({ from, to, roomTypeSlug }) {
+  const types = await listRoomTypes();
+  const scoped = roomTypeSlug ? types.filter((t) => t.slug === roomTypeSlug) : types;
+  if (roomTypeSlug && !scoped.length) throw new AppError(404, "We couldn't find that apartment type.", true, "ROOM_TYPE_NOT_FOUND");
+  const typeIds = scoped.map((t) => t.id);
+
+  return cached(
+    `rooms:calendar:${from}:${to}:${roomTypeSlug || "all"}`,
+    async () => {
+      const [rows, seasonal] = await Promise.all([
+        prisma.$queryRaw`
+          SELECT to_char(d::date, 'YYYY-MM-DD') AS date, r."roomTypeId" AS "roomTypeId", COUNT(*)::int AS available
+          FROM generate_series(${from}::date, ${to}::date, interval '1 day') d
+          JOIN "Room" r ON r."isActive" = true AND r."roomTypeId" = ANY(${typeIds})
+          WHERE NOT EXISTS (
+            SELECT 1 FROM "BookingRoom" br
+            WHERE br."roomId" = r.id AND br.active = true AND br."checkIn" <= d::date AND br."checkOut" > d::date)
+          GROUP BY d, r."roomTypeId"`,
+        seasonalRatesFor(from, to),
+      ]);
+
+      const byDate = new Map();
+      for (const r of rows) {
+        if (!byDate.has(r.date)) byDate.set(r.date, []);
+        byDate.get(r.date).push(r);
+      }
+      const roomOnly = { discountPercent: 0, breakfastIncluded: false, breakfastPerGuest: 0 };
+      const days = [];
+      for (let d = from; d <= to; d = addDays(d, 1)) {
+        const free = byDate.get(d) || [];
+        let minRate = null;
+        for (const f of free) {
+          const type = scoped.find((t) => t.id === f.roomTypeId);
+          const q = quoteStay({ roomType: type, ratePlan: roomOnly, seasonalRates: seasonal, checkIn: d, checkOut: addDays(d, 1), rooms: 1, adults: 1, children: 0 });
+          if (minRate === null || q.roomSubtotal < minRate) minRate = q.roomSubtotal;
+        }
+        days.push({ date: d, available: free.reduce((s, f) => s + f.available, 0), minRate });
+      }
+      return { from, to, currency: env.currency, days };
+    },
+    { ttlMs: 30_000, staleMs: 60_000 }
+  );
 }
 
 async function getRoomType(slug) {
@@ -181,4 +252,4 @@ async function getRates(slug, stay) {
   };
 }
 
-module.exports = { listRoomTypes, listRatePlans, seasonalRatesFor, availableCounts, fitsParty, searchAvailability, getRoomType, getRates };
+module.exports = { listRoomTypes, listRatePlans, seasonalRatesFor, availableCounts, fitsParty, searchAvailability, getRoomType, getRates, calendar };

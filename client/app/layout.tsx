@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Jost } from "next/font/google";
+import { Jost, Plus_Jakarta_Sans } from "next/font/google";
 import "react-day-picker/style.css";
 import "./globals.css";
 import Providers from "./providers";
 import SiteHeader from "@/global/components/SiteHeader";
 import SiteFooter from "@/global/components/SiteFooter";
 
-const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const display = Jost({ subsets: ["latin"], variable: "--font-display", display: "swap", weight: ["300", "400", "500", "600"] });
+// Plus Jakarta Sans for everything (geometric grotesk like the reference design);
+// Jost only for the logo wordmark, which matches the Serene Heights logo lettering.
+const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap", weight: ["400", "500", "600", "700", "800"] });
+const display = Jost({ subsets: ["latin"], variable: "--font-display", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   title: { default: "Serene Heights Nathia Gali | Book your mountain stay", template: "%s | Serene Heights Nathia Gali" },

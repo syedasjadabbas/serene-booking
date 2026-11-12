@@ -9,6 +9,7 @@ import { errorMessage } from "@/global/api/baseApi";
 import { useAuthStore } from "@/global/stores/authStore";
 import { useBookingStore } from "@/global/stores/bookingStore";
 import BookingDetails from "@/global/components/BookingDetails";
+import BookingSteps from "@/global/components/BookingSteps";
 import { Alert, PageLoader } from "@/global/components/ui";
 import LookupForm from "@/app/manage/_components/LookupForm";
 
@@ -32,6 +33,11 @@ export default function BookingView() {
   return (
     <div className="bg-zinc-50/60">
       <div className="container-page py-8">
+        {isNew && booking?.status === "CONFIRMED" && (
+          <div className="mb-6 max-w-2xl">
+            <BookingSteps current={3} />
+          </div>
+        )}
         {isNew && booking?.status === "CONFIRMED" && (
           <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">
             <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />

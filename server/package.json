@@ -5,7 +5,7 @@
   "description": "Serene Booking API: guest-facing booking for Serene Heights Nathia Gali",
   "main": "server.js",
   "scripts": {
-    "dev": "node --watch server.js",
+    "dev": "node --watch-path=app.js --watch-path=server.js --watch-path=config --watch-path=lib --watch-path=middlewares --watch-path=modules server.js",
     "start": "node server.js",
     "prisma": "node ./node_modules/prisma/build/index.js",
     "prisma:generate": "node ./node_modules/prisma/build/index.js generate",

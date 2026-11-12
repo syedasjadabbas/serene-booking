@@ -1,6 +1,6 @@
 import { baseApi } from "@/global/api/baseApi";
 import { EP } from "@/global/constants/api";
-import type { AvailabilityResponse, RatesResponse, RoomType, RoomTypeDetail, Stay } from "@/global/api/types";
+import type { AvailabilityResponse, CalendarResponse, RatesResponse, RoomType, RoomTypeDetail, Stay } from "@/global/api/types";
 
 export const roomsApi = baseApi.injectEndpoints({
   endpoints: (b) => ({
@@ -9,6 +9,11 @@ export const roomsApi = baseApi.injectEndpoints({
       query: (params) => ({ url: EP.rooms.availability, params }),
       providesTags: ["Availability"],
       keepUnusedDataFor: 30,
+    }),
+    calendar: b.query<CalendarResponse, { from: string; to: string; roomType?: string }>({
+      query: (params) => ({ url: EP.rooms.calendar, params }),
+      providesTags: ["Availability"],
+      keepUnusedDataFor: 120,
     }),
     roomType: b.query<RoomTypeDetail, string>({ query: (slug) => EP.rooms.detail(slug), providesTags: ["Rooms"], keepUnusedDataFor: 300 }),
     rates: b.query<RatesResponse, { slug: string } & Stay>({
@@ -19,4 +24,4 @@ export const roomsApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useRoomTypesQuery, useAvailabilityQuery, useRoomTypeQuery, useRatesQuery } = roomsApi;
+export const { useRoomTypesQuery, useAvailabilityQuery, useCalendarQuery, useRoomTypeQuery, useRatesQuery } = roomsApi;

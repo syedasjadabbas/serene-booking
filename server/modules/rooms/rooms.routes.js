@@ -6,6 +6,7 @@ const { validateQuery, validateParams } = require("../../lib/validate");
 // Public: guests browse without signing in.
 router.get("/", c.list);
 router.get("/availability", validateQuery(v.staySchema), c.availability);
+router.get("/calendar", validateQuery(v.calendarQuery), c.calendar);
 router.get("/:slug", validateParams(v.slugParams), c.detail);
 router.get("/:slug/rates", validateParams(v.slugParams), validateQuery(v.staySchema), c.rates);
 

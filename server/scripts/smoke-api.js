@@ -135,7 +135,12 @@ const made = [];
   });
 
   console.log(`\n${n} API checks passed`);
-})().catch((err) => {
+})().catch(async (err) => {
   console.error("\nFAILED:", err.message);
+  // Never leave test bookings holding apartments: cancel whatever this run created.
+  for (const r of made) {
+    await call("POST", `/bookings/${r}/cancel`, { email: guest.email, reason: "smoke test cleanup" }).catch(() => undefined);
+  }
+  if (made.length) console.error(`Cleaned up ${made.length} test booking(s).`);
   process.exit(1);
 });

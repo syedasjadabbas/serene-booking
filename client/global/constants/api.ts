@@ -13,6 +13,7 @@ export const EP = {
   rooms: {
     list: "/rooms",
     availability: "/rooms/availability",
+    calendar: "/rooms/calendar",
     detail: (slug: string) => `/rooms/${slug}`,
     rates: (slug: string) => `/rooms/${slug}/rates`,
   },

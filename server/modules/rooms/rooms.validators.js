@@ -25,6 +25,18 @@ const refineStay = (schema) =>
 
 const staySchema = refineStay(z.object(stayFields));
 
-const slugParams = z.object({ slug: z.string().trim().min(1).max(80).regex(/^[a-z0-9-]+$/, "Invalid room") });
+// Date-picker window: at most ~2 months, today or later.
+const calendarQuery = z
+  .object({
+    from: isoDate("From"),
+    to: isoDate("To"),
+    roomType: z.string().trim().regex(/^[a-z0-9-]+$/).max(80).optional(),
+  })
+  .refine((q) => q.to >= q.from, { message: "'to' must be on or after 'from'", path: ["to"] })
+  .refine((q) => nightsBetween(q.from, q.to) <= 70, { message: "Calendar window is limited to 70 days", path: ["to"] })
+  .transform((q) => ({ ...q, from: q.from < todayInHotelTz() ? todayInHotelTz() : q.from }))
+  .refine((q) => q.to >= q.from, { message: "Calendar window is in the past", path: ["to"] });
 
-module.exports = { stayFields, refineStay, staySchema, slugParams };
+const slugParams =z.object({ slug: z.string().trim().min(1).max(80).regex(/^[a-z0-9-]+$/, "Invalid room") });
+
+module.exports = { stayFields, refineStay, staySchema, slugParams, calendarQuery };

@@ -1,31 +1,38 @@
 import Image from "next/image";
 import SearchBar from "@/global/components/SearchBar";
-import HomeHighlights from "./_components/HomeHighlights";
 import HomeApartments from "./_components/HomeApartments";
-import HomeExperiences from "./_components/HomeExperiences";
+import HomeUnique from "./_components/HomeUnique";
+import HomeFeature from "./_components/HomeFeature";
 import HomeReviews from "./_components/HomeReviews";
 import HomeLocation from "./_components/HomeLocation";
 
 export default function HomePage() {
   return (
     <>
-      <section className="relative isolate">
+      {/* Hero: inset rounded card with the header floating inside it */}
+      <section className="panel relative isolate mt-2 sm:mt-3">
         <Image src="/images/hero/hero-exterior.png" alt="Serene Heights Nathia Gali among the pines" fill priority sizes="100vw" className="-z-10 object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-brand-900/70 via-brand-900/40 to-brand-900/80" />
-        <div className="container-page pb-16 pt-24 sm:pb-24 sm:pt-32">
-          <p className="eyebrow text-gold-light">Nathia Gali · 7,906 ft</p>
-          <h1 className="mt-4 max-w-3xl font-display text-4xl font-light leading-tight text-white sm:text-6xl">A haven in the highlands</h1>
-          <p className="mt-4 max-w-xl text-base text-cream/90 sm:text-lg">
-            Fully furnished hotel apartments at Pakistan&apos;s first winter resort. Book in minutes and pay at the property.
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/60 via-ink/25 to-ink/55" />
+        <div className="flex min-h-[640px] flex-col items-center justify-center px-4 pb-14 pt-32 text-center sm:min-h-[700px]">
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/15 py-1.5 pl-1.5 pr-4 text-xs font-medium text-white ring-1 ring-white/25 backdrop-blur">
+            <span className="rounded-full bg-lime px-2 py-0.5 text-[11px] font-bold text-ink">7,906 ft</span>
+            Pakistan&apos;s first winter resort<span className="hidden sm:inline"> · Nathia Gali</span>
           </p>
-          <div className="mt-10 max-w-4xl">
-            <SearchBar variant="hero" submitLabel="Check availability" />
+          <h1 className="mt-6 max-w-4xl text-4xl font-bold leading-[1.1] text-white sm:text-6xl">
+            Unwind in the Pines,
+            <br />
+            Stay Above the Clouds.
+          </h1>
+          <p className="mt-4 max-w-xl text-sm text-white/85 sm:text-base">Fully furnished hotel apartments with a heated infinity pool and rooftop dining. Book in minutes, pay at the property.</p>
+          <div className="mt-10 w-full max-w-4xl text-left">
+            <SearchBar variant="hero" submitLabel="Search" />
           </div>
         </div>
       </section>
-      <HomeHighlights />
+
       <HomeApartments />
-      <HomeExperiences />
+      <HomeUnique />
+      <HomeFeature />
       <HomeReviews />
       <HomeLocation />
     </>
