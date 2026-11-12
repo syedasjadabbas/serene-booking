@@ -19,8 +19,8 @@ export default function ManagePage() {
     <div>
       <PageHero
         size="sm"
-        image="/images/dining/rooftop-restaurant.jpg"
-        imageAlt="Rooftop restaurant with glass walls"
+        image="/images/interiors/living-room-wide.jpg"
+        imageAlt="Apartment living room with sofa and dining area"
         eyebrow="Manage booking"
         title="Find Your Booking"
         subtitle="No account needed. Use your booking reference and email."

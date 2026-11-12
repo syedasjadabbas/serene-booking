@@ -4,6 +4,8 @@ node_modules/
 .env.*.local
 .next/
 .next-prod/
+# Raw photo drops; the optimised copies used by the site live in client/public/images
+/assets/
 out/
 dist/
 coverage/

@@ -47,12 +47,12 @@ export default function HomeUnique() {
         <div className="relative mx-auto h-[460px] w-full max-w-lg">
           <Parallax speed={0.06} className="absolute right-0 top-0 h-[400px] w-[72%]">
             <Reveal from="zoom" className="relative h-full w-full overflow-hidden rounded-3xl shadow-pop">
-              <Image src={asset("/images/resort/aerial-pool-portrait.jpg")} alt="The tower and its glass-roof rooftop pool above the misty pines" fill sizes="(min-width: 1024px) 30vw, 70vw" className="object-cover" />
+              <Image src={asset("/images/interiors/sunrise-balcony.jpg")} alt="Sunrise through the arched balcony doors of an apartment" fill sizes="(min-width: 1024px) 30vw, 70vw" className="object-cover" />
             </Reveal>
           </Parallax>
           <Parallax speed={-0.1} className="absolute bottom-0 left-0 h-[210px] w-[50%]">
             <Reveal from="left" delay={200} className="relative h-full w-full overflow-hidden rounded-3xl border-[6px] border-mist shadow-pop">
-              <Image src={asset("/images/dining/rooftop-restaurant.jpg")} alt="Rooftop restaurant with glass walls" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
+              <Image src={asset("/images/interiors/kitchenette.jpg")} alt="Fitted kitchenette with marble backsplash" fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover object-[50%_60%]" />
             </Reveal>
           </Parallax>
           <span className="float-slow absolute right-4 top-5 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ink shadow-card">

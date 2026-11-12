@@ -16,8 +16,11 @@ export default function HomeFeature() {
   const { data: types } = useRoomTypesQuery();
   const [active, setActive] = useState(0);
   const featured = types?.find((t) => t.slug === "terrace-apartment") ?? types?.[0];
-  // Gallery renders, leading with the snowy aerial of the whole resort; skip the hero shot used above.
-  const shots = (p?.gallery ?? []).map((g) => ({ image: g.src, title: g.alt })).filter((s) => !s.image.includes("hero-tower-mist"));
+  // Full-width band: high-resolution exterior renders only (the interior photos are portrait and too small
+  // to fill the screen sharply), leading with the snowy aerial; skip the hero shot used above.
+  const shots = (p?.gallery ?? [])
+    .map((g) => ({ image: g.src, title: g.alt }))
+    .filter((s) => !s.image.includes("hero-tower-mist") && !s.image.includes("/interiors/"));
   const lead = "aerial-snow-resort";
   const ordered = [...shots.filter((s) => s.image.includes(lead)), ...shots.filter((s) => !s.image.includes(lead))].slice(0, 7);
   const bg = ordered[active]?.image ?? "/images/resort/aerial-snow-resort.jpg";

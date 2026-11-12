@@ -88,6 +88,8 @@ module.exports = {
     { title: "Rooftop crown", image: "/images/resort/rooftop-crown.jpg" },
     { title: "Snowy slopes", image: "/images/activities/ski-slope-aerial.jpg" },
     { title: "Rooftop dining", image: "/images/dining/rooftop-dining-glass.jpg" },
+    { title: "Daily housekeeping", image: "/images/interiors/housekeeping.jpg" },
+    { title: "Your apartment", image: "/images/interiors/living-room-sofa.jpg" },
   ],
   floors: [
     { key: "ground", label: "Ground floor", summary: "Banquet hall, two conference rooms and the main lift lobby.", plans: ["/images/floor-plans/ground-2.png"] },
@@ -101,7 +103,17 @@ module.exports = {
     { key: "8", label: "8th floor", summary: "20 terrace apartments (801 to 820) with private terraces.", plans: ["/images/floor-plans/floor-8.png"] },
   ],
   // Official 3D renders. No apartment interior renders exist yet; add them here when available.
+  // Real apartment interiors (images/interiors) + official exterior renders.
   gallery: [
+    { src: "/images/interiors/living-room-wide.jpg", alt: "Apartment living room with sofa and dining area" },
+    { src: "/images/interiors/sunrise-balcony.jpg", alt: "Sunrise through the arched balcony doors" },
+    { src: "/images/interiors/bedroom-arch-window.jpg", alt: "Bedroom with arched window and mountain view" },
+    { src: "/images/interiors/kitchenette.jpg", alt: "Fitted kitchenette with marble backsplash" },
+    { src: "/images/interiors/dining-nook-arch.jpg", alt: "Dining nook by the arched window" },
+    { src: "/images/interiors/lounge-art.jpg", alt: "Sitting room with artwork" },
+    { src: "/images/interiors/bedroom-morning.jpg", alt: "Morning in bed" },
+    { src: "/images/interiors/corridor.jpg", alt: "Warm-lit apartment corridor" },
+    { src: "/images/interiors/housekeeping.jpg", alt: "Housekeeping and concierge service" },
     { src: "/images/resort/hero-tower-mist.jpg", alt: "Serene Heights tower rising above the pines and mist" },
     { src: "/images/resort/aerial-rooftop-pool.jpg", alt: "Aerial view with the glass-roof rooftop pool" },
     { src: "/images/resort/aerial-snow-resort.jpg", alt: "The resort and ski slope under snow" },
