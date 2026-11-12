@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-white text-zinc-800 antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-zinc-900;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .card {
+    @apply rounded-2xl border border-zinc-200 bg-white shadow-card;
+  }
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply btn border border-zinc-300 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50;
+  }
+  .btn-ghost {
+    @apply btn text-brand-700 hover:bg-brand-50;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-white hover:brightness-95;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-zinc-700;
+  }
+  .input {
+    @apply block w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-zinc-50;
+  }
+  .input-error {
+    @apply border-red-400 focus:border-red-500 focus:ring-red-500/20;
+  }
+  .field-error {
+    @apply mt-1 text-xs text-red-600;
+  }
+  .section-title {
+    @apply font-display text-2xl font-medium tracking-tight sm:text-3xl;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-gold;
+  }
+}
+
+/* react-day-picker theming */
+.rdp-root {
+  --rdp-accent-color: #36564f;
+  --rdp-accent-background-color: #dde7e4;
+  --rdp-range_middle-background-color: #dde7e4;
+  --rdp-range_middle-color: #1d2e2b;
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-day_button-height: 38px;
+  --rdp-day_button-width: 38px;
+  font-size: 0.875rem;
+}

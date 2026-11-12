@@ -1,0 +1,189 @@
+// Seeds room types, apartments, rate plans and seasonal rates. Idempotent (upserts).
+// Refuses to run against production unless --yes is passed.
+//   npm run db:seed
+//
+// PLACEHOLDERS: nightly rates, breakfast price, seasons, occupancy limits and the sofa bed are not
+// published on the official site (it lists sale prices per sq ft). Confirm with Serene Heights management.
+// Room photos: the site has no apartment interior photos, so types use exterior renders + their floor plan.
+
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
+const { PrismaClient } = require("@prisma/client");
+const { apartments } = require("./inventory");
+
+const prisma = new PrismaClient();
+
+const commonFeatures = [
+  "Fully furnished one-bedroom apartment",
+  "Separate sitting room with kitchenette",
+  "En-suite bathroom with shower",
+  "Central heating & heated floors",
+  "High-speed Wi-Fi",
+  "Daily housekeeping",
+  "24/7 room service",
+];
+
+const roomTypes = [
+  {
+    slug: "classic-one-bedroom",
+    name: "Classic One-Bedroom Apartment",
+    tagline: "A cosy mountain base with its own balcony",
+    description:
+      "A compact, fully furnished one-bedroom apartment with a bedroom, sitting room with kitchenette, en-suite bathroom and a private balcony. Ideal for couples and short getaways.",
+    bedType: "1 double bed",
+    outdoorSpace: "Private balcony",
+    maxAdults: 2,
+    maxChildren: 1,
+    maxOccupancy: 3,
+    baseRate: 18000,
+    images: ["/images/hero/hero-exterior.png", "/images/exterior/render-snow.png", "/images/floor-plans/floor-1.png"],
+    extra: ["Private balcony"],
+    sortOrder: 1,
+  },
+  {
+    slug: "premier-one-bedroom",
+    name: "Premier One-Bedroom Apartment",
+    tagline: "More room to unwind after a day in the pines",
+    description:
+      "A roomier one-bedroom apartment with a larger sitting room, kitchenette, en-suite bathroom and private balcony. A sofa bed in the sitting room makes space for the family.",
+    bedType: "1 double bed + sofa bed",
+    outdoorSpace: "Private balcony",
+    maxAdults: 3,
+    maxChildren: 2,
+    maxOccupancy: 4,
+    baseRate: 22000,
+    images: ["/images/hero/tower-view.png", "/images/exterior/render-night.png", "/images/floor-plans/floor-2.png"],
+    extra: ["Private balcony", "Sofa bed in sitting room"],
+    sortOrder: 2,
+  },
+  {
+    slug: "grand-one-bedroom",
+    name: "Grand One-Bedroom Apartment",
+    tagline: "Our most spacious standard layout",
+    description:
+      "A generous one-bedroom apartment with a large bedroom, spacious sitting room with kitchenette, en-suite bathroom and a wide private balcony facing the Galiyat.",
+    bedType: "1 double bed + sofa bed",
+    outdoorSpace: "Private balcony",
+    maxAdults: 3,
+    maxChildren: 2,
+    maxOccupancy: 4,
+    baseRate: 26000,
+    images: ["/images/exterior/render-facade.png", "/images/hero/hero-exterior.png", "/images/floor-plans/floor-6.png"],
+    extra: ["Wide private balcony", "Sofa bed in sitting room"],
+    sortOrder: 3,
+  },
+  {
+    slug: "signature-corner-suite",
+    name: "Signature Corner Suite",
+    tagline: "Corner living with views on two sides",
+    description:
+      "Our largest apartments, set on the corners of the building with windows on two sides, an oversized sitting room, kitchenette, en-suite bathroom and private balcony.",
+    bedType: "1 double bed + sofa bed",
+    outdoorSpace: "Private balcony",
+    maxAdults: 3,
+    maxChildren: 2,
+    maxOccupancy: 4,
+    baseRate: 34000,
+    images: ["/images/exterior/render-night.png", "/images/hero/tower-view.png", "/images/floor-plans/floor-3.png"],
+    extra: ["Corner position, dual aspect", "Sofa bed in sitting room"],
+    sortOrder: 4,
+  },
+  {
+    slug: "terrace-apartment",
+    name: "Terrace Apartment",
+    tagline: "Top-floor living with your own terrace",
+    description:
+      "One-bedroom apartments on the 8th floor, each opening onto a private terrace in place of a balcony. Closest to the sky for stargazing at 7,906 ft.",
+    bedType: "1 double bed + sofa bed",
+    outdoorSpace: "Private terrace",
+    maxAdults: 3,
+    maxChildren: 2,
+    maxOccupancy: 4,
+    baseRate: 30000,
+    images: ["/images/exterior/render-rooftop.png", "/images/hero/tower-view.png", "/images/floor-plans/floor-8.png"],
+    extra: ["Private terrace", "Top floor", "Sofa bed in sitting room"],
+    sortOrder: 5,
+  },
+];
+
+const ratePlans = [
+  {
+    code: "FLEX",
+    name: "Flexible rate",
+    description: "Room only. Free cancellation until 48 hours before check-in. Pay at the property.",
+    refundable: true,
+    freeCancelHours: 48,
+    breakfastIncluded: false,
+    breakfastPerGuest: 0,
+    discountPercent: 0,
+    sortOrder: 1,
+  },
+  {
+    code: "FLEX_BB",
+    name: "Flexible with breakfast",
+    description: "Breakfast at the rooftop restaurant for every guest. Free cancellation until 48 hours before check-in.",
+    refundable: true,
+    freeCancelHours: 48,
+    breakfastIncluded: true,
+    breakfastPerGuest: 1500,
+    discountPercent: 0,
+    sortOrder: 2,
+  },
+  {
+    code: "SAVER",
+    name: "Non-refundable saver",
+    description: "Save 10%. Room only. This rate can't be refunded if you cancel or change your stay.",
+    refundable: false,
+    freeCancelHours: null,
+    breakfastIncluded: false,
+    breakfastPerGuest: 0,
+    discountPercent: 10,
+    sortOrder: 3,
+  },
+];
+
+const seasons = [
+  { name: "Snow season 2026-27", startDate: "2026-12-20", endDate: "2027-02-15", multiplierPct: 115 },
+  { name: "Summer peak 2027", startDate: "2027-06-01", endDate: "2027-08-31", multiplierPct: 125 },
+];
+
+async function main() {
+  if (process.env.NODE_ENV === "production" && !process.argv.includes("--yes")) {
+    console.error("Refusing to seed a production database without --yes");
+    process.exit(1);
+  }
+
+  const typeIds = {};
+  for (const { extra, ...t } of roomTypes) {
+    const data = { ...t, bedrooms: 1, bathrooms: 1, features: [...extra, ...commonFeatures] };
+    const row = await prisma.roomType.upsert({ where: { slug: t.slug }, create: data, update: data, select: { id: true } });
+    typeIds[t.slug] = row.id;
+  }
+
+  for (const a of apartments) {
+    const { roomTypeSlug, ...rest } = a;
+    const data = { ...rest, roomTypeId: typeIds[roomTypeSlug] };
+    await prisma.room.upsert({ where: { number: a.number }, create: data, update: data });
+  }
+
+  for (const p of ratePlans) {
+    await prisma.ratePlan.upsert({ where: { code: p.code }, create: p, update: p });
+  }
+
+  await prisma.seasonalRate.deleteMany({ where: { name: { in: seasons.map((s) => s.name) } } });
+  await prisma.seasonalRate.createMany({
+    data: seasons.map((s) => ({ ...s, startDate: new Date(`${s.startDate}T00:00:00Z`), endDate: new Date(`${s.endDate}T00:00:00Z`) })),
+  });
+
+  const counts = await prisma.room.groupBy({ by: ["roomTypeId"], _count: { _all: true } });
+  console.log(`Seeded ${roomTypes.length} room types, ${apartments.length} apartments, ${ratePlans.length} rate plans, ${seasons.length} seasons.`);
+  for (const [slug, id] of Object.entries(typeIds)) {
+    console.log(`  ${slug.padEnd(24)} ${counts.find((c) => c.roomTypeId === id)?._count._all ?? 0} apartments`);
+  }
+}
+
+main()
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());
