@@ -198,8 +198,23 @@ export function Parallax({ children, className, speed = 0.15 }: { children: Reac
  * section, so the page doesn't move on while the effect plays. Progress drives the CSS var --inset
  * (0 → 1; geometry in `.scroll-inset`, globals.css). The track height is published as
  * --hero-pin-height so the floating site header can stay pinned with the hero.
+ *
+ * `runway` (any CSS length, e.g. "430svh") keeps the hero pinned for that much more scrolling after the
+ * hold, for content that plays with scroll inside it (the home page's cinematic film).
  */
-export function ScrollInset({ children, className, distance = 320, hold = 220 }: { children: ReactNode; className?: string; distance?: number; hold?: number }) {
+export function ScrollInset({
+  children,
+  className,
+  distance = 320,
+  hold = 220,
+  runway,
+}: {
+  children: ReactNode;
+  className?: string;
+  distance?: number;
+  hold?: number;
+  runway?: string;
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLElement>(null);
   const [pin, setPin] = useState(true);
@@ -269,7 +284,7 @@ export function ScrollInset({ children, className, distance = 320, hold = 220 }:
         {children}
       </section>
       {/* Scroll runway: while it passes, the hero above stays pinned (shrink, then hold). */}
-      {pin && <div aria-hidden style={{ height: distance + hold }} />}
+      {pin && <div aria-hidden style={{ height: runway ? `calc(${distance + hold}px + ${runway})` : distance + hold }} />}
     </div>
   );
 }

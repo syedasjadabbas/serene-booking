@@ -75,6 +75,7 @@ Administration (rates, inventory, booking operations) lives in **Serene Manageme
 ### Experience
 
 - **Design:** inset rounded hero panels, pill-shaped controls, Plus Jakarta Sans, a forest-green and lime palette taken from the Serene Heights brand.
+- **Cinematic hero:** the home page opens on the resort's 3D flythrough, played by scrolling. The hero insets into a framed card, then five chapters scrub past (arrival, rooftop, winter, play, stay) with captions and a booking shortcut. The frames are WebP stills drawn on a canvas with crossfades, loaded after the page in coarse-to-fine order. Phones get a lighter portrait set, data-saver gets every 4th frame, and reduced motion gets a still.
 - **Motion:** scroll reveals, staggered grids, 3D pointer-tilt cards, parallax and slow-zoom imagery, count-up stats, page transitions. All hand-built (no animation library) and all switched off for users who prefer reduced motion.
 - **Responsive:** checked at 320 px, 375 px and desktop widths, with no horizontal overflow.
 
@@ -324,6 +325,7 @@ On the API, add the group domain to `CLIENT_ORIGIN` (comma-separated) and keep `
 | `npm run dev` | Next.js dev server on :3000 |
 | `npm run build` / `npm start` | Production build / serve |
 | `npm run typecheck` | TypeScript check |
+| `scripts/make-cinematic-frames.ps1 -In <video> -Out public/images/cinematic` | Rebuild the hero film frames from the 3D animation (needs ffmpeg). Chapter times are at the top of the script. If you change the frame counts, update `CHAPTERS` in `app/_components/CinematicFilm.tsx`. |
 
 ---
 
