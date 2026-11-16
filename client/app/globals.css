@@ -233,7 +233,8 @@
   html { scroll-behavior: auto !important; }
 }
 
-html { scroll-behavior: smooth; }
+/* The page never scrolls sideways: slide-in reveals start off-screen (body alone does not stop it on phones). */
+html { scroll-behavior: smooth; overflow-x: clip; }
 
 /* react-day-picker theming */
 .rdp-root {
