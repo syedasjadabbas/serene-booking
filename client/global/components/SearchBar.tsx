@@ -73,19 +73,19 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
       onSubmit={submit}
       className={cn(
         "relative grid gap-1.5 bg-white text-ink",
-        hero && "rounded-[6px] p-2 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
-        variant === "bar" && "rounded-[6px] border border-ink/10 p-1.5 shadow-card md:grid-cols-[1.4fr_1fr_auto] md:items-center",
+        hero && "rounded-none bg-bone p-1.5 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
+        variant === "bar" && "rounded-none border border-ink/15 p-1.5 md:grid-cols-[1.4fr_1fr_auto] md:items-center",
         panel && "grid-cols-1 gap-2"
       )}
       aria-label="Search availability"
     >
       {/* Where: single property, shown for orientation like the reference design */}
       {hero && (
-        <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
+        <div className="hidden items-center gap-3 rounded-2xl px-3 py-2 md:flex">
           <FieldIcon><Navigation className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Where</span>
-            <span className="block truncate font-display text-[15px] text-ink">Nathia Gali, Pakistan</span>
+            <span className="block caps text-ink/55">Where</span>
+            <span className="block truncate font-display text-lg leading-tight text-ink">Nathia Gali, Pakistan</span>
           </span>
         </div>
       )}
@@ -95,19 +95,19 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "dates" ? null : "dates"))}
-          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-zinc-50", panel && "border border-zinc-200", hero && "md:border-l md:border-zinc-100 md:rounded-none md:pl-4")}
+          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel && "border border-zinc-200", hero && "md:border-l md:border-zinc-100 md:rounded-none md:pl-4")}
           aria-expanded={openPanel === "dates"}
         >
           <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Check-in — Check-out</span>
-            <span className="block truncate font-display text-[15px] text-ink">
+            <span className="block caps text-ink/55">Check-in — Check-out</span>
+            <span className="block truncate font-display text-lg leading-tight text-ink">
               {format(parseISO(stay.checkIn), "EEE d MMM")} — {format(parseISO(stay.checkOut), "EEE d MMM")}
               <span className="ml-2 font-sans text-sm font-light text-zinc-500">{plural(nights, "night")}</span>
             </span>
           </span>
         </button>
-        <Popover open={openPanel === "dates"} onClose={close} className="w-max max-w-[calc(100vw-2rem)]" align={panel ? "right" : "left"}>
+        <Popover open={openPanel === "dates"} onClose={close} className="w-max max-w-[calc(100vw-2rem)]" align={panel ? "right" : "left"} side={hero ? "top" : "bottom"}>
           <PriceCalendar
             range={range}
             onSelect={onSelectRange}
@@ -131,18 +131,18 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "guests" ? null : "guests"))}
-          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-zinc-50", panel ? "border border-zinc-200" : "md:rounded-none md:border-l md:border-zinc-100 md:pl-4")}
+          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel ? "border border-zinc-200" : "md:rounded-none md:border-l md:border-zinc-100 md:pl-4")}
           aria-expanded={openPanel === "guests"}
         >
           <FieldIcon><Users className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Guests & apartments</span>
-            <span className="block truncate font-display text-[15px] text-ink">
+            <span className="block caps text-ink/55">Guests & apartments</span>
+            <span className="block truncate font-display text-lg leading-tight text-ink">
               {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apt", "apts")}
             </span>
           </span>
         </button>
-        <Popover open={openPanel === "guests"} onClose={close} className="w-72" align="right">
+        <Popover open={openPanel === "guests"} onClose={close} className="w-72" align="right" side={hero ? "top" : "bottom"}>
           <Stepper label="Adults" hint="Age 13+" value={stay.adults} min={stay.rooms} max={20} onChange={(adults) => setStay((s) => ({ ...s, adults }))} />
           <Stepper label="Children" hint="Age 0–12" value={stay.children} min={0} max={20} onChange={(children) => setStay((s) => ({ ...s, children }))} />
           <Stepper
@@ -166,7 +166,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
 }
 
 function FieldIcon({ children }: { children: React.ReactNode }) {
-  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-gold/35 text-gold">{children}</span>;
+  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-ink/20 text-ink">{children}</span>;
 }
 
 function Stepper({ label, hint, value, min, max, onChange }: { label: string; hint?: string; value: number; min: number; max: number; onChange: (v: number) => void }) {

@@ -7,38 +7,47 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-ivory text-zinc-600 antialiased;
-    /* Slide-in reveals start off-screen; clip (not hidden) so sticky headers keep working. */
+    @apply bg-bone font-sans text-[15px] text-ink/80 antialiased;
+    /* Slide-in reveals start off-screen; clip (not hidden) so sticky elements keep working. */
     overflow-x: clip;
   }
-  /* Marcellus has a single weight: never let the browser fake a bold version of it. */
+  /* Editorial headlines: tall condensed serif. h1/h2 are set in capitals, h3 in title case. */
   h1,
   h2,
   h3 {
-    @apply font-display font-normal tracking-normal text-ink;
+    @apply font-display font-normal text-ink;
     font-synthesis: none;
+    letter-spacing: -0.005em;
+  }
+  h1,
+  h2 {
+    @apply uppercase leading-[0.92];
   }
   ::selection {
-    @apply bg-gold-light text-ink;
+    @apply bg-sky text-ink;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+    @apply outline-none ring-2 ring-ink/60 ring-offset-2;
   }
 }
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-14;
   }
-  /* Classic-luxury language: calm corners, fine borders, small-caps buttons, bronze details. */
+  /* Small expanded capitals: the label voice used for navigation, buttons and eyebrows. */
+  .caps {
+    @apply text-[10.5px] font-bold uppercase tracking-[0.1em];
+    font-stretch: 125%;
+  }
   .card {
-    @apply rounded-3xl border border-ink/[0.07] bg-white shadow-card;
+    @apply rounded-3xl border border-ink/10 bg-white shadow-card;
   }
   .pill {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   .chip {
-    @apply inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/15 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 transition hover:border-gold;
+    @apply inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 bg-white px-4 py-1.5 text-sm font-medium text-ink/80 transition hover:border-ink;
   }
   /* Enlarges the touch area of small inline links/buttons to ~44px without changing layout. */
   .tap {
@@ -50,36 +59,41 @@
     inset: -10px -6px;
   }
   .chip-active {
-    @apply border-pine bg-pine text-white hover:border-pine;
+    @apply border-ink bg-ink text-white hover:border-ink;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-6 py-3 text-[12.5px] font-medium uppercase tracking-[0.16em] transition duration-300 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3.5 text-[10.5px] font-bold uppercase tracking-[0.1em] transition duration-300 disabled:cursor-not-allowed disabled:opacity-50;
+    font-stretch: 125%;
   }
   .btn-primary {
-    @apply btn bg-pine text-white hover:bg-pine-hover;
+    @apply btn bg-ink text-bone hover:bg-pine;
   }
   .btn-dark {
-    @apply btn bg-ink text-white hover:bg-brand-800;
+    @apply btn bg-pine text-bone hover:bg-ink;
   }
   .btn-secondary {
-    @apply btn border border-ink/20 bg-white text-ink hover:border-gold hover:text-gold-dark;
+    @apply btn border border-ink/25 bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-bone;
   }
   .btn-ghost {
-    @apply btn text-brand-700 hover:bg-brand-50;
+    @apply btn text-ink hover:bg-ink/5;
   }
   .btn-gold {
-    @apply btn bg-gold text-white hover:bg-gold-dark;
+    @apply btn bg-sky text-ink hover:bg-sky-dark;
   }
   /* Thin outlined button for dark backgrounds */
   .btn-outline-light {
-    @apply btn border border-white/40 text-white hover:border-lime hover:bg-white/10;
+    @apply btn border border-bone/40 text-bone hover:border-bone hover:bg-bone hover:text-ink;
+  }
+  /* Underlined serif link in capitals ("SELECT AN APARTMENT") */
+  .link-serif {
+    @apply font-display uppercase leading-none underline decoration-1 underline-offset-[6px] transition hover:decoration-transparent;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-zinc-700;
+    @apply mb-1.5 block text-sm font-medium text-ink/80;
   }
   /* 16px text on phones: iOS Safari zooms the page when focusing inputs smaller than 16px. */
   .input {
-    @apply block w-full rounded-2xl border border-ink/15 bg-white px-3.5 py-2.5 text-base sm:text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-zinc-50;
+    @apply block w-full rounded-xl border border-ink/20 bg-white px-3.5 py-2.5 text-base text-ink placeholder:text-ink/40 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10 disabled:bg-mist sm:text-sm;
   }
   .input-error {
     @apply border-red-400 focus:border-red-500 focus:ring-red-500/20;
@@ -88,43 +102,26 @@
     @apply mt-1 text-xs text-red-600;
   }
   .section-title {
-    @apply font-display text-[2rem] leading-[1.12] text-ink sm:text-5xl;
+    @apply font-display text-[2.6rem] uppercase leading-[0.92] text-ink sm:text-6xl;
   }
   .section-sub {
-    @apply mt-2 text-sm text-zinc-500 sm:text-base;
+    @apply mt-3 text-sm text-ink/60 sm:text-base;
   }
   .eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.32em] text-gold;
+    @apply text-[10.5px] font-bold uppercase tracking-[0.1em] text-ink;
+    font-stretch: 125%;
   }
-  /* Arch-topped frame (classic window shape) for photos: a semicircle at any width. */
-  .arch {
-    @apply overflow-hidden rounded-b-[6px] rounded-t-[999px];
-  }
-  /* Faint vertical guide lines at the content edges, as on classic editorial layouts. */
-  .guides {
-    @apply relative;
-  }
-  .guides::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(to right, transparent calc(50% - min(40rem, 50vw - 1rem) - 0.5px), rgba(15, 31, 27, 0.07) 0 calc(50% - min(40rem, 50vw - 1rem) + 0.5px), transparent 0),
-      linear-gradient(to left, transparent calc(50% - min(40rem, 50vw - 1rem) - 0.5px), rgba(15, 31, 27, 0.07) 0 calc(50% - min(40rem, 50vw - 1rem) + 0.5px), transparent 0);
-  }
-  /* Thin bronze rule with a diamond, used under eyebrows */
-  .ornament {
-    @apply mx-auto flex w-28 items-center gap-2 text-gold;
-  }
-  .ornament::before,
-  .ornament::after {
-    content: "";
-    @apply h-px flex-1 bg-current opacity-50;
-  }
-  /* Inset rounded panel used for hero, feature band and footer (page shows a white frame around it). */
+  /* Full-bleed panel (hero, feature bands, footer). */
   .panel {
-    @apply mx-2.5 overflow-hidden rounded-[14px] sm:mx-4 sm:rounded-[18px] lg:mx-6 lg:rounded-[22px];
+    @apply overflow-hidden;
+  }
+  /* Arch-topped frame for photos: a semicircle at any width. */
+  .arch {
+    @apply overflow-hidden rounded-b-none rounded-t-[999px];
+  }
+  /* Thin vertical rule used between label lines */
+  .rule-v {
+    @apply mx-auto block h-24 w-px bg-current opacity-60;
   }
 }
 
@@ -384,4 +381,19 @@ html { scroll-behavior: smooth; overflow-x: clip; }
 }
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue::after { animation: none; }
+}
+
+/* ───────────── Site chrome (SiteHeader) ───────────── */
+.chrome { color: #17233b; transition: color 0.45s ease; }
+.chrome[data-tone="dark"] { color: #f3f3ec; }
+@keyframes menu-in { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.menu-in { animation: menu-in 0.8s cubic-bezier(0.77, 0, 0.18, 1) both; }
+.menu-item { animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(250ms + var(--i, 0) * 60ms); }
+
+/* Rotating ring of a circular button ("View available apartments") */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 14s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-in, .menu-item, .spin-slow { animation: none !important; }
 }

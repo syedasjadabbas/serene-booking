@@ -2,138 +2,250 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { CalendarCheck, ChevronDown, LogOut, Menu, User, X } from "lucide-react";
-import Logo from "./Logo";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { X } from "lucide-react";
 import { useAuthStore } from "@/global/stores/authStore";
 import { useLogoutMutation } from "@/global/api/endpoints/authApi";
+import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
+import { asset } from "@/global/lib/asset";
 import { cn } from "@/global/lib/cn";
 
 const NAV = [
+  { href: "/", label: "Home" },
   { href: "/rooms", label: "Apartments" },
   { href: "/amenities", label: "Amenities" },
   { href: "/floor-plans", label: "Floor plans" },
   { href: "/contact", label: "Location & contact" },
+  { href: "/manage", label: "Find a booking" },
 ];
 
+/**
+ * Editorial site chrome, fixed over every page:
+ *  - top left: a round badge (the Serene Heights mark ringed by text) that turns as you scroll;
+ *  - top right: "Select an apartment" plus small-caps links and the menu button;
+ *  - bottom left: a hairline scroll gauge with a 0–100 counter;
+ *  - a full-screen menu.
+ * The chrome switches between light and dark ink depending on the section underneath: sections mark
+ * themselves with data-theme="dark" (photos, dark panels); anything else counts as light.
+ */
 export default function SiteHeader() {
   const pathname = usePathname();
+  const home = pathname === "/";
   const [open, setOpen] = useState(false);
-  useEffect(() => setOpen(false), [pathname]);
-  // On the home page the header floats inside the rounded hero card (reference design); elsewhere it's a sticky white bar.
-  const overlay = pathname === "/" && !open;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<SVGSVGElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
 
-  const header = (
-    <header className={cn("z-40", overlay ? "hero-header pointer-events-auto sticky top-0" : "sticky top-0 border-b border-zinc-200/80 bg-white sm:bg-white/90 sm:backdrop-blur")}>
-      <div className={cn("container-page flex h-16 items-center justify-between gap-4", overlay && "h-20")}>
-        <Logo tone={overlay ? "cream" : "green"} />
-        <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={cn(
-                "rounded-full px-3.5 py-2 text-[13px] font-medium uppercase tracking-[0.14em] transition",
-                overlay ? "text-white/90 hover:bg-white/15 hover:text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-ink",
-                !overlay && pathname.startsWith(n.href) && "bg-mist text-ink"
-              )}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link href="/manage" className={cn("hidden rounded-full px-3.5 py-2 text-[13px] font-medium uppercase tracking-[0.14em] xl:block", overlay ? "text-white/90 hover:bg-white/15" : "text-zinc-600 hover:bg-zinc-100")}>
-            Find booking
+  useEffect(() => setOpen(false), [pathname]);
+
+  // Lock page scroll under the menu; Escape closes it.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.documentElement.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  // One rAF-throttled scroll handler drives the badge rotation, the gauge and the light/dark tone.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const p = Math.min(1, Math.max(0, window.scrollY / max));
+      if (barRef.current) barRef.current.style.transform = `scaleY(${p.toFixed(4)})`;
+      if (countRef.current) countRef.current.textContent = String(Math.round(p * 100));
+      if (badgeRef.current && !still) badgeRef.current.style.transform = `rotate(${(window.scrollY * 0.08).toFixed(1)}deg)`;
+      // Home: sample just below the top edge, in the middle (clear of the chrome itself). Inner pages
+      // have a bone bar behind the chrome, so they stay light.
+      if (home) {
+        const under = document.elementFromPoint(window.innerWidth / 2, 6);
+        const tone = under?.closest<HTMLElement>("[data-theme]")?.dataset.theme === "dark" ? "dark" : "light";
+        if (root.dataset.tone !== tone) root.dataset.tone = tone;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    // Pages render their content after this effect on navigation; re-check once it has settled.
+    const t = window.setTimeout(update, 250);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname, home]);
+
+  return (
+    <>
+      <div ref={rootRef} data-tone={home ? "dark" : "light"} className="chrome pointer-events-none fixed inset-0 z-40">
+        {/* Inner pages: a slim bone bar behind the chrome, so content and sticky bars pass under it cleanly */}
+        {!home && <div className="absolute inset-x-0 top-0 h-[84px] border-b border-ink/10 bg-bone/95 backdrop-blur-sm" aria-hidden />}
+
+        {/* Badge */}
+        <Link
+          href="/"
+          aria-label="Serene Heights Nathia Gali, home"
+          className={cn(
+            "pointer-events-auto absolute left-4 grid place-items-center sm:left-7",
+            home ? "top-4 h-[76px] w-[76px] sm:top-7 sm:h-[92px] sm:w-[92px]" : "top-[10px] h-16 w-16"
+          )}
+        >
+          <svg ref={badgeRef} viewBox="0 0 100 100" className="absolute inset-0 h-full w-full will-change-transform" aria-hidden>
+            <defs>
+              <path id="badge-ring" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
+            </defs>
+            {/* textLength fits the words exactly once around the ring (circumference 2π·38 ≈ 238.8). */}
+            <text className="fill-current" style={{ fontSize: "7.6px", fontWeight: 700, fontStretch: "125%" }}>
+              <textPath href="#badge-ring" textLength="236" lengthAdjust="spacing">SERENE HEIGHTS · NATHIA GALI ·</textPath>
+            </text>
+          </svg>
+          <span
+            aria-hidden
+            className={cn("block bg-current", home ? "h-8 w-6 sm:h-9 sm:w-7" : "h-7 w-5")}
+            style={{ maskImage: `url(${asset("/brand/mark-cream.png")})`, WebkitMaskImage: `url(${asset("/brand/mark-cream.png")})`, maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat", maskPosition: "center", WebkitMaskPosition: "center" } as CSSProperties}
+          />
+        </Link>
+
+        {/* Top right */}
+        <nav
+          aria-label="Main"
+          className={cn(
+            "pointer-events-auto absolute right-4 flex text-right sm:right-7",
+            home ? "top-5 flex-col items-end gap-3 sm:top-8" : "top-0 h-[84px] items-center gap-8"
+          )}
+        >
+          <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.45rem]" : "text-xl")}>
+            Select
+            {home ? <br /> : " "}
+            an apartment
           </Link>
-          <Link href="/rooms" className={cn("hidden md:inline-flex", overlay ? "btn-outline-light px-5 py-2.5" : "btn-gold px-5 py-2.5")}>
-            Book now
-          </Link>
-          <AccountMenu />
-          <button className={cn("rounded-full p-2.5 lg:hidden", overlay ? "text-white hover:bg-white/15" : "text-zinc-700 hover:bg-zinc-100")} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </div>
-      {open && (
-        <nav aria-label="Mobile" className="border-t border-zinc-200 bg-white lg:hidden">
-          <div className="container-page flex flex-col py-2">
-            {[...NAV, { href: "/manage", label: "Find a booking" }].map((n) => (
-              <Link key={n.href} href={n.href} className="rounded-lg px-2 py-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
-                {n.label}
-              </Link>
-            ))}
+          <div className={cn("flex items-center gap-4", home && "sm:flex-col sm:items-end sm:gap-1.5", !home && "sm:gap-6")}>
+            <Link href="/rooms" className="caps sm:hidden">Book</Link>
+            <Link href="/manage" className="caps hidden hover:opacity-60 sm:block">Find a booking</Link>
+            <AccountLink />
+            <button type="button" onClick={() => setOpen(true)} className="caps flex items-center gap-2 hover:opacity-60" aria-expanded={open} aria-controls="site-menu">
+              Menu
+              <span className="flex flex-col gap-[3px]" aria-hidden>
+                <span className="block h-px w-5 bg-current" />
+                <span className="block h-px w-5 bg-current" />
+              </span>
+            </button>
           </div>
         </nav>
-      )}
-    </header>
-  );
 
-  // Home: the header rides along with the pinned hero. Its track is exactly as tall as the hero's pin
-  // section (--hero-pin-height, set by <ScrollInset>), so it stays on the hero while it shrinks and then
-  // scrolls away with it.
-  if (overlay) {
-    return (
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-40" style={{ height: "var(--hero-pin-height, auto)" }}>
-        {header}
+        {/* Scroll gauge */}
+        <div className="absolute bottom-8 left-7 hidden flex-col items-center gap-3 lg:flex" aria-hidden>
+          <span className="relative block h-28 w-px overflow-hidden">
+            <span className="absolute inset-0 bg-current opacity-25" />
+            <span ref={barRef} className="absolute inset-0 origin-top scale-y-0 bg-current" />
+          </span>
+          <span ref={countRef} className="caps w-6 text-center tabular-nums">0</span>
+        </div>
       </div>
-    );
-  }
-  return header;
+
+      {!home && <div className="h-[84px]" aria-hidden />}
+
+      {open && <MenuOverlay onClose={() => setOpen(false)} />}
+    </>
+  );
 }
 
-function AccountMenu() {
+function AccountLink() {
   const { status, customer } = useAuthStore();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const [logout] = useLogoutMutation();
-  const router = useRouter();
-
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(false);
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, []);
-
-  if (status === "unknown") return <div className="h-9 w-24 animate-pulse rounded-full bg-zinc-100/60" aria-hidden />;
-  if (status !== "authenticated" || !customer) {
+  if (status === "authenticated" && customer) {
     return (
-      <Link href="/login" className="btn-primary px-4 py-2">
-        Sign in
+      <Link href="/account" className="caps hidden hover:opacity-60 sm:block">
+        {customer.firstName}&apos;s stays
       </Link>
     );
   }
+  return (
+    <Link href="/login" className="caps hidden hover:opacity-60 sm:block">
+      Sign in
+    </Link>
+  );
+}
+
+function MenuOverlay({ onClose }: { onClose: () => void }) {
+  const { status, customer } = useAuthStore();
+  const [logout] = useLogoutMutation();
+  const router = useRouter();
+  const { data: p } = usePropertyQuery();
+  const phone = p?.contact.phone ?? "042-111-111-744";
+  const signedIn = status === "authenticated" && !!customer;
 
   return (
-    <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((o) => !o)} className="btn-secondary py-1.5 pl-1.5 pr-3" aria-expanded={open} aria-haspopup="menu">
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-pine text-xs font-bold text-white">
-          {customer.firstName.charAt(0).toUpperCase()}
-        </span>
-        <span className="hidden sm:inline">{customer.firstName}</span>
-        <ChevronDown className="hidden h-4 w-4 min-[380px]:block" />
-      </button>
-      {open && (
-        <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-zinc-200 bg-white py-1 shadow-pop">
-          <Link role="menuitem" href="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-zinc-50">
-            <CalendarCheck className="h-4 w-4 text-zinc-500" /> My bookings
-          </Link>
-          <Link role="menuitem" href="/account/profile" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-zinc-50">
-            <User className="h-4 w-4 text-zinc-500" /> Profile & security
-          </Link>
-          <button
-            role="menuitem"
-            onClick={async () => {
-              setOpen(false);
-              await logout().unwrap().catch(() => undefined);
-              router.push("/");
-            }}
-            className="flex w-full items-center gap-2 border-t border-zinc-100 px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
-          >
-            <LogOut className="h-4 w-4" /> Sign out
+    <div id="site-menu" role="dialog" aria-modal="true" aria-label="Menu" className="menu-in fixed inset-0 z-50 overflow-y-auto bg-pine text-bone">
+      <div className="container-page flex min-h-full flex-col py-8">
+        <div className="flex items-start justify-between">
+          <p className="font-script text-5xl text-sky sm:text-6xl">Nathia Gali</p>
+          <button type="button" onClick={onClose} className="caps flex items-center gap-2 hover:opacity-60" autoFocus>
+            Close <X className="h-4 w-4" />
           </button>
         </div>
-      )}
+
+        <nav aria-label="Site" className="mt-10 flex-1">
+          <ul className="space-y-1">
+            {NAV.map((n, i) => (
+              <li key={n.href} className="menu-item" style={{ "--i": i } as CSSProperties}>
+                <Link href={n.href} onClick={onClose} className="group flex items-baseline gap-5 py-1">
+                  <span className="caps w-6 text-sky/70">0{i + 1}</span>
+                  <span className="font-display text-[2.6rem] uppercase leading-none transition group-hover:translate-x-2 group-hover:text-sky sm:text-7xl">{n.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="mt-12 grid gap-8 border-t border-bone/15 pt-8 sm:grid-cols-3">
+          <div>
+            <p className="caps text-sky">Reservations</p>
+            <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="mt-2 block font-display text-3xl">{phone}</a>
+          </div>
+          <div>
+            <p className="caps text-sky">Your account</p>
+            {signedIn ? (
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+                <Link href="/account" onClick={onClose} className="underline-offset-4 hover:underline">My bookings</Link>
+                <Link href="/account/profile" onClick={onClose} className="underline-offset-4 hover:underline">Profile</Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    onClose();
+                    await logout().unwrap().catch(() => undefined);
+                    router.push("/");
+                  }}
+                  className="underline-offset-4 hover:underline"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <div className="mt-2 flex gap-5 text-sm">
+                <Link href="/login" onClick={onClose} className="underline-offset-4 hover:underline">Sign in</Link>
+                <Link href="/register" onClick={onClose} className="underline-offset-4 hover:underline">Create account</Link>
+              </div>
+            )}
+          </div>
+          <div className="sm:text-right">
+            <Link href="/rooms" onClick={onClose} className="btn-outline-light">Check availability</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

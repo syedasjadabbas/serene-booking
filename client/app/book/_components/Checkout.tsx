@@ -166,7 +166,7 @@ export default function Checkout() {
             </section>
           </form>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-28 lg:self-start">
             <PriceSummary stay={stay} roomName={rates.roomType.name} ratePlan={selected.ratePlan} quote={selected.quote} />
           </aside>
         </div>

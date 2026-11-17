@@ -99,7 +99,7 @@ export default function BookingDetails({ booking: b, guestEmail, onChange }: { b
         </section>
       </div>
 
-      <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+      <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
         <div className="card p-5">
           <p className="text-xs uppercase tracking-widest text-zinc-500">Booking reference</p>
           <p className="mt-1 font-mono text-2xl font-semibold tracking-wider text-brand-700">{b.reference}</p>

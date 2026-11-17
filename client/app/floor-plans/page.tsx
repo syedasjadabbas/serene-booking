@@ -57,7 +57,7 @@ export default function FloorPlansPage() {
       </PageHero>
 
       {/* Sticky floor selector */}
-      <div className="sticky top-16 z-30 mt-6 border-y border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
+      <div className="sticky top-[84px] z-30 mt-6 border-y border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
         <div className="container-page flex gap-2 overflow-x-auto py-3" role="tablist" aria-label="Floors">
           {p.floors.map((f) => (
             <button

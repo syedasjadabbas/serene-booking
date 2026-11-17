@@ -74,18 +74,21 @@ Administration (rates, inventory, booking operations) lives in **Serene Manageme
 
 ### Experience
 
-- **Design:** classic luxury, inspired by the Almaris hotel theme.
-  - Type: Marcellus serif headings with Jost text (the Serene Heights logo lettering).
-  - Colour: the group's pine green with bronze and champagne accents on warm ivory.
-  - Shapes: arch-framed photos, hairline dividers and editorial guide lines, small-caps buttons and calm corners.
+- **Design:** editorial residence style, modelled on the layout and motion of [era-residence.com](https://www.era-residence.com/), with our own content, photos and brand.
+  - Type: Instrument Serif (tall, condensed capitals) for headlines, Archivo (expanded, small caps) for labels and text, and a calligraphic script for accent words.
+  - Colour: deep navy ink on bone paper, pale mountain-sky blue sections and pine for the darkest panels.
+  - Chrome: a round badge that turns as you scroll, "Select an apartment" and small-caps links top right, a 0–100 scroll gauge, and a full-screen menu. The chrome switches between light and dark ink over photos and paper.
 - **Home page:** sections in this order:
-  - A hero that insets into a framed card as you scroll, with layered depth that follows the mouse.
-  - A welcome statement between two drifting arch photos.
-  - A pinned horizontal gallery of apartment cards on desktop (a swipeable row on phones).
-  - A facilities grid whose photos fade in on hover.
-  - A reviews panel.
-  - Photo strips that slide in opposite directions as you scroll.
-- **Motion:** word-by-word headline reveals, curtain-wipe photo reveals, scroll reveals and staggered grids, 3D pointer-tilt cards, parallax and slow-zoom imagery, count-up stats, page transitions and a bronze cursor ring on desktop. It is all hand-built in `global/components/motion.tsx` and `Cursor.tsx`, with no animation library. Touch screens get lighter versions, and everything switches off for users who prefer reduced motion.
+  - A full-screen hero with the name in huge capitals, a script flourish, an "In summer / In winter" switch that cross-fades the photo, and the booking search.
+  - A sky-blue arch that rises over the hero, with text running along its curve, and three numbered reasons to stay.
+  - The concept as one giant statement, with a round "View available apartments" button.
+  - The location over a full-bleed landscape, with drive times.
+  - An apartment slider: the type name set huge, a "1 — 5" control, key figures and a cross-fading photo.
+  - "The space to live in": a pine block with a photo, the features list and a wide interior.
+  - The architecture over a full-bleed photo of the tower.
+  - Facts stacked in huge capitals.
+  - A closing booking panel, then the footer with the reservations number set huge.
+- **Motion:** word-by-word headline reveals, curtain-wipe photo reveals, parallax, a scaling arch, a rotating badge, slow-orbit button rings and page transitions. It is all hand-built in `global/components/motion.tsx`, with no animation library, and switches off for users who prefer reduced motion.
 - **Responsive:** checked at 320 px, 375 px and desktop widths, with no horizontal overflow.
 
 ---
@@ -352,7 +355,7 @@ serene-booking/
 │   │   └── amenities/ floor-plans/ contact/
 │   ├── global/
 │   │   ├── api/                    # baseApi, endpoints/<feature>Api.ts, types
-│   │   ├── components/             # SearchBar, PriceCalendar, PageHero, Lightbox, motion, Cursor …
+│   │   ├── components/             # SearchBar, PriceCalendar, PageHero, Lightbox, CircleLink, motion …
 │   │   ├── lib/  stores/  constants/
 │   └── public/
 │       ├── brand/                  # Official logo & mark

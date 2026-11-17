@@ -81,7 +81,7 @@ export default function RoomDetail() {
   return (
     <div>
       {/* Sticky in-page navigation, like Booking.com's property tabs */}
-      <nav aria-label="Page sections" className="sticky top-16 z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
+      <nav aria-label="Page sections" className="sticky top-[84px] z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
         <div className="container-page flex gap-1 overflow-x-auto">
           {SECTIONS.map((s) => (
             <a key={s.id} href={`#${s.id}`} className="shrink-0 border-b-2 border-transparent px-3 py-3 text-sm font-medium text-zinc-600 hover:border-brand-600 hover:text-brand-700">

@@ -1,71 +1,86 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, MapPin, MessageCircle, Youtube } from "lucide-react";
-import Logo from "./Logo";
+import type { CSSProperties } from "react";
+import { ArrowUp } from "lucide-react";
 import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
-
+import { asset } from "@/global/lib/asset";
 
 // The parent site. On the group domain "/" is the group home; override for other setups.
 const GROUP_URL = process.env.NEXT_PUBLIC_GROUP_URL || "/";
-// Dark inset footer card with a large contact line (reference design).
+
+const mark = asset("/brand/mark-cream.png");
+const markStyle = {
+  maskImage: `url(${mark})`,
+  WebkitMaskImage: `url(${mark})`,
+  maskSize: "contain",
+  WebkitMaskSize: "contain",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+  maskPosition: "center",
+  WebkitMaskPosition: "center",
+} as CSSProperties;
+
+// Dark pine footer: the mark, the reservations number set huge in the display serif, then address,
+// links and social in small expanded capitals.
 export default function SiteFooter() {
   const { data: p } = usePropertyQuery();
   const phone = p?.contact.phone ?? "042-111-111-744";
+  const socials = p
+    ? [
+        { href: p.contact.social.instagram, label: "Instagram" },
+        { href: p.contact.social.facebook, label: "Facebook" },
+        { href: p.contact.social.youtube, label: "YouTube" },
+        { href: p.contact.social.linkedin, label: "LinkedIn" },
+      ]
+    : [];
+
   return (
-    <footer className="panel relative mb-2.5 mt-16 bg-ink text-white/80 sm:mb-4 lg:mb-6">
-      <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" viewBox="0 0 800 400" preserveAspectRatio="none">
-        <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#d6c09c" strokeWidth="1" />
-        <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#d6c09c" strokeWidth="1" />
-      </svg>
-      <div className="container-page relative py-14">
-        <div className="grid gap-10 md:grid-cols-[1fr_auto_1fr]">
+    <footer data-theme="dark" className="relative bg-pine text-bone">
+      <div className="container-page flex flex-col items-center pb-10 pt-24 text-center sm:pt-32">
+        <span aria-hidden className="block h-12 w-9 bg-sky" style={markStyle} />
+        <p className="caps mt-8 text-sky">Reservations</p>
+        <a
+          href={`tel:${phone.replace(/[^0-9+]/g, "")}`}
+          className="mt-4 block font-display text-[3.4rem] leading-none text-bone transition hover:text-sky sm:text-[7rem] lg:text-[10rem]"
+        >
+          {phone}
+        </a>
+        <p className="caps mt-8 max-w-sm leading-relaxed text-bone/80">{p?.address ?? "Kala Bagh Air Base Road, Nathia Gali"}</p>
+        {p && <p className="caps mt-2 text-bone/60">WhatsApp {p.contact.whatsapp}</p>}
+
+        <div className="mt-20 grid w-full gap-10 border-t border-bone/15 pt-10 text-left sm:grid-cols-3">
           <nav aria-label="Footer">
-            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Quick links</p>
-            <ul className="mt-3 space-y-0.5 text-sm">
-              <li><Link className="inline-block py-1.5 hover:text-lime" href="/rooms">Apartments & rates</Link></li>
-              <li><Link className="inline-block py-1.5 hover:text-lime" href="/amenities">Amenities</Link></li>
-              <li><Link className="inline-block py-1.5 hover:text-lime" href="/floor-plans">Floor plans</Link></li>
-              <li><Link className="inline-block py-1.5 hover:text-lime" href="/manage">Manage a booking</Link></li>
-              <li><Link className="inline-block py-1.5 hover:text-lime" href="/account">My account</Link></li>
+            <p className="caps text-sky">Stay</p>
+            <ul className="mt-4 space-y-2 text-sm text-bone/80">
+              <li><Link className="hover:text-bone" href="/rooms">Apartments & rates</Link></li>
+              <li><Link className="hover:text-bone" href="/amenities">Amenities</Link></li>
+              <li><Link className="hover:text-bone" href="/floor-plans">Floor plans</Link></li>
+              <li><Link className="hover:text-bone" href="/manage">Manage a booking</Link></li>
+              <li><Link className="hover:text-bone" href="/account">My account</Link></li>
               {/* Plain <a>: the group site sits outside this app's /booking base path. */}
-              <li><a className="inline-block py-1.5 hover:text-lime" href={GROUP_URL}>Serene Heights Group ↗</a></li>
+              <li><a className="hover:text-bone" href={GROUP_URL}>Serene Heights Group ↗</a></li>
             </ul>
           </nav>
-          <div className="flex flex-col items-start md:items-center md:text-center">
-            <Logo tone="cream" />
-            <p className="mt-4 max-w-xs text-sm text-white/60">Fully furnished hotel apartments at 7,906 ft. Developed by {p?.developer ?? "DM Consortium"}.</p>
-          </div>
-          <div className="md:justify-self-end">
-            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Social</p>
-            <ul className="mt-3 space-y-0.5 text-sm">
-              {p &&
-                [
-                  { href: p.contact.social.instagram, Icon: Instagram, label: "Instagram" },
-                  { href: p.contact.social.facebook, Icon: Facebook, label: "Facebook" },
-                  { href: p.contact.social.youtube, Icon: Youtube, label: "YouTube" },
-                  { href: p.contact.social.linkedin, Icon: Linkedin, label: "LinkedIn" },
-                ].map(({ href, Icon, label }) => (
-                  <li key={label}>
-                    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 py-1.5 hover:text-lime">
-                      <Icon className="h-4 w-4" /> {label}
-                    </a>
-                  </li>
-                ))}
+          <div>
+            <p className="caps text-sky">Follow</p>
+            <ul className="mt-4 space-y-2 text-sm text-bone/80">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a href={s.href} target="_blank" rel="noreferrer" className="hover:text-bone">{s.label}</a>
+                </li>
+              ))}
             </ul>
           </div>
-        </div>
-
-        <div className="mt-14 border-t border-white/10 pt-10">
-          <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Reservations</p>
-          <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="mt-3 block font-display text-4xl text-white transition hover:text-lime sm:text-7xl">
-            {phone}
-          </a>
-          <div className="mt-6 flex flex-col gap-2 text-sm sm:flex-row sm:gap-8">
-            <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-lime" />{p?.address ?? "Kala Bagh Air Base Road, Nathia Gali"}</span>
-            {p && <span className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-lime" />WhatsApp {p.contact.whatsapp}</span>}
+          <div className="flex flex-col items-start justify-between gap-6 sm:items-end">
+            <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="caps flex items-center gap-2 hover:text-sky">
+              To top <ArrowUp className="h-3.5 w-3.5" />
+            </button>
+            <p className="text-xs text-bone/50 sm:text-right">
+              Developed by {p?.developer ?? "DM Consortium"}.
+              <br />© {new Date().getFullYear()} Serene Heights Nathia Gali · Prices in Pakistani rupees.
+            </p>
           </div>
-          <p className="mt-8 text-xs text-white/40">© {new Date().getFullYear()} Serene Heights Nathia Gali · Prices in Pakistani rupees.</p>
         </div>
       </div>
     </footer>

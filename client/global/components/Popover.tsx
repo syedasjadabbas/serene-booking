@@ -10,12 +10,15 @@ export default function Popover({
   children,
   className,
   align = "left",
+  side = "bottom",
 }: {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
   className?: string;
   align?: "left" | "right";
+  /** Open below (default) or above the trigger, e.g. for a search bar at the bottom of a full-screen hero. */
+  side?: "bottom" | "top";
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -39,7 +42,8 @@ export default function Popover({
       ref={ref}
       role="dialog"
       className={cn(
-        "absolute top-full z-50 mt-2 rounded-2xl border border-zinc-200 bg-white p-4 text-zinc-800 shadow-pop",
+        "absolute z-50 rounded-2xl border border-ink/10 bg-white p-4 text-ink shadow-pop",
+        side === "top" ? "bottom-full mb-2" : "top-full mt-2",
         align === "right" ? "right-0" : "left-0",
         className
       )}

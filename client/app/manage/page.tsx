@@ -49,7 +49,7 @@ export default function ManagePage() {
             </p>
           </Reveal>
         </div>
-        <Reveal from="right" className="lg:sticky lg:top-24">
+        <Reveal from="right" className="lg:sticky lg:top-28">
           <LookupForm />
         </Reveal>
       </section>

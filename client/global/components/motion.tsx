@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
+import { Children, Fragment, useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { cn } from "@/global/lib/cn";
 
 // Lightweight motion primitives (no animation library). All respect prefers-reduced-motion:
@@ -330,13 +330,16 @@ export function RevealWords({ text, className, delay = 0, as: Tag = "span" }: { 
     <Tag ref={ref} className={cn(inView && "words-in", className)} style={{ "--d": `${delay}ms` } as CSSProperties}>
       <span className="sr-only">{text}</span>
       <span aria-hidden>
+        {/* The space goes between the masks: inside an inline-block a trailing space collapses away. */}
         {words.map((w, i) => (
-          <span key={i} className="word-mask">
-            <span className="word" style={{ "--w": i } as CSSProperties}>
-              {w}
+          <Fragment key={i}>
+            <span className="word-mask">
+              <span className="word" style={{ "--w": i } as CSSProperties}>
+                {w}
+              </span>
             </span>
             {i < words.length - 1 && " "}
-          </span>
+          </Fragment>
         ))}
       </span>
     </Tag>
@@ -483,6 +486,43 @@ export function ScrollDrift({ children, className, speed = 0.2 }: { children: Re
   }, [speed]);
   return (
     <div ref={ref} className={cn("will-change-transform", className)}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Scales its content from `from` to `to` as it scrolls up into view (e.g. the arch that rises over the
+ * hero, widening as it comes). Transform only, rAF-throttled; static at `to` with reduced motion.
+ */
+export function ScrollScale({ children, className, from = 0.82, to = 1, origin = "50% 100%" }: { children: ReactNode; className?: string; from?: number; to?: number; origin?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reducedMotion()) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.85)));
+      const eased = 1 - Math.pow(1 - p, 2);
+      el.style.transform = `scale(${(from + (to - from) * eased).toFixed(4)})`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [from, to]);
+  return (
+    <div ref={ref} className={cn("will-change-transform", className)} style={{ transformOrigin: origin }}>
       {children}
     </div>
   );
