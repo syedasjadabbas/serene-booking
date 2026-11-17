@@ -50,11 +50,12 @@ export default function HomeFeature() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/20" />
       <div className="container-page grid min-h-[600px] gap-10 py-16 lg:grid-cols-[1fr_340px] lg:items-center">
         <Reveal from="left" className="text-white">
-          <h2 className="max-w-lg text-3xl font-bold leading-tight text-white sm:text-5xl">Pakistan&apos;s First Winter Resort, Open All Year</h2>
+          <p className="text-[11px] font-medium uppercase tracking-[0.35em] text-lime">Experiences</p>
+          <h2 className="mt-4 max-w-lg text-[2.1rem] leading-[1.1] text-white sm:text-[3.4rem]">Pakistan&apos;s First Winter Resort, Open All Year</h2>
           <p className="mt-4 max-w-md text-sm text-white/80 sm:text-base">
             Heated infinity pool, sauna and massage, rooftop dining, zipline, mini golf and stargazing, all a short walk from your apartment.
           </p>
-          <p key={`cap-${active}`} className="fade-up mt-8 text-xs font-semibold uppercase tracking-widest text-lime">{ordered[active]?.title}</p>
+          <p key={`cap-${active}`} className="fade-up mt-8 font-display text-xl text-lime">{ordered[active]?.title}</p>
           <div className="mt-3 flex flex-wrap gap-2.5">
             {ordered.map((s, i) => (
               <button
@@ -73,14 +74,14 @@ export default function HomeFeature() {
         {featured && (
           <Reveal from="right" delay={150}>
           <Tilt max={6}>
-          <div className="rounded-3xl bg-white p-3 shadow-pop">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+          <div className="rounded-[10px] bg-white p-3 shadow-pop">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[6px]">
               <Image src={asset(featured.images[0])} alt={featured.name} fill sizes="340px" className="object-cover" />
             </div>
             <div className="px-2 pb-2 pt-4">
-              <p className="font-bold text-ink">{featured.name} – Nathia Gali</p>
+              <p className="font-display text-xl text-ink">{featured.name}</p>
               <p className="mt-0.5 text-sm text-zinc-500">{featured.tagline}</p>
-              <p className="mt-3 text-xl font-bold text-ink">
+              <p className="mt-3 font-display text-2xl text-ink">
                 {money(featured.baseRate)}
                 <span className="text-sm font-medium text-zinc-500">/night</span>
               </p>

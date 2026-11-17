@@ -33,7 +33,7 @@ export default function SiteHeader() {
               key={n.href}
               href={n.href}
               className={cn(
-                "rounded-full px-3.5 py-2 text-sm font-medium transition",
+                "rounded-full px-3.5 py-2 text-[13px] font-medium uppercase tracking-[0.14em] transition",
                 overlay ? "text-white/90 hover:bg-white/15 hover:text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-ink",
                 !overlay && pathname.startsWith(n.href) && "bg-mist text-ink"
               )}
@@ -43,8 +43,11 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/manage" className={cn("hidden rounded-full px-3.5 py-2 text-sm font-medium sm:block", overlay ? "text-white/90 hover:bg-white/15" : "text-zinc-600 hover:bg-zinc-100")}>
+          <Link href="/manage" className={cn("hidden rounded-full px-3.5 py-2 text-[13px] font-medium uppercase tracking-[0.14em] xl:block", overlay ? "text-white/90 hover:bg-white/15" : "text-zinc-600 hover:bg-zinc-100")}>
             Find booking
+          </Link>
+          <Link href="/rooms" className={cn("hidden md:inline-flex", overlay ? "btn-outline-light px-5 py-2.5" : "btn-gold px-5 py-2.5")}>
+            Book now
           </Link>
           <AccountMenu />
           <button className={cn("rounded-full p-2.5 lg:hidden", overlay ? "text-white hover:bg-white/15" : "text-zinc-700 hover:bg-zinc-100")} onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Menu">

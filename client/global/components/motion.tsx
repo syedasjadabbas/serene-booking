@@ -71,8 +71,8 @@ type RevealProps = {
   className?: string;
   /** Delay in ms before the reveal starts. */
   delay?: number;
-  /** up (default) | left | right | zoom | none (fade only) */
-  from?: "up" | "left" | "right" | "zoom" | "none";
+  /** up (default) | left | right | zoom | clip (curtain wipe for photos) | none (fade only) */
+  from?: "up" | "left" | "right" | "zoom" | "clip" | "none";
   style?: CSSProperties;
   id?: string;
 };
@@ -316,5 +316,174 @@ export function SplitLines({ lines, className, lineClassName, baseDelay = 0 }: {
         </span>
       ))}
     </span>
+  );
+}
+
+/**
+ * Headline that rises in word by word (each word slides up out of a mask) when it scrolls into view.
+ * Screen readers get the plain sentence.
+ */
+export function RevealWords({ text, className, delay = 0, as: Tag = "span" }: { text: string; className?: string; delay?: number; as?: ElementType }) {
+  const { ref, inView } = useInView<HTMLElement>();
+  const words = text.split(/\s+/);
+  return (
+    <Tag ref={ref} className={cn(inView && "words-in", className)} style={{ "--d": `${delay}ms` } as CSSProperties}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden>
+        {words.map((w, i) => (
+          <span key={i} className="word-mask">
+            <span className="word" style={{ "--w": i } as CSSProperties}>
+              {w}
+            </span>
+            {i < words.length - 1 && " "}
+          </span>
+        ))}
+      </span>
+    </Tag>
+  );
+}
+
+/**
+ * Gives its children a sense of depth: as the mouse moves over the page, it eases --px/--py (-1…1)
+ * on itself, and any descendant with class `depth` (and its own --depth distance) drifts by that much.
+ * Layers with larger --depth move further, so they read as nearer. Mouse/trackpad only; off for reduced motion.
+ */
+export function PointerDepth({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reducedMotion() || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    let tx = 0;
+    let ty = 0;
+    let x = 0;
+    let y = 0;
+    let raf = 0;
+    const tick = () => {
+      x += (tx - x) * 0.08;
+      y += (ty - y) * 0.08;
+      el.style.setProperty("--px", x.toFixed(4));
+      el.style.setProperty("--py", y.toFixed(4));
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.001 ? requestAnimationFrame(tick) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth) * 2 - 1;
+      ty = (e.clientY / window.innerHeight) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Horizontal gallery that is driven by vertical scrolling on desktop: the section pins while the track
+ * slides sideways, then the page carries on. On touch screens, narrow windows and with reduced motion it
+ * is an ordinary swipeable row with snap points instead.
+ */
+export function HorizontalScroll({ children, className, trackClassName }: { children: ReactNode; className?: string; trackClassName?: string }) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [pinned, setPinned] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)");
+    const update = () => setPinned(mq.matches && !reducedMotion());
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const outer = outerRef.current;
+    const track = trackRef.current;
+    if (!pinned || !outer || !track) return;
+    let travel = 0;
+    let top = 0;
+    let raf = 0;
+    let current = -1;
+    const measure = () => {
+      travel = Math.max(0, track.scrollWidth - window.innerWidth);
+      outer.style.height = `${window.innerHeight + travel}px`;
+      top = outer.getBoundingClientRect().top + window.scrollY;
+    };
+    const tick = () => {
+      const target = Math.min(travel, Math.max(0, window.scrollY - top));
+      current = current < 0 ? target : current + (target - current) * 0.14;
+      if (Math.abs(target - current) < 0.4) current = target;
+      track.style.transform = `translate3d(${(-current).toFixed(1)}px, 0, 0)`;
+      raf = current === target ? 0 : requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+    measure();
+    tick();
+    const ro = new ResizeObserver(onResize);
+    ro.observe(track);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      outer.style.height = "";
+      track.style.transform = "";
+    };
+  }, [pinned]);
+
+  return (
+    <div ref={outerRef} className={cn("relative", className)}>
+      <div className={cn(pinned ? "sticky top-0 flex h-screen items-center overflow-hidden" : "overflow-x-auto overscroll-x-contain [scrollbar-width:none] snap-x snap-mandatory")}>
+        <div ref={trackRef} className={cn("flex w-max will-change-transform", trackClassName)}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Slides its content sideways as the page scrolls past (for image rows that drift in opposite directions). */
+export function ScrollDrift({ children, className, speed = 0.2 }: { children: ReactNode; className?: string; speed?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reducedMotion()) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
+      const offset = (r.top + r.height / 2 - window.innerHeight / 2) * speed;
+      el.style.transform = `translate3d(${offset.toFixed(1)}px, 0, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [speed]);
+  return (
+    <div ref={ref} className={cn("will-change-transform", className)}>
+      {children}
+    </div>
   );
 }

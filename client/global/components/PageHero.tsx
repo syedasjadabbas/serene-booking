@@ -37,7 +37,7 @@ export default function PageHero({
           <Image src={asset(image)} alt={imageAlt} fill priority sizes="100vw" className="object-cover" />
         </div>
       </Parallax>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-ink/85 via-ink/45 to-ink/10" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-ink/85 via-ink/50 to-ink/20" />
       <div className={cn("container-page flex flex-col justify-end text-white", size === "sm" ? "min-h-[300px] py-10" : "min-h-[440px] py-12 sm:min-h-[480px]")}>
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="fade-up mb-5 inline-flex w-fit flex-wrap items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs text-white/85 ring-1 ring-white/20">
@@ -50,8 +50,8 @@ export default function PageHero({
             ))}
           </nav>
         )}
-        {eyebrow && <p className="fade-up text-xs font-semibold uppercase tracking-[0.25em] text-lime" style={{ animationDelay: "100ms" }}>{eyebrow}</p>}
-        <h1 className="mt-2 max-w-3xl text-4xl font-bold leading-[1.08] text-white sm:text-6xl">
+        {eyebrow && <p className="fade-up text-[11px] font-medium uppercase tracking-[0.35em] text-lime" style={{ animationDelay: "100ms" }}>{eyebrow}</p>}
+        <h1 className="mt-3 max-w-3xl text-[2.6rem] leading-[1.05] text-white sm:text-7xl">
           <SplitLines lines={title.split("\n")} baseDelay={150} />
         </h1>
         {subtitle && <p className="fade-up mt-4 max-w-xl text-sm text-white/80 sm:text-base" style={{ animationDelay: "450ms" }}>{subtitle}</p>}

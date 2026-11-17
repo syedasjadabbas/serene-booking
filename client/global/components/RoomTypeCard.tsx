@@ -40,7 +40,7 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col overflow-hidden rounded-[28px] bg-white shadow-card ring-1 ring-ink/[0.06] transition duration-500 hover:-translate-y-1 hover:shadow-pop hover:ring-brand-300/60"
+      className="group flex h-full flex-col overflow-hidden rounded-[10px] bg-white shadow-card ring-1 ring-ink/[0.06] transition duration-500 hover:-translate-y-1 hover:shadow-pop hover:ring-brand-300/60"
     >
       {/* Photo with the name on it */}
       <div className={cn("relative overflow-hidden bg-brand-100", wide ? "aspect-[16/10] sm:aspect-[16/8]" : "aspect-[4/3.4]")}>
@@ -72,7 +72,7 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
         </div>
 
         <div className="absolute inset-x-5 bottom-5">
-          <h3 className="text-xl font-bold leading-tight tracking-tight text-white sm:text-2xl">{type.name}</h3>
+          <h3 className="text-2xl leading-tight text-white sm:text-[1.7rem]">{type.name}</h3>
           <p className="mt-1 line-clamp-1 text-sm text-white/80">{type.tagline}</p>
         </div>
       </div>

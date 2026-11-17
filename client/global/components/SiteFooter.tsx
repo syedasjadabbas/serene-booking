@@ -15,13 +15,13 @@ export default function SiteFooter() {
   return (
     <footer className="panel relative mb-2.5 mt-16 bg-ink text-white/80 sm:mb-4 lg:mb-6">
       <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" viewBox="0 0 800 400" preserveAspectRatio="none">
-        <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#a9c7b8" strokeWidth="1" />
-        <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#a9c7b8" strokeWidth="1" />
+        <path d="M0 260 C 220 140, 360 330, 560 210 S 760 90, 800 130" fill="none" stroke="#d6c09c" strokeWidth="1" />
+        <path d="M0 340 C 160 280, 380 380, 600 300 S 780 250, 800 270" fill="none" stroke="#d6c09c" strokeWidth="1" />
       </svg>
       <div className="container-page relative py-14">
         <div className="grid gap-10 md:grid-cols-[1fr_auto_1fr]">
           <nav aria-label="Footer">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Quick links</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Quick links</p>
             <ul className="mt-3 space-y-0.5 text-sm">
               <li><Link className="inline-block py-1.5 hover:text-lime" href="/rooms">Apartments & rates</Link></li>
               <li><Link className="inline-block py-1.5 hover:text-lime" href="/amenities">Amenities</Link></li>
@@ -37,7 +37,7 @@ export default function SiteFooter() {
             <p className="mt-4 max-w-xs text-sm text-white/60">Fully furnished hotel apartments at 7,906 ft. Developed by {p?.developer ?? "DM Consortium"}.</p>
           </div>
           <div className="md:justify-self-end">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Social</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Social</p>
             <ul className="mt-3 space-y-0.5 text-sm">
               {p &&
                 [
@@ -57,8 +57,8 @@ export default function SiteFooter() {
         </div>
 
         <div className="mt-14 border-t border-white/10 pt-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Reservations</p>
-          <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="mt-2 block text-4xl font-bold tracking-tight text-white hover:text-lime sm:text-6xl">
+          <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-lime">Reservations</p>
+          <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="mt-3 block font-display text-4xl text-white transition hover:text-lime sm:text-7xl">
             {phone}
           </a>
           <div className="mt-6 flex flex-col gap-2 text-sm sm:flex-row sm:gap-8">

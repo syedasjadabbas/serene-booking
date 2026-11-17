@@ -73,8 +73,8 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
       onSubmit={submit}
       className={cn(
         "relative grid gap-1.5 bg-white text-ink",
-        hero && "rounded-3xl p-2 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
-        variant === "bar" && "rounded-3xl border border-zinc-200 p-1.5 shadow-card md:grid-cols-[1.4fr_1fr_auto] md:items-center",
+        hero && "rounded-[6px] p-2 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
+        variant === "bar" && "rounded-[6px] border border-ink/10 p-1.5 shadow-card md:grid-cols-[1.4fr_1fr_auto] md:items-center",
         panel && "grid-cols-1 gap-2"
       )}
       aria-label="Search availability"
@@ -84,8 +84,8 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
           <FieldIcon><Navigation className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[11px] font-medium text-zinc-500">Where</span>
-            <span className="block truncate text-sm font-semibold">Nathia Gali, Pakistan</span>
+            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Where</span>
+            <span className="block truncate font-display text-[15px] text-ink">Nathia Gali, Pakistan</span>
           </span>
         </div>
       )}
@@ -100,10 +100,10 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         >
           <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[11px] font-medium text-zinc-500">Check-in — Check-out</span>
-            <span className="block truncate text-sm font-semibold">
+            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Check-in — Check-out</span>
+            <span className="block truncate font-display text-[15px] text-ink">
               {format(parseISO(stay.checkIn), "EEE d MMM")} — {format(parseISO(stay.checkOut), "EEE d MMM")}
-              <span className="ml-2 font-normal text-zinc-500">{plural(nights, "night")}</span>
+              <span className="ml-2 font-sans text-sm font-light text-zinc-500">{plural(nights, "night")}</span>
             </span>
           </span>
         </button>
@@ -136,8 +136,8 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         >
           <FieldIcon><Users className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
-            <span className="block text-[11px] font-medium text-zinc-500">Guests & apartments</span>
-            <span className="block truncate text-sm font-semibold">
+            <span className="block text-[10px] font-medium uppercase tracking-[0.22em] text-gold">Guests & apartments</span>
+            <span className="block truncate font-display text-[15px] text-ink">
               {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apt", "apts")}
             </span>
           </span>
@@ -166,7 +166,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
 }
 
 function FieldIcon({ children }: { children: React.ReactNode }) {
-  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-mist text-brand-700">{children}</span>;
+  return <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-gold/35 text-gold">{children}</span>;
 }
 
 function Stepper({ label, hint, value, min, max, onChange }: { label: string; hint?: string; value: number; min: number; max: number; onChange: (v: number) => void }) {

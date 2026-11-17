@@ -12,14 +12,15 @@ export default function HomeLocation() {
     <section className="container-page grid gap-10 py-20 lg:grid-cols-2 lg:items-center">
       <div>
         <Reveal>
-          <h2 className="section-title">In the Heart of the Galiyat</h2>
+          <p className="eyebrow">Location</p>
+          <h2 className="section-title mt-4">In the Heart of the Galiyat</h2>
           <p className="mt-3 flex gap-2 text-zinc-600">
-            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" /> {p.address}
+            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-gold" /> {p.address}
           </p>
         </Reveal>
         <Stagger as="ul" itemAs="li" className="mt-6 space-y-2" step={70}>
           {p.distances.map((d) => (
-            <div key={d.place} className="flex items-center justify-between gap-4 rounded-2xl bg-mist px-4 py-3 text-sm transition hover:translate-x-1 hover:bg-lime-soft">
+            <div key={d.place} className="flex items-center justify-between gap-4 border-b border-ink/10 px-1 py-3.5 text-sm transition hover:translate-x-1 hover:text-gold-dark">
               <span className="font-medium text-ink">{d.place}</span>
               <span className="flex items-center gap-2 text-zinc-600">
                 {d.drive && <Car className="h-4 w-4" />}
@@ -33,7 +34,7 @@ export default function HomeLocation() {
           <Link href="/contact" className="btn-dark mt-6">Directions & contact</Link>
         </Reveal>
       </div>
-      <Reveal from="right" className="overflow-hidden rounded-3xl bg-zinc-100 shadow-card">
+      <Reveal from="clip" className="overflow-hidden rounded-[6px] bg-sand shadow-card">
         <iframe
           title="Map of Serene Heights Nathia Gali"
           src={`https://maps.google.com/maps?q=${encodeURIComponent(p.mapsQuery)}&z=13&output=embed`}

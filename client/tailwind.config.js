@@ -23,26 +23,34 @@ module.exports = {
           900: "#0f241e", // group night
         },
         cream: { DEFAULT: "#f3f1ec", dark: "#e7e3da" }, // logo cream
-        gold: { DEFAULT: "#b8955a", light: "#e9dcc3" },
-        // Soft accent (kept under the name "lime" so existing classes keep working): the group's sage green
-        // for highlights on dark panels; deep ink for text/dark panels; soft mist sections.
-        lime: { DEFAULT: "#a9c7b8", dark: "#93b8a6", soft: "#dfece4" },
+        // Classic-luxury accents: bronze for eyebrows, stars and fine lines on light backgrounds…
+        gold: { DEFAULT: "#ab8965", light: "#e8dccb", dark: "#8a6b4b" },
+        // …and champagne for highlights on dark panels (kept under the name "lime" so existing classes keep working).
+        lime: { DEFAULT: "#d6c09c", dark: "#c2a77d", soft: "#f1e8da" },
+        ivory: "#faf7f2", // page background
+        sand: "#efe7da", // warm section background
         // Buttons and solid accents: the dark green of the Serene Heights Group site (its --night section colour)
         pine: { DEFAULT: "#0f241e", hover: "#284840" },
         ink: "#0f1f1b",
-        mist: "#ecf2ee",
+        mist: "#f4efe7", // soft warm panels
       },
       fontFamily: {
+        // Jost for text (it is also the Serene Heights logo lettering); Marcellus, a classic inscriptional
+        // serif, for headings.
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-sans)", "system-ui", "sans-serif"],
-        logo: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
+        display: ["var(--font-serif)", "Georgia", "serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        logo: ["var(--font-sans)", "sans-serif"],
       },
+      // Calmer, more architectural corners than the default scale.
       borderRadius: {
-        "4xl": "2rem",
+        "2xl": "0.75rem",
+        "3xl": "1rem",
+        "4xl": "1.25rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(24,24,27,0.04), 0 4px 16px rgba(24,24,27,0.06)",
-        pop: "0 12px 40px rgba(24,24,27,0.16)",
+        card: "0 1px 2px rgba(43,33,20,0.04), 0 6px 20px rgba(43,33,20,0.06)",
+        pop: "0 18px 50px rgba(43,33,20,0.18)",
       },
     },
   },
