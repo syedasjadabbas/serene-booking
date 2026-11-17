@@ -74,8 +74,18 @@ Administration (rates, inventory, booking operations) lives in **Serene Manageme
 
 ### Experience
 
-- **Design:** inset rounded hero panels, pill-shaped controls, Plus Jakarta Sans, a forest-green and lime palette taken from the Serene Heights brand.
-- **Motion:** scroll reveals, staggered grids, 3D pointer-tilt cards, parallax and slow-zoom imagery, count-up stats, page transitions. All hand-built (no animation library) and all switched off for users who prefer reduced motion.
+- **Design:** classic luxury, inspired by the Almaris hotel theme.
+  - Type: Marcellus serif headings with Jost text (the Serene Heights logo lettering).
+  - Colour: the group's pine green with bronze and champagne accents on warm ivory.
+  - Shapes: arch-framed photos, hairline dividers and editorial guide lines, small-caps buttons and calm corners.
+- **Home page:** sections in this order:
+  - A hero that insets into a framed card as you scroll, with layered depth that follows the mouse.
+  - A welcome statement between two drifting arch photos.
+  - A pinned horizontal gallery of apartment cards on desktop (a swipeable row on phones).
+  - A facilities grid whose photos fade in on hover.
+  - A reviews panel.
+  - Photo strips that slide in opposite directions as you scroll.
+- **Motion:** word-by-word headline reveals, curtain-wipe photo reveals, scroll reveals and staggered grids, 3D pointer-tilt cards, parallax and slow-zoom imagery, count-up stats, page transitions and a bronze cursor ring on desktop. It is all hand-built in `global/components/motion.tsx` and `Cursor.tsx`, with no animation library. Touch screens get lighter versions, and everything switches off for users who prefer reduced motion.
 - **Responsive:** checked at 320 px, 375 px and desktop widths, with no horizontal overflow.
 
 ---
@@ -342,11 +352,11 @@ serene-booking/
 │   │   └── amenities/ floor-plans/ contact/
 │   ├── global/
 │   │   ├── api/                    # baseApi, endpoints/<feature>Api.ts, types
-│   │   ├── components/             # SearchBar, PriceCalendar, PageHero, Lightbox, motion …
+│   │   ├── components/             # SearchBar, PriceCalendar, PageHero, Lightbox, motion, Cursor …
 │   │   ├── lib/  stores/  constants/
 │   └── public/
 │       ├── brand/                  # Official logo & mark
-│       └── images/                 # resort/ dining/ activities/ floor-plans/
+│       └── images/                 # resort/ dining/ activities/ interiors/ floor-plans/
 │
 └── server/                         # Express API
     ├── app.js  server.js
@@ -440,7 +450,7 @@ cd client && npm run typecheck        # TypeScript
 
 - **Content sources:**
   - Property content comes from the official site, [sereneheightsnathiagali.com](https://www.sereneheightsnathiagali.com/nathiagali).
-  - Imagery comes from the official Serene Heights 3D renders and animation frames.
+  - Imagery comes from the official Serene Heights 3D renders and animation frames, plus photos of the apartment interiors.
   - Apartments and areas are transcribed from the published floor plans (`server/prisma/inventory.js`).
 
 The following are **sensible defaults awaiting confirmation** from Serene Heights management:
