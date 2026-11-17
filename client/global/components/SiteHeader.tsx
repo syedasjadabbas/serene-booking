@@ -102,7 +102,7 @@ export default function SiteHeader() {
           aria-label="Serene Heights Nathia Gali, home"
           className={cn(
             "pointer-events-auto absolute left-4 grid place-items-center sm:left-7",
-            home ? "top-4 h-[76px] w-[76px] sm:top-7 sm:h-[92px] sm:w-[92px]" : "top-[10px] h-16 w-16"
+            home ? "chrome-badge top-4 h-[76px] w-[76px] sm:top-7 sm:h-[92px] sm:w-[92px]" : "top-[10px] h-16 w-16"
           )}
         >
           <svg ref={badgeRef} viewBox="0 0 100 100" className="absolute inset-0 h-full w-full will-change-transform" aria-hidden>
@@ -126,10 +126,10 @@ export default function SiteHeader() {
           aria-label="Main"
           className={cn(
             "pointer-events-auto absolute right-4 flex text-right sm:right-7",
-            home ? "top-5 flex-col items-end gap-3 sm:top-8 sm:gap-7" : "top-0 h-[84px] items-center gap-8"
+            home ? "chrome-fade top-5 flex-col items-end gap-3 sm:top-8 sm:gap-7" : "top-0 h-[84px] items-center gap-8"
           )}
         >
-          <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.45rem]" : "text-xl")}>
+          <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.45rem] !leading-[1.4]" : "text-xl")}>
             Select
             {home ? <br /> : " "}
             an apartment
@@ -150,7 +150,7 @@ export default function SiteHeader() {
 
         {/* Scroll gauge */}
         {/* Scroll gauge: the 0–100 counter, "Scroll" set vertically, and a line that fills as you go and ends in an arrow */}
-        <div className="absolute bottom-6 left-[34px] hidden flex-col items-center gap-4 sm:left-[52px] sm:flex" aria-hidden>
+        <div className={cn("absolute bottom-6 left-[34px] hidden flex-col items-center gap-4 sm:left-[52px] sm:flex", home && "chrome-fade")} aria-hidden>
           <span ref={countRef} className="caps w-8 text-center tabular-nums">00</span>
           <span className="caps [writing-mode:vertical-rl] rotate-180 tracking-[0.18em]">Scroll</span>
           <span className="relative flex flex-col items-center">

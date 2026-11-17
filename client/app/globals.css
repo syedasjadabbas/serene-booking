@@ -429,3 +429,18 @@ html { scroll-behavior: smooth; overflow-x: clip; }
   .roll > span, .circle-arc { transition: none !important; }
   .panel-in { animation: none !important; }
 }
+
+/* Home splash: the badge starts in the centre of the screen (a little larger) and glides to its corner as
+   --intro-logo goes 0 → 1; the top-right links and the scroll gauge fade in with --intro-nav (EraHero sets both). */
+.chrome-badge {
+  --bx: calc(50vw - 16px - 38px);
+  --by: calc(50svh - 16px - 38px);
+  transform: translate3d(calc((1 - var(--intro-logo, 1)) * var(--bx)), calc((1 - var(--intro-logo, 1)) * var(--by)), 0) scale(calc(1 + (1 - var(--intro-logo, 1)) * 0.5));
+  transform-origin: center;
+  will-change: transform;
+}
+@media (min-width: 640px) {
+  .chrome-badge { --bx: calc(50vw - 28px - 46px); --by: calc(50svh - 28px - 46px); }
+}
+.chrome-fade { opacity: var(--intro-nav, 1); }
+:root[data-intro-nav="off"] .chrome-fade { pointer-events: none; }

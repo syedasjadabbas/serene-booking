@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { DateRange } from "react-day-picker";
 import { format, parseISO } from "date-fns";
 import PriceCalendar from "./PriceCalendar";
-import { CalendarDays, Minus, Navigation, Plus, Search, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Minus, Plus, Search, Users } from "lucide-react";
 import Popover from "./Popover";
 import type { Stay } from "@/global/api/types";
 import { defaultStay, stayToQuery } from "@/global/lib/stay";
@@ -72,8 +72,9 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
     <form
       onSubmit={submit}
       className={cn(
-        "relative grid gap-1.5 bg-white text-ink",
-        hero && "rounded-none bg-bone p-1.5 shadow-pop md:grid-cols-[1.3fr_1fr_auto] md:items-center lg:grid-cols-[1fr_1.3fr_1fr_auto]",
+        "relative grid text-ink",
+        !hero && "gap-1.5 bg-white",
+        hero && "bg-bone/95 shadow-pop backdrop-blur-md md:grid-cols-[1.35fr_1fr_auto] lg:grid-cols-[0.95fr_1.35fr_1fr_auto]",
         variant === "bar" && "rounded-none border border-ink/15 p-1.5 md:grid-cols-[1.4fr_1fr_auto] md:items-center",
         panel && "grid-cols-1 gap-2"
       )}
@@ -81,11 +82,10 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
     >
       {/* Where: single property, shown for orientation like the reference design */}
       {hero && (
-        <div className="hidden items-center gap-3 rounded-2xl px-3 py-2 lg:flex">
-          <FieldIcon><Navigation className="h-4 w-4" /></FieldIcon>
+        <div className="hidden items-center px-6 py-4 lg:flex">
           <span className="min-w-0">
-            <span className="block caps text-ink/55">Where</span>
-            <span className="block truncate font-display text-lg leading-tight text-ink">Nathia Gali, Pakistan</span>
+            <span className="block caps whitespace-nowrap text-ink/50">Where</span>
+            <span className="mt-1.5 block truncate font-display text-xl leading-tight text-ink">Nathia Gali, Pakistan</span>
           </span>
         </div>
       )}
@@ -95,13 +95,17 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "dates" ? null : "dates"))}
-          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel && "border border-zinc-200", hero && "md:rounded-none lg:border-l lg:border-zinc-100 lg:pl-4")}
+          className={cn(
+            "flex w-full items-center gap-3 text-left hover:bg-ink/[0.04]",
+            hero ? "h-full px-6 py-4 lg:border-l lg:border-ink/10" : "rounded-2xl px-3 py-2",
+            panel && "border border-zinc-200"
+          )}
           aria-expanded={openPanel === "dates"}
         >
-          <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>
+          {!hero && <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>}
           <span className="min-w-0">
-            <span className="block caps text-ink/55">Check-in — Check-out</span>
-            <span className="block truncate font-display text-lg leading-tight text-ink">
+            <span className="block caps whitespace-nowrap text-ink/50">Check-in — Check-out</span>
+            <span className={cn("block truncate font-display leading-tight text-ink", hero ? "mt-1.5 text-xl" : "text-lg")}>
               {format(parseISO(stay.checkIn), "EEE d MMM")} — {format(parseISO(stay.checkOut), "EEE d MMM")}
               <span className="ml-2 font-sans text-sm font-light text-zinc-500">{plural(nights, "night")}</span>
             </span>
@@ -131,13 +135,17 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "guests" ? null : "guests"))}
-          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel ? "border border-zinc-200" : "md:rounded-none md:border-l md:border-zinc-100 md:pl-4")}
+          className={cn(
+            "flex w-full items-center gap-3 text-left hover:bg-ink/[0.04]",
+            hero ? "h-full border-t border-ink/10 px-6 py-4 md:border-l md:border-t-0" : "rounded-2xl px-3 py-2",
+            panel ? "border border-zinc-200" : !hero && "md:rounded-none md:border-l md:border-zinc-100 md:pl-4"
+          )}
           aria-expanded={openPanel === "guests"}
         >
-          <FieldIcon><Users className="h-4 w-4" /></FieldIcon>
+          {!hero && <FieldIcon><Users className="h-4 w-4" /></FieldIcon>}
           <span className="min-w-0">
-            <span className="block caps text-ink/55">Guests & apartments</span>
-            <span className="block truncate font-display text-lg leading-tight text-ink">
+            <span className="block caps whitespace-nowrap text-ink/50">{hero ? "Guests" : "Guests & apartments"}</span>
+            <span className={cn("block truncate font-display leading-tight text-ink", hero ? "mt-1.5 text-xl" : "text-lg")}>
               {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apt", "apts")}
             </span>
           </span>
@@ -158,9 +166,16 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         </Popover>
       </div>
 
-      <button type="submit" className={cn("btn-primary", hero ? "px-7 py-3.5" : "px-6 py-3")}>
-        <Search className="h-4 w-4" /> {submitLabel}
-      </button>
+      {hero ? (
+        <button type="submit" className="btn-primary group h-full gap-3 whitespace-nowrap px-8 py-5">
+          {submitLabel}
+          <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />
+        </button>
+      ) : (
+        <button type="submit" className="btn-primary px-6 py-3">
+          <Search className="h-4 w-4" /> {submitLabel}
+        </button>
+      )}
     </form>
   );
 }

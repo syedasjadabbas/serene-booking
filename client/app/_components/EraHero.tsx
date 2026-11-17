@@ -101,6 +101,12 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
         hole.style.height = `${(h0 * k).toFixed(1)}px`;
       }
       if (overlayRef.current) overlayRef.current.style.visibility = p >= 0.999 ? "hidden" : "visible";
+      // Site chrome during the splash: the badge starts centred and glides to its corner; the links fade in.
+      const root = document.documentElement;
+      root.style.setProperty("--intro-logo", clamp(p / 0.5).toFixed(4));
+      const nav = clamp((p - 0.35) / 0.35);
+      root.style.setProperty("--intro-nav", nav.toFixed(4));
+      root.dataset.introNav = nav > 0.5 ? "on" : "off";
       if (contentRef.current) {
         const o = clamp((p - 0.55) / 0.4);
         contentRef.current.style.opacity = o.toFixed(3);
@@ -126,11 +132,18 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      const root = document.documentElement;
+      root.style.removeProperty("--intro-logo");
+      root.style.removeProperty("--intro-nav");
+      delete root.dataset.introNav;
     };
   }, []);
 
   return (
     <>
+      {/* Server-rendered start state for the site chrome (badge centred, links hidden) so there's no jump on load;
+          it goes away with the home page. Reduced motion keeps the normal chrome. */}
+      <style>{`:root{--intro-logo:0;--intro-nav:0}@media (prefers-reduced-motion: reduce){:root{--intro-logo:1!important;--intro-nav:1!important}}`}</style>
       {/* Opening runway: the first hero screen stays pinned while the splash opens over it */}
       <div ref={runwayRef} className="intro-runway relative" style={{ height: `calc(${HERO_H} + ${INTRO_H})` }}>
         <div data-theme="dark" className="sticky top-0 overflow-hidden" style={{ height: HERO_H }}>

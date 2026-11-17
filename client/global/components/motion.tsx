@@ -543,6 +543,7 @@ export function ScrollRise({ children, className, innerClassName, rise = 35, spa
     if (!outer || !inner) return;
     if (reducedMotion()) {
       inner.style.transform = "none";
+      inner.style.setProperty("--rise", "1");
       return;
     }
     let raf = 0;
@@ -551,13 +552,15 @@ export function ScrollRise({ children, className, innerClassName, rise = 35, spa
       const vh = window.innerHeight;
       const top = outer.getBoundingClientRect().top;
       const p = Math.min(1, Math.max(0, (vh - top) / (vh * span)));
-      return 1 - Math.pow(1 - p, 2.2); // ease-out: quick to start, settles gently
+      return p * p * (3 - 2 * p); // smoothstep: eases in and out
     };
     const tick = () => {
       const t = target();
-      current = current < 0 ? t : current + (t - current) * 0.09;
-      if (Math.abs(t - current) < 0.0008) current = t;
-      inner.style.transform = `translate3d(0, ${((1 - current) * rise * window.innerHeight) / 100}px, 0)`;
+      current = current < 0 ? t : current + (t - current) * 0.075;
+      if (Math.abs(t - current) < 0.0005) current = t;
+      inner.style.transform = `translate3d(0, ${(((1 - current) * rise * window.innerHeight) / 100).toFixed(2)}px, 0)`;
+      // Children can follow the same eased progress (e.g. scale with it) via var(--rise): one value, in step.
+      inner.style.setProperty("--rise", current.toFixed(4));
       raf = current === t ? 0 : requestAnimationFrame(tick);
     };
     const onScroll = () => {
@@ -574,7 +577,7 @@ export function ScrollRise({ children, className, innerClassName, rise = 35, spa
   }, [rise, span]);
   return (
     <div ref={outerRef} className={className}>
-      <div ref={innerRef} className={cn("will-change-transform", innerClassName)} style={{ transform: `translate3d(0, ${rise}vh, 0)` }}>
+      <div ref={innerRef} className={cn("will-change-transform", innerClassName)} style={{ transform: `translate3d(0, ${rise}vh, 0)`, "--rise": 0 } as CSSProperties}>
         {children}
       </div>
     </div>

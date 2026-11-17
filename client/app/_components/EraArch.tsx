@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { Parallax, Reveal, RevealWords, ScrollRise, ScrollScale } from "@/global/components/motion";
+import { Parallax, Reveal, RevealWords, ScrollRise } from "@/global/components/motion";
 import { asset } from "@/global/lib/asset";
 import { ARCH_RISE, ARCH_TOP } from "./heroLayout";
 
@@ -44,9 +44,9 @@ const REASONS = [
 // its curve, followed by three numbered reasons to stay.
 export default function EraArch() {
   return (
-    <ScrollRise rise={ARCH_RISE} span={1.15} className="relative z-10 text-ink" innerClassName="relative">
+    <ScrollRise rise={ARCH_RISE} span={1.4} className="relative z-10 text-ink" innerClassName="relative">
     <section style={{ marginTop: ARCH_TOP }}>
-      <ScrollScale from={0.6} className="pointer-events-none relative">
+      <div className="pointer-events-none relative will-change-transform" style={{ transform: "scale(calc(0.6 + 0.4 * var(--rise, 1)))", transformOrigin: "50% 100%" }}>
         <svg viewBox="0 0 1000 420" className="block h-auto w-full" aria-hidden>
           <path d="M0 420 A500 420 0 0 1 1000 420 Z" fill="#B5CEDB" />
           <path id="arch-text" d="M90 420 A410 340 0 0 1 910 420" fill="none" />
@@ -56,7 +56,7 @@ export default function EraArch() {
             </textPath>
           </text>
         </svg>
-      </ScrollScale>
+      </div>
 
       <div className="-mt-px bg-sky pb-24 sm:pb-36">
         <div className="container-page flex flex-col items-center text-center">
