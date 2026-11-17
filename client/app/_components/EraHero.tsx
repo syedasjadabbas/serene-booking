@@ -63,8 +63,8 @@ function Scene({ season, offset = "0px", priority = false }: { season: Season; o
 // Full-screen opening: the name set huge in the condensed serif, an "in summer / in winter" switch that
 // cross-fades the scene between seasons, and the booking search.
 //
-// Opening, as on the reference site: the page starts on a deep pine splash (a fine frame, a faint script,
-// and an arch "window" onto the hero). Scrolling opens the arch until it fills the screen, while the first
+// Opening, as on the reference site: the page starts on a plain deep pine screen. Scrolling opens an arch
+// "window" onto the hero from nothing at the bottom centre until it fills the screen, while the first
 // hero screen stays pinned underneath; then the page carries on. The picture is taller than the screen: a
 // deep mountain sky behind the name first, then the tower comes up from below, and the sky arch rises over
 // its lower part. The page wraps <EraHero> and <EraArch> in one container.
@@ -72,7 +72,6 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
   const [season, setSeason] = useState<Season>("summer");
   const runwayRef = useRef<HTMLDivElement>(null);
   const holeRef = useRef<HTMLDivElement>(null);
-  const decorRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -91,14 +90,16 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
       const vh = window.innerHeight;
       const hole = holeRef.current;
       if (hole) {
-        // Scale the arch until its shoulders clear the screen corners.
-        const w = hole.offsetWidth;
-        const h = hole.offsetHeight;
-        const need = Math.max(vw / w, (vh + w / 2) / h) * 1.15;
+        // Size the window directly (scaling would shrink the pine "shadow" around it too): from nothing to an
+        // arch whose shoulders clear the screen corners. Base shape: min(34vw, 560px) wide, 66% of the height.
+        const w0 = Math.max(230, Math.min(vw * 0.34, 560));
+        const h0 = vh * 0.66;
+        const need = Math.max(vw / w0, (vh + w0 / 2) / h0) * 1.15;
         const e = p * p * (3 - 2 * p); // smoothstep
-        hole.style.transform = `translateX(-50%) scale(${(1 + (need - 1) * e).toFixed(4)})`;
+        const k = need * e;
+        hole.style.width = `${(w0 * k).toFixed(1)}px`;
+        hole.style.height = `${(h0 * k).toFixed(1)}px`;
       }
-      if (decorRef.current) decorRef.current.style.opacity = (1 - clamp(p / 0.45)).toFixed(3);
       if (overlayRef.current) overlayRef.current.style.visibility = p >= 0.999 ? "hidden" : "visible";
       if (contentRef.current) {
         const o = clamp((p - 0.55) / 0.4);
@@ -169,30 +170,13 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
             </div>
           </section>
 
-          {/* Splash: pine everywhere except an arch-shaped window, which grows as you scroll */}
+          {/* Splash: plain pine; an arch-shaped window grows out of it as you scroll */}
           <div ref={overlayRef} className="intro-overlay pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
             <div
               ref={holeRef}
-              className="absolute bottom-0 left-1/2 h-[66svh] w-[min(34vw,560px)] min-w-[230px] origin-bottom rounded-t-[999px] will-change-transform"
-              style={{ transform: "translateX(-50%)", boxShadow: "0 0 0 300vmax #0f241e" } as CSSProperties}
+              className="absolute bottom-0 left-1/2 h-0 w-0 -translate-x-1/2 rounded-t-[999px]"
+              style={{ boxShadow: "0 0 0 300vmax #0f241e" } as CSSProperties}
             />
-            <div ref={decorRef} className="absolute inset-0">
-              {/* Concentric outlines around the window */}
-              {[28, 56].map((d) => (
-                <span
-                  key={d}
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-t-[999px] border border-b-0 border-bone/10"
-                  style={{ width: `calc(min(34vw, 560px) + ${d * 2}px)`, minWidth: `${230 + d * 2}px`, height: `calc(66svh + ${d}px)` }}
-                />
-              ))}
-              {/* Fine frame with cut corners */}
-              <svg className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] sm:inset-7 sm:h-[calc(100%-3.5rem)] sm:w-[calc(100%-3.5rem)]" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <polygon points="2.5,0 97.5,0 100,4 100,96 97.5,100 2.5,100 0,96 0,4" fill="none" stroke="rgba(243,243,236,0.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-              </svg>
-              {/* Faint script across the background */}
-              <p className="absolute inset-x-0 top-[12%] select-none text-center font-script text-[26vw] leading-none text-bone/[0.05] sm:text-[19vw]">Serene Heights</p>
-              <p className="caps absolute inset-x-0 bottom-[70svh] text-center text-bone/70">Scroll to open</p>
-            </div>
           </div>
         </div>
       </div>
