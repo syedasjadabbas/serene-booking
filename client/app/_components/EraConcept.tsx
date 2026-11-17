@@ -29,7 +29,7 @@ export default function EraConcept() {
         </h2>
         <div className="mt-16 flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20">
           <Reveal delay={150}>
-            <CircleLink href="/rooms">View available apartments</CircleLink>
+            <CircleLink panel>View available apartments</CircleLink>
           </Reveal>
           <Reveal delay={250} className="max-w-xs text-left">
             <p className="text-[15px] leading-relaxed text-ink/75">

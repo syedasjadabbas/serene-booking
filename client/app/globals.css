@@ -397,3 +397,35 @@ html { scroll-behavior: smooth; overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .menu-in, .menu-item, .spin-slow { animation: none !important; }
 }
+
+/* Home opening splash: skipped entirely for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .intro-runway { height: max(100svh, 680px) !important; }
+  .intro-overlay { display: none !important; }
+  .intro-content { opacity: 1 !important; }
+}
+
+/* Photo hotspots (Hotspot.tsx): a slow pulse on the ring, and a card with cut corners */
+@keyframes hotspot-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.18); opacity: 0.45; } }
+.hotspot-pulse { animation: hotspot-pulse 2.4s ease-in-out infinite; }
+.hotspot-card { clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px); }
+@media (prefers-reduced-motion: reduce) { .hotspot-pulse { animation: none; } }
+
+/* Rolling hover labels (RollText), as on the reference site: 0.8s, cubic-bezier(.25, 1, .5, 1) */
+.roll { display: inline-grid; overflow: hidden; vertical-align: top; line-height: 1.15; }
+.roll > span { grid-area: 1 / 1; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+.roll > span:last-child { transform: translateY(110%); }
+.roll-host:hover .roll > span:first-child, .roll-host:focus-visible .roll > span:first-child { transform: translateY(-110%); }
+.roll-host:hover .roll > span:last-child, .roll-host:focus-visible .roll > span:last-child { transform: none; }
+
+/* Circle button arcs (CircleLink): short dashes that draw the ring closed on hover */
+.circle-arc { stroke-dasharray: var(--rest); transition: stroke-dasharray 1s cubic-bezier(0.25, 1, 0.5, 1); }
+.circle-host:hover .circle-arc, .circle-host:focus-visible .circle-arc { stroke-dasharray: var(--full); }
+
+/* Apartments panel: wipes open from the bottom */
+@keyframes panel-in { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+.panel-in { animation: panel-in 0.9s cubic-bezier(0.77, 0, 0.18, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .roll > span, .circle-arc { transition: none !important; }
+  .panel-in { animation: none !important; }
+}

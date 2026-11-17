@@ -4,6 +4,7 @@ import EraConcept from "./_components/EraConcept";
 import EraPlace from "./_components/EraPlace";
 import EraResidences from "./_components/EraResidences";
 import EraSpace from "./_components/EraSpace";
+import EraPool from "./_components/EraPool";
 import EraArchitecture from "./_components/EraArchitecture";
 import EraFacts from "./_components/EraFacts";
 import EraCta from "./_components/EraCta";
@@ -24,12 +25,16 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
   return (
     <>
-      <EraHero initial={initial} />
-      <EraArch />
+      {/* One container: the tall hero photo runs on behind the start of the sky section. */}
+      <div className="relative">
+        <EraHero initial={initial} />
+        <EraArch />
+      </div>
       <EraConcept />
       <EraPlace />
       <EraResidences />
       <EraSpace />
+      <EraPool />
       <EraArchitecture />
       <EraFacts />
       <EraCta />

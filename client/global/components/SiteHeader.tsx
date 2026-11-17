@@ -9,6 +9,7 @@ import { useLogoutMutation } from "@/global/api/endpoints/authApi";
 import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
 import { asset } from "@/global/lib/asset";
 import { cn } from "@/global/lib/cn";
+import RollText from "./RollText";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -63,7 +64,7 @@ export default function SiteHeader() {
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, window.scrollY / max));
       if (barRef.current) barRef.current.style.transform = `scaleY(${p.toFixed(4)})`;
-      if (countRef.current) countRef.current.textContent = String(Math.round(p * 100));
+      if (countRef.current) countRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0");
       if (badgeRef.current && !still) badgeRef.current.style.transform = `rotate(${(window.scrollY * 0.08).toFixed(1)}deg)`;
       // Home: sample just below the top edge, in the middle (clear of the chrome itself). Inner pages
       // have a bone bar behind the chrome, so they stay light.
@@ -125,7 +126,7 @@ export default function SiteHeader() {
           aria-label="Main"
           className={cn(
             "pointer-events-auto absolute right-4 flex text-right sm:right-7",
-            home ? "top-5 flex-col items-end gap-3 sm:top-8" : "top-0 h-[84px] items-center gap-8"
+            home ? "top-5 flex-col items-end gap-3 sm:top-8 sm:gap-7" : "top-0 h-[84px] items-center gap-8"
           )}
         >
           <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.45rem]" : "text-xl")}>
@@ -133,12 +134,12 @@ export default function SiteHeader() {
             {home ? <br /> : " "}
             an apartment
           </Link>
-          <div className={cn("flex items-center gap-4", home && "sm:flex-col sm:items-end sm:gap-1.5", !home && "sm:gap-6")}>
-            <Link href="/rooms" className="caps sm:hidden">Book</Link>
-            <Link href="/manage" className="caps hidden hover:opacity-60 sm:block">Find a booking</Link>
+          <div className={cn("flex items-center gap-4", home && "sm:flex-col sm:items-end sm:gap-[11px] sm:[&_.caps]:leading-none sm:[&_.caps]:tracking-[0.24em]", !home && "sm:gap-6")}>
+            <Link href="/rooms" className="roll-host caps sm:hidden"><RollText>Book</RollText></Link>
+            <Link href="/manage" className="roll-host caps hidden sm:block"><RollText>Find a booking</RollText></Link>
             <AccountLink />
-            <button type="button" onClick={() => setOpen(true)} className="caps flex items-center gap-2 hover:opacity-60" aria-expanded={open} aria-controls="site-menu">
-              Menu
+            <button type="button" onClick={() => setOpen(true)} className="roll-host caps flex items-center gap-2" aria-expanded={open} aria-controls="site-menu">
+              <RollText>Menu</RollText>
               <span className="flex flex-col gap-[3px]" aria-hidden>
                 <span className="block h-px w-5 bg-current" />
                 <span className="block h-px w-5 bg-current" />
@@ -148,12 +149,19 @@ export default function SiteHeader() {
         </nav>
 
         {/* Scroll gauge */}
-        <div className="absolute bottom-8 left-7 hidden flex-col items-center gap-3 lg:flex" aria-hidden>
-          <span className="relative block h-28 w-px overflow-hidden">
-            <span className="absolute inset-0 bg-current opacity-25" />
-            <span ref={barRef} className="absolute inset-0 origin-top scale-y-0 bg-current" />
+        {/* Scroll gauge: the 0–100 counter, "Scroll" set vertically, and a line that fills as you go and ends in an arrow */}
+        <div className="absolute bottom-6 left-[34px] hidden flex-col items-center gap-4 sm:left-[52px] sm:flex" aria-hidden>
+          <span ref={countRef} className="caps w-8 text-center tabular-nums">00</span>
+          <span className="caps [writing-mode:vertical-rl] rotate-180 tracking-[0.18em]">Scroll</span>
+          <span className="relative flex flex-col items-center">
+            <span className="relative block h-16 w-px overflow-hidden">
+              <span className="absolute inset-0 bg-current opacity-30" />
+              <span ref={barRef} className="absolute inset-0 origin-top scale-y-0 bg-current" />
+            </span>
+            <svg viewBox="0 0 10 6" className="-mt-px h-1.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1">
+              <path d="M1 0.5 L5 5 L9 0.5" />
+            </svg>
           </span>
-          <span ref={countRef} className="caps w-6 text-center tabular-nums">0</span>
         </div>
       </div>
 
@@ -168,14 +176,14 @@ function AccountLink() {
   const { status, customer } = useAuthStore();
   if (status === "authenticated" && customer) {
     return (
-      <Link href="/account" className="caps hidden hover:opacity-60 sm:block">
-        {customer.firstName}&apos;s stays
+      <Link href="/account" className="roll-host caps hidden sm:block">
+        <RollText>{`${customer.firstName}'s stays`}</RollText>
       </Link>
     );
   }
   return (
-    <Link href="/login" className="caps hidden hover:opacity-60 sm:block">
-      Sign in
+    <Link href="/login" className="roll-host caps hidden sm:block">
+      <RollText>Sign in</RollText>
     </Link>
   );
 }

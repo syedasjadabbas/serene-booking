@@ -73,7 +73,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
       onSubmit={submit}
       className={cn(
         "relative grid gap-1.5 bg-white text-ink",
-        hero && "rounded-none bg-bone p-1.5 shadow-pop md:grid-cols-[1fr_1.3fr_1fr_auto] md:items-center",
+        hero && "rounded-none bg-bone p-1.5 shadow-pop md:grid-cols-[1.3fr_1fr_auto] md:items-center lg:grid-cols-[1fr_1.3fr_1fr_auto]",
         variant === "bar" && "rounded-none border border-ink/15 p-1.5 md:grid-cols-[1.4fr_1fr_auto] md:items-center",
         panel && "grid-cols-1 gap-2"
       )}
@@ -81,7 +81,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
     >
       {/* Where: single property, shown for orientation like the reference design */}
       {hero && (
-        <div className="hidden items-center gap-3 rounded-2xl px-3 py-2 md:flex">
+        <div className="hidden items-center gap-3 rounded-2xl px-3 py-2 lg:flex">
           <FieldIcon><Navigation className="h-4 w-4" /></FieldIcon>
           <span className="min-w-0">
             <span className="block caps text-ink/55">Where</span>
@@ -95,7 +95,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
         <button
           type="button"
           onClick={() => setOpenPanel((p) => (p === "dates" ? null : "dates"))}
-          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel && "border border-zinc-200", hero && "md:border-l md:border-zinc-100 md:rounded-none md:pl-4")}
+          className={cn("flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left hover:bg-ink/[0.04]", panel && "border border-zinc-200", hero && "md:rounded-none lg:border-l lg:border-zinc-100 lg:pl-4")}
           aria-expanded={openPanel === "dates"}
         >
           <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>

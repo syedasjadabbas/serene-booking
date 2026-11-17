@@ -527,3 +527,56 @@ export function ScrollScale({ children, className, from = 0.82, to = 1, origin =
     </div>
   );
 }
+
+/**
+ * Holds its content `rise` (in % of the screen height) lower than its place in the page and lets it glide
+ * up into place as the visitor scrolls, eased and scroll-linked (scrolling back lowers it again).
+ * Progress is measured on the untransformed outer box, so the motion never feeds back into itself.
+ * `span` is how much scrolling (in screen heights) the rise takes. Static, in place, for reduced motion.
+ */
+export function ScrollRise({ children, className, innerClassName, rise = 35, span = 1.1 }: { children: ReactNode; className?: string; innerClassName?: string; rise?: number; span?: number }) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+    if (reducedMotion()) {
+      inner.style.transform = "none";
+      return;
+    }
+    let raf = 0;
+    let current = -1;
+    const target = () => {
+      const vh = window.innerHeight;
+      const top = outer.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, (vh - top) / (vh * span)));
+      return 1 - Math.pow(1 - p, 2.2); // ease-out: quick to start, settles gently
+    };
+    const tick = () => {
+      const t = target();
+      current = current < 0 ? t : current + (t - current) * 0.09;
+      if (Math.abs(t - current) < 0.0008) current = t;
+      inner.style.transform = `translate3d(0, ${((1 - current) * rise * window.innerHeight) / 100}px, 0)`;
+      raf = current === t ? 0 : requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    tick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [rise, span]);
+  return (
+    <div ref={outerRef} className={className}>
+      <div ref={innerRef} className={cn("will-change-transform", innerClassName)} style={{ transform: `translate3d(0, ${rise}vh, 0)` }}>
+        {children}
+      </div>
+    </div>
+  );
+}
