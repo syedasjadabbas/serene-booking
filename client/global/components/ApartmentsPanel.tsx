@@ -33,7 +33,7 @@ export default function ApartmentsPanel({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Available apartments" className="panel-in fixed inset-0 z-50 overflow-y-auto bg-bone text-ink">
+    <div data-lenis-prevent role="dialog" aria-modal="true" aria-label="Available apartments" className="panel-in fixed inset-0 z-50 overflow-y-auto bg-bone text-ink">
       <div className="container-page flex min-h-full flex-col py-8">
         <div className="flex items-start justify-between gap-6">
           <div>
@@ -60,7 +60,7 @@ export default function ApartmentsPanel({ onClose }: { onClose: () => void }) {
                   >
                     <span className="caps text-ink/50">{String(i + 1).padStart(2, "0")}</span>
                     <span>
-                      <span className="block font-display text-[2.2rem] uppercase leading-none transition duration-500 group-hover:translate-x-2 sm:text-6xl">{t.name}</span>
+                      <span className="block font-display text-[1.9rem] font-medium uppercase leading-none transition duration-500 group-hover:translate-x-2 sm:text-5xl">{t.name}</span>
                       <span className="caps mt-2 block text-ink/55">
                         Sleeps {t.maxOccupancy}
                         {size ? ` · ${size} ft²` : ""} · {t.outdoorSpace} · {t.totalApartments} apartments

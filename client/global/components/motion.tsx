@@ -325,17 +325,19 @@ export function SplitLines({ lines, className, lineClassName, baseDelay = 0 }: {
  */
 export function RevealWords({ text, className, delay = 0, as: Tag = "span" }: { text: string; className?: string; delay?: number; as?: ElementType }) {
   const { ref, inView } = useInView<HTMLElement>();
+  // Words wrapped in *asterisks* are set in italic (accents); the asterisks never show.
   const words = text.split(/\s+/);
+  const plain = text.replace(/\*/g, "");
   return (
     <Tag ref={ref} className={cn(inView && "words-in", className)} style={{ "--d": `${delay}ms` } as CSSProperties}>
-      <span className="sr-only">{text}</span>
+      <span className="sr-only">{plain}</span>
       <span aria-hidden>
         {/* The space goes between the masks: inside an inline-block a trailing space collapses away. */}
         {words.map((w, i) => (
           <Fragment key={i}>
             <span className="word-mask">
-              <span className="word" style={{ "--w": i } as CSSProperties}>
-                {w}
+              <span className={cn("word", /^\*.*\*$/.test(w) && "italic")} style={{ "--w": i } as CSSProperties}>
+                {w.replace(/\*/g, "")}
               </span>
             </span>
             {i < words.length - 1 && " "}
@@ -556,7 +558,7 @@ export function ScrollRise({ children, className, innerClassName, rise = 35, spa
     };
     const tick = () => {
       const t = target();
-      current = current < 0 ? t : current + (t - current) * 0.075;
+      current = current < 0 ? t : current + (t - current) * 0.15;
       if (Math.abs(t - current) < 0.0005) current = t;
       inner.style.transform = `translate3d(0, ${(((1 - current) * rise * window.innerHeight) / 100).toFixed(2)}px, 0)`;
       // Children can follow the same eased progress (e.g. scale with it) via var(--rise): one value, in step.

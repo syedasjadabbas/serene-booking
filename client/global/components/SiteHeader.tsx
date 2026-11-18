@@ -110,7 +110,7 @@ export default function SiteHeader() {
               <path id="badge-ring" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" />
             </defs>
             {/* textLength fits the words exactly once around the ring (circumference 2π·38 ≈ 238.8). */}
-            <text className="fill-current" style={{ fontSize: "7.6px", fontWeight: 700, fontStretch: "125%" }}>
+            <text className="fill-current" style={{ fontSize: "7.6px", fontWeight: 700, letterSpacing: "0.05em" }}>
               <textPath href="#badge-ring" textLength="236" lengthAdjust="spacing">SERENE HEIGHTS · NATHIA GALI ·</textPath>
             </text>
           </svg>
@@ -129,7 +129,7 @@ export default function SiteHeader() {
             home ? "chrome-fade top-5 flex-col items-end gap-3 sm:top-8 sm:gap-7" : "top-0 h-[84px] items-center gap-8"
           )}
         >
-          <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.45rem] !leading-[1.4]" : "text-xl")}>
+          <Link href="/rooms" className={cn("link-serif hidden sm:block", home ? "text-[1.35rem] !leading-[1.35]" : "text-lg")}>
             Select
             {home ? <br /> : " "}
             an apartment
@@ -197,10 +197,10 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
   const signedIn = status === "authenticated" && !!customer;
 
   return (
-    <div id="site-menu" role="dialog" aria-modal="true" aria-label="Menu" className="menu-in fixed inset-0 z-50 overflow-y-auto bg-pine text-bone">
+    <div id="site-menu" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Menu" className="menu-in fixed inset-0 z-50 overflow-y-auto bg-pine text-bone">
       <div className="container-page flex min-h-full flex-col py-8">
         <div className="flex items-start justify-between">
-          <p className="font-script text-5xl text-sky sm:text-6xl">Nathia Gali</p>
+          <p className="font-display text-4xl italic text-sky sm:text-5xl">Nathia Gali</p>
           <button type="button" onClick={onClose} className="caps flex items-center gap-2 hover:opacity-60" autoFocus>
             Close <X className="h-4 w-4" />
           </button>
@@ -212,7 +212,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
               <li key={n.href} className="menu-item" style={{ "--i": i } as CSSProperties}>
                 <Link href={n.href} onClick={onClose} className="group flex items-baseline gap-5 py-1">
                   <span className="caps w-6 text-sky/70">0{i + 1}</span>
-                  <span className="font-display text-[2.6rem] uppercase leading-none transition group-hover:translate-x-2 group-hover:text-sky sm:text-7xl">{n.label}</span>
+                  <span className="font-display text-[2.1rem] font-medium uppercase leading-none transition group-hover:translate-x-2 group-hover:text-sky sm:text-6xl">{n.label}</span>
                 </Link>
               </li>
             ))}

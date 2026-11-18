@@ -20,11 +20,11 @@ export default function EraSpace() {
         </div>
 
         <div className="lg:col-span-5 lg:col-start-8">
-          <h2 className="text-[3rem] leading-[0.9] sm:text-7xl lg:text-[6.5rem]">
+          <h2 className="text-[2.6rem] leading-[0.95] sm:text-6xl lg:text-[5rem]">
             <RevealWords text="The space to" />
           </h2>
           <Reveal delay={200}>
-            <p className="-mt-2 font-script text-7xl leading-none text-ink sm:text-8xl lg:text-[8rem]">live in</p>
+            <p className="mt-1 font-display text-6xl italic leading-none text-ink sm:text-7xl lg:text-[6rem]">live in</p>
           </Reveal>
           <Reveal delay={250}>
             <ul className="mt-10 divide-y divide-ink/15 border-y border-ink/15">

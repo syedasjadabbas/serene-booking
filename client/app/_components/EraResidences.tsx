@@ -50,7 +50,7 @@ export default function EraResidences() {
           </div>
         </Reveal>
 
-        <h2 key={`title-${t.id}`} className="fade-up mt-10 text-[13vw] leading-[0.85] sm:text-[9vw] lg:text-[8.5rem]" aria-live="polite">
+        <h2 key={`title-${t.id}`} className="fade-up mt-10 text-[9.5vw] leading-[0.95] sm:text-[6.5vw] lg:text-[6rem]" aria-live="polite">
           {t.name}
         </h2>
 

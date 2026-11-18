@@ -14,7 +14,7 @@ export default function EraCta() {
         <Reveal>
           <p className="caps">Book your stay</p>
         </Reveal>
-        <h2 className="mt-8 max-w-6xl text-[2.4rem] leading-[0.95] sm:text-6xl lg:text-[5.4rem]">
+        <h2 className="mt-8 max-w-6xl text-[2.1rem] leading-[1.05] sm:text-5xl lg:text-[4.2rem]">
           <RevealWords text="Pick your dates and see what is free — or call us, and we will help you choose the right apartment" />
         </h2>
         <Reveal delay={200} className="mt-14 grid gap-8 lg:grid-cols-12 lg:items-end">

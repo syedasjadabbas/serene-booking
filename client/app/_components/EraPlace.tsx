@@ -22,11 +22,11 @@ export default function EraPlace() {
         <Reveal>
           <p className="caps">The location</p>
         </Reveal>
-        <h2 className="mt-6 text-[17vw] leading-[0.82] text-bone sm:text-[10vw] lg:text-[9rem]">
+        <h2 className="mt-6 text-[11vw] leading-[0.95] text-bone sm:text-[7vw] lg:text-[6.5rem]">
           <SplitLines lines={["Nathia Gali,", "The Galiyat"]} />
         </h2>
         <Reveal delay={200}>
-          <p className="mt-8 font-script text-5xl text-bone sm:text-6xl">Khyber Pakhtunkhwa</p>
+          <p className="mt-8 font-display text-3xl italic text-bone sm:text-4xl">Khyber Pakhtunkhwa</p>
         </Reveal>
       </div>
 

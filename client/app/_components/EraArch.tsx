@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Parallax, Reveal, RevealWords, ScrollRise } from "@/global/components/motion";
 import { asset } from "@/global/lib/asset";
 import { ARCH_RISE, ARCH_TOP } from "./heroLayout";
+import EraExpand from "./EraExpand";
 
 const mark = asset("/brand/mark-cream.png");
 const markStyle = {
@@ -21,8 +22,9 @@ const REASONS = [
     label: "Real mountain air",
     title: "7,906 ft above the noise, two hours from Islamabad",
     text: "Set in the pine forests of the Galiyat beside PAF Airbase Nathia Gali, with cool summers, snowy winters and views across the hills from every balcony.",
-    image: "/images/resort/aerial-snow-resort.jpg",
-    alt: "The resort and its slope under snow, surrounded by pine forest",
+    image: "/images/interiors/window-view.jpg",
+    position: "50% 30%",
+    alt: "A guest with a morning coffee at the window, looking out over the misty hills",
   },
   {
     label: "Made for every season",
@@ -50,7 +52,7 @@ export default function EraArch() {
         <svg viewBox="0 0 1000 420" className="block h-auto w-full" aria-hidden>
           <path d="M0 420 A500 420 0 0 1 1000 420 Z" fill="#B5CEDB" />
           <path id="arch-text" d="M90 420 A410 340 0 0 1 910 420" fill="none" />
-          <text className="fill-ink font-display uppercase" style={{ fontSize: "34px", letterSpacing: "0.04em" }}>
+          <text className="fill-ink font-display uppercase" style={{ fontSize: "30px", letterSpacing: "0.06em", fontWeight: 500 }}>
             <textPath href="#arch-text" startOffset="50%" textAnchor="middle">
               Three reasons to choose Serene Heights
             </textPath>
@@ -69,13 +71,18 @@ export default function EraArch() {
           <p className="caps mt-6 max-w-[16rem] leading-relaxed">A mountain home — to return to, season after season</p>
         </div>
 
+        {/* Pinned: a small photo that grows to fill the screen as you scroll */}
+        <div className="mt-16 sm:mt-24">
+          <EraExpand />
+        </div>
+
         <ol className="container-page mt-24 space-y-28 sm:mt-32 sm:space-y-40">
           {REASONS.map((r, i) => (
             <li key={r.label} className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
               <div className={i % 2 ? "lg:order-2 lg:col-span-6 lg:col-start-7" : "lg:col-span-6"}>
                 <Parallax speed={0.05}>
                   <Reveal from="clip" className="relative aspect-[4/3.2] overflow-hidden bg-sky-dark">
-                    <Image src={asset(r.image)} alt={r.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+                    <Image src={asset(r.image)} alt={r.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "position" in r ? r.position : "50% 50%" }} />
                   </Reveal>
                 </Parallax>
               </div>
@@ -85,7 +92,7 @@ export default function EraArch() {
                   <span className="block h-px w-14 bg-ink/40" aria-hidden />
                   <span className="caps">{r.label}</span>
                 </Reveal>
-                <h2 className="mt-8 text-[2.4rem] sm:text-6xl">
+                <h2 className="mt-8 text-[2.1rem] sm:text-5xl">
                   <RevealWords text={r.title} />
                 </h2>
                 <Reveal delay={150}>

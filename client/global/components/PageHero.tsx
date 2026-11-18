@@ -51,7 +51,7 @@ export default function PageHero({
           </nav>
         )}
         {eyebrow && <p className="caps fade-up text-white/85" style={{ animationDelay: "100ms" }}>{eyebrow}</p>}
-        <h1 className="mt-4 max-w-5xl text-[3.2rem] leading-[0.88] text-white sm:text-8xl lg:text-[8.5rem]">
+        <h1 className="mt-4 max-w-5xl text-[2.6rem] leading-[0.98] text-white sm:text-7xl lg:text-[6rem]">
           <SplitLines lines={title.split("\n")} baseDelay={150} />
         </h1>
         {subtitle && <p className="fade-up mt-6 max-w-xl text-[15px] text-white/85 sm:text-base" style={{ animationDelay: "450ms" }}>{subtitle}</p>}

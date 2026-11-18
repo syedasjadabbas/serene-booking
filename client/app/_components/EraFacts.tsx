@@ -25,7 +25,7 @@ export default function EraFacts() {
           {facts.map((f, i) => (
             <li key={f.label}>
               <p className="caps text-ink/55">{f.label}</p>
-              <p className="mt-1 font-display text-[2.8rem] uppercase leading-[0.95] text-ink sm:text-7xl lg:text-[6rem]">
+              <p className="mt-1 font-display text-[2.3rem] font-medium uppercase leading-[1] text-ink sm:text-6xl lg:text-[4.6rem]">
                 <RevealWords text={f.value} delay={i * 60} />
                 <span className="ml-3 inline-block h-[0.12em] w-[0.12em] -translate-y-[0.9em] rotate-45 bg-ink align-baseline" aria-hidden />
               </p>

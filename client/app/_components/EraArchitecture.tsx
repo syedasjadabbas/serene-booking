@@ -28,7 +28,7 @@ export default function EraArchitecture() {
         <Reveal className="lg:col-span-3">
           <p className="caps">The architecture</p>
         </Reveal>
-        <h2 className="text-[2.3rem] leading-[0.95] text-bone sm:text-6xl lg:col-span-9 lg:text-[5.2rem]">
+        <h2 className="text-[2rem] leading-[1.05] text-bone sm:text-5xl lg:col-span-9 lg:text-[4rem]">
           <RevealWords text="Arched windows, warm stone and a balcony on every floor, rising above the pines" />
         </h2>
       </div>

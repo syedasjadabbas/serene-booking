@@ -117,7 +117,7 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
     const target = () => clamp(window.scrollY / Math.max(1, runway.offsetHeight - window.innerHeight));
     const tick = () => {
       const t = target();
-      current = current < 0 ? t : current + (t - current) * 0.12;
+      current = current < 0 ? t : current + (t - current) * 0.2;
       if (Math.abs(t - current) < 0.0006) current = t;
       apply(current);
       raf = current === t ? 0 : requestAnimationFrame(tick);
@@ -152,13 +152,13 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
           {/* Headline, season switch and search over the top of the photo */}
           <section ref={contentRef} className="intro-content relative flex h-full flex-col items-center px-4 pb-6 pt-[14vh] text-center text-bone sm:pb-8 sm:pt-[10vh]" style={{ opacity: 0 }}>
             <Parallax speed={0.25} className="relative">
-              <h1 className="text-[23vw] leading-[0.8] text-bone sm:text-[13vw] lg:text-[11.5rem]">
+              <h1 className="text-[15vw] leading-[0.9] text-bone sm:text-[9vw] lg:text-[8.5rem]">
                 <SplitLines lines={["Serene", "Heights"]} baseDelay={150} />
               </h1>
             </Parallax>
 
             <div className="mt-[4vh] flex w-full max-w-6xl items-center justify-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">
-              <p className="hidden text-left font-display text-[2rem] uppercase leading-none sm:block">A home</p>
+              <p className="hidden text-left font-display text-[1.6rem] font-medium uppercase leading-none sm:block">A home</p>
               <div role="radiogroup" aria-label="Season" className="flex items-center gap-2 sm:gap-3">
                 {(Object.keys(SEASONS) as Season[]).map((key, i) => (
                   <span key={key} className="flex items-center gap-2 sm:gap-3">
@@ -175,7 +175,7 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
                   </span>
                 ))}
               </div>
-              <p className="hidden text-right font-display text-[2rem] uppercase leading-none sm:block">Above the clouds</p>
+              <p className="hidden text-right font-display text-[1.6rem] font-medium uppercase leading-none sm:block">Above the clouds</p>
             </div>
 
             <div className="mt-auto w-full max-w-4xl text-left">
