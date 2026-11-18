@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Manrope, Playfair_Display } from "next/font/google";
 import "react-day-picker/style.css";
 import "./globals.css";
 import Providers from "./providers";
@@ -8,10 +8,10 @@ import SiteFooter from "@/global/components/SiteFooter";
 import SmoothScroll from "@/global/components/SmoothScroll";
 
 import { asset } from "@/global/lib/asset";
-// Cormorant Garamond (a refined Garamond for headlines, with true italics for accents) and Manrope, a clean,
-// professional sans for text and small-caps labels.
+// Playfair Display (a high-contrast luxury serif for headlines, with true italics for accents) and Manrope, a
+// clean, professional sans for text and small-caps labels.
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const serif = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500", "600"], style: ["normal", "italic"] });
+const serif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500"], style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
   // Absolute base for Open Graph images and canonical URLs. Set SITE_URL in production.

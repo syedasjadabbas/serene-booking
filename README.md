@@ -75,7 +75,7 @@ Administration (rates, inventory, booking operations) lives in **Serene Manageme
 ### Experience
 
 - **Design:** editorial residence style, modelled on the layout and motion of [era-residence.com](https://www.era-residence.com/), with our own content, photos and brand.
-  - Type: Cormorant Garamond for headlines (with italic accents) and Manrope for text and small-caps labels.
+  - Type: Playfair Display for headlines (with italic accents) and Manrope for text and small-caps labels.
   - Colour: deep navy ink on bone paper, pale mountain-sky blue sections and pine for the darkest panels.
   - Chrome: a round badge that turns as you scroll, "Select an apartment" and small-caps links top right, a 0–100 scroll gauge, and a full-screen menu. The chrome switches between light and dark ink over photos and paper.
 - **Home page:** sections in this order:

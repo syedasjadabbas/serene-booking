@@ -5,7 +5,7 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    /* Cormorant defaults to old-style figures; lining figures keep numbers (130, 7,906) on the line. */
+    /* Lining figures keep numbers (130, 7,906) level with capitals in the serif. */
     font-variant-numeric: lining-nums;
   }
   body {
@@ -17,9 +17,9 @@
   h1,
   h2,
   h3 {
-    @apply font-display font-medium text-ink;
+    @apply font-display font-normal text-ink;
     font-synthesis: none;
-    letter-spacing: 0.01em;
+    letter-spacing: 0;
   }
   h1,
   h2 {
