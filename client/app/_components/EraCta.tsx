@@ -17,13 +17,13 @@ export default function EraCta() {
         <h2 className="mt-8 max-w-6xl text-[2.1rem] leading-[1.05] sm:text-5xl lg:text-[4.2rem]">
           <RevealWords text="Pick your dates and see what is free — or call us, and we will help you choose the right apartment" />
         </h2>
-        <Reveal delay={200} className="mt-14 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <Reveal delay={200} className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end [&>*]:min-w-0">
           <div className="lg:col-span-8">
             <SearchBar variant="bar" submitLabel="Search" />
           </div>
           <div className="lg:col-span-4 lg:text-right">
             <p className="caps text-ink/60">Reservations</p>
-            <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="link-serif mt-2 inline-block text-4xl">
+            <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`} className="link-serif mt-2 inline-block text-2xl sm:text-3xl lg:text-4xl">
               {phone}
             </a>
           </div>

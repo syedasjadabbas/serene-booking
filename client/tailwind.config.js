@@ -37,7 +37,7 @@ module.exports = {
         mist: "#EBEBE3",
       },
       fontFamily: {
-        // Manrope for text and small-caps labels; Playfair Display for headlines and (italic) accent words.
+        // Manrope for text and small-caps labels; Cinzel (Roman capitals) for headlines.
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-serif)", "Georgia", "serif"],
         serif: ["var(--font-serif)", "Georgia", "serif"],

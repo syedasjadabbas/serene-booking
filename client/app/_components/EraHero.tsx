@@ -152,16 +152,20 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
           {/* Headline, season switch and search over the top of the photo */}
           <section ref={contentRef} className="intro-content relative flex h-full flex-col items-center px-4 pb-6 pt-[14vh] text-center text-bone sm:pb-8 sm:pt-[10vh]" style={{ opacity: 0 }}>
             <Parallax speed={0.25} className="relative">
-              {/* Sentence case, upright, the two words gently staggered: a quieter, more
-                  refined treatment of the name than heavy capitals. */}
-              <h1 className="text-[16vw] font-normal normal-case leading-[0.92] tracking-[-0.01em] text-bone sm:text-[10vw] lg:text-[9rem]">
-                <span className="block overflow-hidden pb-[0.08em]">
-                  <span className="line-rise block pr-[0.55em]" style={{ animationDelay: "150ms" }}>Serene</span>
+              {/* Classic Roman capitals, widely spaced: the grand-hotel signature. One line on wide screens,
+                  two on phones, with a small line beneath. */}
+              <h1 className="text-[13vw] font-normal leading-[1.05] tracking-[0.08em] text-bone sm:text-[min(4.8vw,6.4rem)]">
+                <span className="block overflow-hidden pb-[0.06em] sm:inline-block">
+                  <span className="line-rise block" style={{ animationDelay: "150ms" }}>Serene</span>
                 </span>
-                <span className="block overflow-hidden pb-[0.1em]">
-                  <span className="line-rise block pl-[0.55em]" style={{ animationDelay: "290ms" }}>Heights</span>
+                <span className="hidden sm:inline"> </span>
+                <span className="block overflow-hidden pb-[0.06em] sm:inline-block">
+                  <span className="line-rise block" style={{ animationDelay: "290ms" }}>Heights</span>
                 </span>
               </h1>
+              <p className="caps fade-up mt-5 tracking-[0.32em] text-bone/90" style={{ animationDelay: "500ms" }}>
+                Nathia Gali · 7,906 ft
+              </p>
             </Parallax>
 
             <div className="mt-[4vh] flex w-full max-w-6xl items-center justify-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">

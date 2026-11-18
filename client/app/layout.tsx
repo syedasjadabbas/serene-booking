@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Cinzel, Manrope } from "next/font/google";
 import "react-day-picker/style.css";
 import "./globals.css";
 import Providers from "./providers";
@@ -8,10 +8,10 @@ import SiteFooter from "@/global/components/SiteFooter";
 import SmoothScroll from "@/global/components/SmoothScroll";
 
 import { asset } from "@/global/lib/asset";
-// Playfair Display (a high-contrast luxury serif for headlines, always upright) and Manrope, a
+// Cinzel (classic Roman inscriptional capitals, the "grand hotel" voice) for headlines and Manrope, a
 // clean, professional sans for text and small-caps labels.
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const serif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500"] });
+const serif = Cinzel({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   // Absolute base for Open Graph images and canonical URLs. Set SITE_URL in production.
