@@ -152,20 +152,20 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
           {/* Headline, season switch and search over the top of the photo */}
           <section ref={contentRef} className="intro-content relative flex h-full flex-col items-center px-4 pb-6 pt-[14vh] text-center text-bone sm:pb-8 sm:pt-[10vh]" style={{ opacity: 0 }}>
             <Parallax speed={0.25} className="relative">
-              {/* Light weight, sentence case, "Heights" in italic and set in from the left: a quieter, more
+              {/* Sentence case, upright, the two words gently staggered: a quieter, more
                   refined treatment of the name than heavy capitals. */}
               <h1 className="text-[16vw] font-normal normal-case leading-[0.92] tracking-[-0.01em] text-bone sm:text-[10vw] lg:text-[9rem]">
                 <span className="block overflow-hidden pb-[0.08em]">
                   <span className="line-rise block pr-[0.55em]" style={{ animationDelay: "150ms" }}>Serene</span>
                 </span>
                 <span className="block overflow-hidden pb-[0.1em]">
-                  <span className="line-rise block pl-[0.55em] italic" style={{ animationDelay: "290ms" }}>Heights</span>
+                  <span className="line-rise block pl-[0.55em]" style={{ animationDelay: "290ms" }}>Heights</span>
                 </span>
               </h1>
             </Parallax>
 
             <div className="mt-[4vh] flex w-full max-w-6xl items-center justify-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">
-              <p className="hidden text-left font-display text-[1.7rem] italic leading-none sm:block">A home</p>
+              <p className="hidden text-left font-display text-[1.6rem] leading-none sm:block">A home</p>
               <div role="radiogroup" aria-label="Season" className="flex items-center gap-2 sm:gap-3">
                 {(Object.keys(SEASONS) as Season[]).map((key, i) => (
                   <span key={key} className="flex items-center gap-2 sm:gap-3">
@@ -182,7 +182,7 @@ export default function EraHero({ initial }: { initial: Stay | null }) {
                   </span>
                 ))}
               </div>
-              <p className="hidden text-right font-display text-[1.7rem] italic leading-none sm:block">above the clouds</p>
+              <p className="hidden text-right font-display text-[1.6rem] leading-none sm:block">Above the clouds</p>
             </div>
 
             <div className="mt-auto w-full max-w-4xl text-left">

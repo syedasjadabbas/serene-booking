@@ -325,7 +325,7 @@ export function SplitLines({ lines, className, lineClassName, baseDelay = 0 }: {
  */
 export function RevealWords({ text, className, delay = 0, as: Tag = "span" }: { text: string; className?: string; delay?: number; as?: ElementType }) {
   const { ref, inView } = useInView<HTMLElement>();
-  // Words wrapped in *asterisks* are set in italic (accents); the asterisks never show.
+  // Words wrapped in *asterisks* are picked out in the accent colour; the asterisks never show.
   const words = text.split(/\s+/);
   const plain = text.replace(/\*/g, "");
   return (
@@ -336,7 +336,7 @@ export function RevealWords({ text, className, delay = 0, as: Tag = "span" }: { 
         {words.map((w, i) => (
           <Fragment key={i}>
             <span className="word-mask">
-              <span className={cn("word", /^\*.*\*$/.test(w) && "italic")} style={{ "--w": i } as CSSProperties}>
+              <span className={cn("word", /^\*.*\*$/.test(w) && "text-gold")} style={{ "--w": i } as CSSProperties}>
                 {w.replace(/\*/g, "")}
               </span>
             </span>

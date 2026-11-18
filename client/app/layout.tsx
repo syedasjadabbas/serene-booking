@@ -8,10 +8,10 @@ import SiteFooter from "@/global/components/SiteFooter";
 import SmoothScroll from "@/global/components/SmoothScroll";
 
 import { asset } from "@/global/lib/asset";
-// Playfair Display (a high-contrast luxury serif for headlines, with true italics for accents) and Manrope, a
+// Playfair Display (a high-contrast luxury serif for headlines, always upright) and Manrope, a
 // clean, professional sans for text and small-caps labels.
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const serif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500"], style: ["normal", "italic"] });
+const serif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   // Absolute base for Open Graph images and canonical URLs. Set SITE_URL in production.

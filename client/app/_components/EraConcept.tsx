@@ -6,8 +6,8 @@ import CircleLink from "@/global/components/CircleLink";
 import { Parallax, Reveal, RevealWords } from "@/global/components/motion";
 import { asset } from "@/global/lib/asset";
 
-// The concept: a portrait photo beside an editorial statement in sentence case (italic accents on the key
-// words) that rises in word by word, then a short note and the round "view available apartments" button.
+// The concept: a portrait photo beside an editorial statement in sentence case (key words picked out in
+// the accent colour) that rises in word by word, then a short note and the round "view available apartments" button.
 export default function EraConcept() {
   const { data: p } = usePropertyQuery();
   const count = p?.stats.apartments ?? 130;

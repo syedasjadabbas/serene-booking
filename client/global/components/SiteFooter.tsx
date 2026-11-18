@@ -56,7 +56,7 @@ export default function SiteFooter() {
           <div className="lg:col-span-8">
             <span aria-hidden className="block h-11 w-8 bg-sky" style={markStyle} />
             <h2 className="mt-8 max-w-3xl text-[2.2rem] normal-case leading-[1.1] text-bone sm:text-5xl lg:text-[3.6rem]">
-              Your mountain home is <span className="italic text-sky">waiting.</span>
+              Your mountain home is <span className="text-sky">waiting.</span>
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-bone/65">
               Book in minutes and pay at the property, or call us and we&apos;ll help you choose the right apartment.

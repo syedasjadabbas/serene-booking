@@ -200,7 +200,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
     <div id="site-menu" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Menu" className="menu-in fixed inset-0 z-50 overflow-y-auto bg-pine text-bone">
       <div className="container-page flex min-h-full flex-col py-8">
         <div className="flex items-start justify-between">
-          <p className="font-display text-4xl italic text-sky sm:text-5xl">Nathia Gali</p>
+          <p className="font-display text-4xl text-sky sm:text-5xl">Nathia Gali</p>
           <button type="button" onClick={onClose} className="caps flex items-center gap-2 hover:opacity-60" autoFocus>
             Close <X className="h-4 w-4" />
           </button>

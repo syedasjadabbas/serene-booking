@@ -24,7 +24,7 @@ export default function EraSpace() {
             <RevealWords text="The space to" />
           </h2>
           <Reveal delay={200}>
-            <p className="mt-1 font-display text-6xl italic leading-none text-ink sm:text-7xl lg:text-[6rem]">live in</p>
+            <p className="mt-1 font-display text-[2.6rem] leading-[0.95] text-gold sm:text-6xl lg:text-[5rem]">live in</p>
           </Reveal>
           <Reveal delay={250}>
             <ul className="mt-10 divide-y divide-ink/15 border-y border-ink/15">

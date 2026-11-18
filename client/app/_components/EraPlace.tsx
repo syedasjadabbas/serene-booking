@@ -26,7 +26,7 @@ export default function EraPlace() {
           <SplitLines lines={["Nathia Gali,", "The Galiyat"]} />
         </h2>
         <Reveal delay={200}>
-          <p className="mt-8 font-display text-3xl italic text-bone sm:text-4xl">Khyber Pakhtunkhwa</p>
+          <p className="mt-8 font-display text-3xl text-bone sm:text-4xl">Khyber Pakhtunkhwa</p>
         </Reveal>
       </div>
 
