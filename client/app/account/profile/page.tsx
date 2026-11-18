@@ -8,6 +8,7 @@ import { errorMessage } from "@/global/api/baseApi";
 import { useAuthStore } from "@/global/stores/authStore";
 import { Alert } from "@/global/components/ui";
 import { cn } from "@/global/lib/cn";
+import RollText from "@/global/components/RollText";
 
 const profileSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(60),
@@ -48,33 +49,45 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <form onSubmit={saveProfile} noValidate className="card space-y-4 p-6">
-        <h2 className="text-lg font-medium">Personal details</h2>
+    <div className="grid gap-6 lg:grid-cols-2 lg:gap-10">
+      <form onSubmit={saveProfile} noValidate className="space-y-6 border border-ink/15 bg-white p-6 sm:p-10">
+        <div>
+          <p className="caps flex items-center gap-4 text-ink">
+            Profile
+            <span className="block h-px w-14 bg-ink/30" aria-hidden />
+          </p>
+          <h2 className="mt-4 text-[1.9rem] leading-[1.08] sm:text-4xl">Personal details</h2>
+        </div>
         {profileState.isSuccess && <Alert tone="success">Profile saved.</Alert>}
         {profileState.error && <Alert tone="error">{errorMessage(profileState.error)}</Alert>}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           <Input label="First name" error={pf.formState.errors.firstName?.message} {...pf.register("firstName")} autoComplete="given-name" />
           <Input label="Last name" error={pf.formState.errors.lastName?.message} {...pf.register("lastName")} autoComplete="family-name" />
         </div>
         <label className="block">
-          <span className="label">Email</span>
-          <input className="input" value={customer.email} disabled readOnly />
+          <span className="caps mb-2.5 block text-ink/70">Email</span>
+          <input className="input rounded-none border-ink/15 py-3 text-ink/60" value={customer.email} disabled readOnly />
         </label>
         <Input label="Mobile number" error={pf.formState.errors.phone?.message} {...pf.register("phone")} type="tel" autoComplete="tel" />
         <Input label="Country of residence" error={pf.formState.errors.country?.message} {...pf.register("country")} autoComplete="country-name" />
-        <button className="btn-primary" disabled={profileState.isLoading}>{profileState.isLoading ? "Saving…" : "Save details"}</button>
+        <button className="btn-primary roll-host w-full sm:w-auto" disabled={profileState.isLoading}><RollText>{profileState.isLoading ? "Saving…" : "Save details"}</RollText></button>
       </form>
 
-      <form onSubmit={savePassword} noValidate className="card space-y-4 p-6">
-        <h2 className="text-lg font-medium">Change password</h2>
-        <p className="text-sm text-zinc-500">Changing your password signs you out on every other device.</p>
+      <form onSubmit={savePassword} noValidate className="space-y-6 border border-ink/15 bg-white p-6 sm:p-10">
+        <div>
+          <p className="caps flex items-center gap-4 text-ink">
+            Security
+            <span className="block h-px w-14 bg-ink/30" aria-hidden />
+          </p>
+          <h2 className="mt-4 text-[1.9rem] leading-[1.08] sm:text-4xl">Change password</h2>
+          <p className="mt-3 text-sm leading-relaxed text-ink/60">Changing your password signs you out on every other device.</p>
+        </div>
         {pwState.isSuccess && <Alert tone="success">Password changed.</Alert>}
         {pwState.error && <Alert tone="error">{errorMessage(pwState.error)}</Alert>}
         <Input label="Current password" type="password" autoComplete="current-password" error={pw.formState.errors.currentPassword?.message} {...pw.register("currentPassword")} />
         <Input label="New password" type="password" autoComplete="new-password" error={pw.formState.errors.newPassword?.message} {...pw.register("newPassword")} />
         <Input label="Confirm new password" type="password" autoComplete="new-password" error={pw.formState.errors.confirm?.message} {...pw.register("confirm")} />
-        <button className="btn-primary" disabled={pwState.isLoading}>{pwState.isLoading ? "Updating…" : "Update password"}</button>
+        <button className="btn-primary roll-host w-full sm:w-auto" disabled={pwState.isLoading}><RollText>{pwState.isLoading ? "Updating…" : "Update password"}</RollText></button>
       </form>
     </div>
   );
@@ -83,8 +96,8 @@ export default function ProfilePage() {
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string };
 const Input = ({ label, error, ref, ...rest }: InputProps & { ref?: React.Ref<HTMLInputElement> }) => (
   <label className="block">
-    <span className="label">{label}</span>
-    <input ref={ref} className={cn("input", error && "input-error")} {...rest} />
+    <span className="caps mb-2.5 block text-ink/70">{label}</span>
+    <input ref={ref} className={cn("input rounded-none py-3", error && "input-error")} {...rest} />
     {error && <span className="field-error block">{error}</span>}
   </label>
 );

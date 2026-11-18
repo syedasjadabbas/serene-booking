@@ -72,7 +72,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
     <form
       onSubmit={submit}
       className={cn(
-        "relative grid text-ink",
+        "relative grid text-ink [&>*]:min-w-0",
         !hero && "gap-1.5 bg-white",
         hero && "bg-bone/95 shadow-pop backdrop-blur-md md:grid-cols-[1.35fr_1fr_auto] lg:grid-cols-[0.95fr_1.35fr_1fr_auto]",
         variant === "bar" && "rounded-none border border-ink/15 p-1.5 md:grid-cols-[1.4fr_1fr_auto] md:items-center",
@@ -84,7 +84,7 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
       {hero && (
         <div className="hidden items-center px-6 py-4 lg:flex">
           <span className="min-w-0">
-            <span className="block caps whitespace-nowrap text-ink/50">Where</span>
+            <span className="block truncate caps text-ink/50">Where</span>
             <span className="mt-1.5 block truncate font-display text-xl leading-tight text-ink">Nathia Gali, Pakistan</span>
           </span>
         </div>
@@ -97,14 +97,14 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
           onClick={() => setOpenPanel((p) => (p === "dates" ? null : "dates"))}
           className={cn(
             "flex w-full items-center gap-3 text-left hover:bg-ink/[0.04]",
-            hero ? "h-full px-6 py-4 lg:border-l lg:border-ink/10" : "rounded-2xl px-3 py-2",
+            hero ? "h-full px-6 py-4 lg:border-l lg:border-ink/10" : "px-3 py-2",
             panel && "border border-zinc-200"
           )}
           aria-expanded={openPanel === "dates"}
         >
           {!hero && <FieldIcon><CalendarDays className="h-4 w-4" /></FieldIcon>}
           <span className="min-w-0">
-            <span className="block caps whitespace-nowrap text-ink/50">Check-in — Check-out</span>
+            <span className="block truncate caps text-ink/50">Check-in — Check-out</span>
             <span className={cn("block truncate font-display leading-tight text-ink", hero ? "mt-1.5 text-xl" : "text-lg")}>
               {format(parseISO(stay.checkIn), "EEE d MMM")} — {format(parseISO(stay.checkOut), "EEE d MMM")}
               <span className="ml-2 font-sans text-sm font-light text-zinc-500">{plural(nights, "night")}</span>
@@ -137,14 +137,14 @@ export default function SearchBar({ initial, variant = "bar", onSearch, submitLa
           onClick={() => setOpenPanel((p) => (p === "guests" ? null : "guests"))}
           className={cn(
             "flex w-full items-center gap-3 text-left hover:bg-ink/[0.04]",
-            hero ? "h-full border-t border-ink/10 px-6 py-4 md:border-l md:border-t-0" : "rounded-2xl px-3 py-2",
+            hero ? "h-full border-t border-ink/10 px-6 py-4 md:border-l md:border-t-0" : "px-3 py-2",
             panel ? "border border-zinc-200" : !hero && "md:rounded-none md:border-l md:border-zinc-100 md:pl-4"
           )}
           aria-expanded={openPanel === "guests"}
         >
           {!hero && <FieldIcon><Users className="h-4 w-4" /></FieldIcon>}
           <span className="min-w-0">
-            <span className="block caps whitespace-nowrap text-ink/50">{hero ? "Guests" : "Guests & apartments"}</span>
+            <span className="block truncate caps text-ink/50">{hero ? "Guests" : "Guests & apartments"}</span>
             <span className={cn("block truncate font-display leading-tight text-ink", hero ? "mt-1.5 text-xl" : "text-lg")}>
               {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apt", "apts")}
             </span>

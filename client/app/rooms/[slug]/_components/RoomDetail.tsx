@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  BedDouble, Building, Car, Check, Clock, Coffee, CreditCard, Dumbbell, IdCard, MapPin, Maximize2, PawPrint, Baby, Cigarette,
-  Mountain, Trees, Users, Utensils, Waves, Wifi, Zap,
+  ArrowUpRight, Building, Car, Check, Clock, Coffee, CreditCard, Dumbbell, IdCard, MapPin, PawPrint, Baby, Cigarette,
+  Mountain, Utensils, Waves, Wifi, Zap,
 } from "lucide-react";
 import { useRoomTypeQuery } from "@/global/api/endpoints/roomsApi";
 import { usePropertyQuery } from "@/global/api/endpoints/propertyApi";
@@ -15,13 +15,15 @@ import { errorMessage } from "@/global/api/baseApi";
 import { Alert, PageLoader, Stars } from "@/global/components/ui";
 import SearchBar from "@/global/components/SearchBar";
 import ReviewScore from "@/global/components/ReviewScore";
-import { areaRange, fmtDate } from "@/global/lib/format";
+import SectionHeading from "@/global/components/SectionHeading";
+import RollText from "@/global/components/RollText";
+import { Reveal, Stagger } from "@/global/components/motion";
+import { areaRange, fmtDate, money } from "@/global/lib/format";
 import { isPastStay, parseStay, stayToQuery } from "@/global/lib/stay";
+import { asset } from "@/global/lib/asset";
 import PhotoGrid from "./PhotoGrid";
-import { Reveal } from "@/global/components/motion";
 import AvailabilityTable from "./AvailabilityTable";
 
-import { asset } from "@/global/lib/asset";
 const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "availability", label: "Info & prices" },
@@ -43,6 +45,8 @@ const POPULAR = [
   { Icon: Zap, label: "24/7 power backup" },
 ];
 
+// Residence page for one apartment type: the name set large in capitals, an editorial photo grid, the key
+// figures in a ruled list beside the story, then the rates, facilities, plans, rules, location and reviews.
 export default function RoomDetail() {
   const { slug } = useParams<{ slug: string }>();
   const params = useSearchParams();
@@ -66,7 +70,7 @@ export default function RoomDetail() {
   if (isLoading) return <PageLoader />;
   if (error || !t) {
     return (
-      <div className="container-page py-16">
+      <div className="container-page py-20">
         <Alert tone="error" title="Apartment type not found">{errorMessage(error)}</Alert>
         <Link href="/rooms" className="btn-secondary mt-6">Back to apartments</Link>
       </div>
@@ -78,238 +82,291 @@ export default function RoomDetail() {
   const backHref = stay ? `/rooms?${stayToQuery(stay)}` : "/rooms";
   const onSearch = (s: Parameters<typeof stayToQuery>[0]) => router.replace(`${pathname}?${stayToQuery(s)}#availability`, { scroll: false });
 
+  const figures = [
+    { k: "Size", v: areaRange(t.minAreaSqft, t.maxAreaSqft) ?? "—" },
+    { k: "Sleeps", v: `Up to ${t.maxOccupancy}` },
+    { k: "Beds", v: t.bedType },
+    { k: "Outdoor", v: t.outdoorSpace },
+    { k: "From", v: `${money(t.baseRate)} / night` },
+  ];
+
   return (
-    <div>
+    <div className="bg-bone">
       {/* Sticky in-page navigation, like Booking.com's property tabs */}
-      <nav aria-label="Page sections" className="sticky top-[84px] z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
-        <div className="container-page flex gap-1 overflow-x-auto">
+      <nav aria-label="Page sections" className="sticky top-[84px] z-30 border-b border-ink/10 bg-bone sm:bg-bone/90 sm:backdrop-blur-md">
+        <div className="container-page flex gap-1 overflow-x-auto sm:gap-3">
           {SECTIONS.map((s) => (
-            <a key={s.id} href={`#${s.id}`} className="shrink-0 border-b-2 border-transparent px-3 py-3 text-sm font-medium text-zinc-600 hover:border-brand-600 hover:text-brand-700">
+            <a key={s.id} href={`#${s.id}`} className="caps shrink-0 border-b border-transparent px-2 py-4 text-ink/55 transition hover:border-ink hover:text-ink">
               {s.label}
             </a>
           ))}
         </div>
       </nav>
 
-      <div className="container-page py-6">
-        <nav aria-label="Breadcrumb" className="text-xs text-zinc-500">
-          <Link href="/" className="text-brand-700 hover:underline">Home</Link> › <Link href={backHref} className="text-brand-700 hover:underline">Apartments</Link> › <span className="text-zinc-700">{t.name}</span>
-        </nav>
+      {/* Overview */}
+      <section id="overview" className="scroll-mt-32">
+        <div className="container-page pt-10 sm:pt-14">
+          <nav aria-label="Breadcrumb" className="caps flex flex-wrap items-center gap-x-2 gap-y-1 text-ink/45">
+            <Link href="/" className="transition hover:text-ink">Home</Link>
+            <span aria-hidden className="text-ink/25">/</span>
+            <Link href={backHref} className="transition hover:text-ink">Apartments</Link>
+            <span aria-hidden className="text-ink/25">/</span>
+            <span className="text-ink">{t.name}</span>
+          </nav>
 
-        {/* Overview */}
-        <Reveal as="section"id="overview" className="scroll-mt-32">
-          <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <span className="pill bg-gold-light text-[11px] text-zinc-800">Hotel apartment</span>
-              <h1 className="mt-1.5 text-3xl font-semibold">{t.name}</h1>
-              <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-zinc-600">
-                <MapPin className="h-4 w-4 text-brand-600" /> {property?.address ?? "Kala Bagh Air Base Road, Nathia Gali"} –{" "}
-                <a href="#location" className="tap font-medium text-brand-700 underline">Show on map</a>
+          <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <p className="caps fade-up flex items-center gap-4 text-ink/60">
+                Hotel apartment
+                <span className="block h-px w-14 bg-ink/30" aria-hidden />
+              </p>
+              <h1 className="fade-up mt-5 break-words text-[2.6rem] leading-[0.98] sm:text-7xl lg:text-[6.2rem]" style={{ animationDelay: "120ms" }}>
+                {t.name}
+              </h1>
+              <p className="fade-up mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink/65" style={{ animationDelay: "240ms" }}>
+                <MapPin className="h-4 w-4 text-ink/45" strokeWidth={1.5} /> {property?.address ?? "Kala Bagh Air Base Road, Nathia Gali"} –{" "}
+                <a href="#location" className="tap caps text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-ink">Show on map</a>
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="fade-up flex shrink-0 flex-wrap items-center gap-5" style={{ animationDelay: "320ms" }}>
               {property && reviews && <ReviewScore average={property.stats.averageRating} count={property.stats.reviewCount} align="right" />}
-              <a href="#availability" className="btn-primary">Reserve</a>
+              <a href="#availability" className="btn-primary roll-host"><RollText>Reserve</RollText></a>
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-10">
             <PhotoGrid photos={photos} />
           </div>
+        </div>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
-            <div>
-              <ul className="flex flex-wrap gap-2">
+        <div className="container-page mt-16 grid gap-14 pb-24 sm:mt-24 lg:grid-cols-12">
+          <div className="min-w-0 lg:col-span-7">
+            <Reveal className="flex items-center gap-4">
+              <span className="caps">The apartment</span>
+              <span className="block h-px w-14 bg-ink/30" aria-hidden />
+            </Reveal>
+            <Reveal delay={100}>
+              <p className="mt-6 font-display text-2xl leading-[1.35] text-ink sm:text-[1.75rem]">{t.description}</p>
+            </Reveal>
+            {property?.description && (
+              <Reveal delay={150}>
+                <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-ink/70">{property.description}</p>
+              </Reveal>
+            )}
+
+            <Reveal delay={150} className="mt-12">
+              <p className="caps text-ink/60">Most popular facilities</p>
+              <ul className="mt-4 grid border-t border-ink/15 sm:grid-cols-2">
                 {POPULAR.map(({ Icon, label }) => (
-                  <li key={label} className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700">
-                    <Icon className="h-4 w-4 text-emerald-700" /> {label}
+                  <li key={label} className="flex items-center gap-3 border-b border-ink/15 py-3.5 text-sm text-ink/80 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+                    <Icon className="h-4 w-4 shrink-0 text-ink/50" strokeWidth={1.5} /> {label}
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 leading-relaxed text-zinc-700">{t.description}</p>
-              <p className="mt-3 leading-relaxed text-zinc-700">{property?.description}</p>
-              <ul className="mt-5 grid grid-cols-2 gap-4 rounded-2xl border border-zinc-200 p-4 text-sm sm:grid-cols-4">
-                <Fact Icon={Maximize2} label="Size" value={areaRange(t.minAreaSqft, t.maxAreaSqft) ?? "—"} />
-                <Fact Icon={Users} label="Sleeps" value={`Up to ${t.maxOccupancy}`} />
-                <Fact Icon={BedDouble} label="Beds" value={t.bedType} />
-                <Fact Icon={Trees} label="Outdoor" value={t.outdoorSpace} />
-              </ul>
-            </div>
-            <aside className="h-fit rounded-2xl bg-brand-50 p-5">
-              <h2 className="font-semibold">Property highlights</h2>
-              <ul className="mt-3 space-y-3 text-sm">
-                <li className="flex gap-2"><Mountain className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" /><span><strong>Top location:</strong> 7,906 ft, 50 m from PAF Airbase Nathia Gali</span></li>
-                <li className="flex gap-2"><Coffee className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" /><span><strong>Breakfast info:</strong> breakfast at the rooftop restaurant on breakfast rates</span></li>
-                <li className="flex gap-2"><Car className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" /><span>Climate-controlled parking floor on site</span></li>
-                <li className="flex gap-2"><Waves className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" /><span>Heated infinity pool, open year-round</span></li>
-              </ul>
-              <a href="#availability" className="btn-primary mt-5 w-full">Reserve</a>
-            </aside>
+            </Reveal>
           </div>
-        </Reveal>
 
-        {/* Availability */}
-        <Reveal as="section"id="availability" className="mt-12 scroll-mt-32">
-          <h2 className="text-2xl font-semibold">Availability</h2>
-          <p className="mt-1 text-sm text-zinc-500">Prices are for the whole stay and include taxes. Pick dates to see live prices; the calendar shows the nightly price for this apartment type.</p>
-          <div className="mt-4">
+          <aside className="h-fit lg:sticky lg:top-36 lg:col-span-4 lg:col-start-9">
+            <Reveal>
+              <dl className="divide-y divide-ink/20 border-y border-ink/20">
+                {figures.map((f) => (
+                  <div key={f.k} className="flex items-baseline justify-between gap-6 py-4">
+                    <dt className="caps shrink-0">{f.k}</dt>
+                    <dd className="text-right font-display text-xl leading-tight text-ink sm:text-2xl">{f.v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="mt-8 bg-sky-light p-6">
+                <h2 className="caps text-ink">Property highlights</h2>
+                <ul className="mt-4 space-y-3.5 text-sm text-ink/75">
+                  <li className="flex gap-3"><Mountain className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" strokeWidth={1.5} /><span><strong className="font-semibold text-ink">Top location:</strong> 7,906 ft, 50 m from PAF Airbase Nathia Gali</span></li>
+                  <li className="flex gap-3"><Coffee className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" strokeWidth={1.5} /><span><strong className="font-semibold text-ink">Breakfast info:</strong> breakfast at the rooftop restaurant on breakfast rates</span></li>
+                  <li className="flex gap-3"><Car className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" strokeWidth={1.5} /><span>Climate-controlled parking floor on site</span></li>
+                  <li className="flex gap-3"><Waves className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" strokeWidth={1.5} /><span>Heated infinity pool, open year-round</span></li>
+                </ul>
+                <a href="#availability" className="btn-primary roll-host mt-6 w-full"><RollText>Reserve</RollText></a>
+              </div>
+            </Reveal>
+          </aside>
+        </div>
+      </section>
+
+      {/* Availability */}
+      <section id="availability" className="scroll-mt-32 bg-sky-light py-20 sm:py-28">
+        <div className="container-page">
+          <SectionHeading label="Info & prices" title="Availability">
+            Prices are for the whole stay and include taxes. Pick dates to see live prices; the calendar shows the nightly price for this apartment type.
+          </SectionHeading>
+          <div className="mt-10">
             <SearchBar initial={stay} onSearch={onSearch} roomType={t.slug} submitLabel={stay ? "Change search" : "Check availability"} />
           </div>
-          <div className="mt-5">
+          <div className="mt-6">
             {stay && isPastStay(stay) && <Alert tone="warning">Those dates have passed. Pick new dates above.</Alert>}
             {stay && !isPastStay(stay) && <AvailabilityTable type={t} stay={stay} />}
             {!stay && <Alert tone="info" title="Select dates to see this apartment's availability and prices" />}
           </div>
-        </Reveal>
+        </div>
+      </section>
 
-        {/* Facilities */}
-        <Reveal as="section"id="facilities" className="mt-12 scroll-mt-32">
-          <h2 className="text-2xl font-semibold">Facilities of Serene Heights</h2>
-          <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Facilities */}
+      <section id="facilities" className="scroll-mt-32 py-20 sm:py-28">
+        <div className="container-page">
+          <SectionHeading label="Facilities" title="Facilities of Serene Heights" />
+          <Stagger className="mt-12 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3" step={70}>
             <div>
-              <h3 className="font-semibold">In your apartment</h3>
-              <ul className="mt-2 space-y-1.5 text-sm text-zinc-700">
-                {t.features.map((f) => <li key={f} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />{f}</li>)}
+              <h3 className="border-b border-ink/20 pb-3 text-2xl">In your apartment</h3>
+              <ul className="mt-1 divide-y divide-ink/10 text-sm text-ink/75">
+                {t.features.map((f) => <li key={f} className="flex gap-3 py-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-ink/50" strokeWidth={1.5} />{f}</li>)}
               </ul>
             </div>
             {property &&
               [...new Set(property.amenities.map((a) => a.group))].map((g) => (
                 <div key={g}>
-                  <h3 className="font-semibold">{g}</h3>
-                  <ul className="mt-2 space-y-1.5 text-sm text-zinc-700">
-                    {property.amenities.filter((a) => a.group === g).map((a) => <li key={a.key} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" />{a.name}</li>)}
+                  <h3 className="border-b border-ink/20 pb-3 text-2xl">{g}</h3>
+                  <ul className="mt-1 divide-y divide-ink/10 text-sm text-ink/75">
+                    {property.amenities.filter((a) => a.group === g).map((a) => <li key={a.key} className="flex gap-3 py-2.5"><Check className="mt-0.5 h-4 w-4 shrink-0 text-ink/50" strokeWidth={1.5} />{a.name}</li>)}
                   </ul>
                 </div>
               ))}
-          </div>
-        </Reveal>
+          </Stagger>
+        </div>
+      </section>
 
-        {/* Apartments & floor plans */}
-        <Reveal as="section"id="apartments" className="mt-12 scroll-mt-32">
-          <h2 className="text-2xl font-semibold">Apartments & floor plans</h2>
-          <p className="mt-1 text-sm text-zinc-500">
+      {/* Apartments & floor plans */}
+      <section id="apartments" className="scroll-mt-32 border-t border-ink/10 py-20 sm:py-28">
+        <div className="container-page">
+          <SectionHeading label="Floor plans" title="Apartments & floor plans">
             {t.totalApartments} apartments of this type across {t.floors.map((f) => f.label).join(", ")}. Your apartment number is assigned at check-in.
-          </p>
-          <div className="mt-4 grid gap-6 lg:grid-cols-2">
-            <div className="overflow-hidden rounded-2xl border border-zinc-200">
+          </SectionHeading>
+          <div className="mt-12 grid gap-10 lg:grid-cols-2">
+            <Reveal>
               <table className="w-full text-left text-sm">
-                <thead className="bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500">
+                <thead className="border-b border-ink/30">
                   <tr>
-                    <th className="px-4 py-2.5 font-medium">Apartment</th>
-                    <th className="px-4 py-2.5 font-medium">Floor</th>
-                    <th className="px-4 py-2.5 font-medium">Area</th>
+                    <th className="caps py-3 pr-4">Apartment</th>
+                    <th className="caps px-4 py-3">Floor</th>
+                    <th className="caps py-3 pl-4 text-right">Area</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100">
+                <tbody className="divide-y divide-ink/10">
                   {apartments.map((a) => (
                     <tr key={a.number}>
-                      <td className="px-4 py-2 font-medium text-zinc-900">{a.number}</td>
-                      <td className="px-4 py-2 text-zinc-600">{a.floorLabel}</td>
-                      <td className="px-4 py-2 text-zinc-600">{a.areaSqft ? `${a.areaSqft} sq ft` : "—"}</td>
+                      <td className="py-3 pr-4 font-display text-lg text-ink">{a.number}</td>
+                      <td className="px-4 py-3 text-ink/65">{a.floorLabel}</td>
+                      <td className="py-3 pl-4 text-right text-ink/65">{a.areaSqft ? `${a.areaSqft} sq ft` : "—"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               {t.apartments.length > 10 && (
-                <button onClick={() => setShowAll((s) => !s)} className="w-full border-t border-zinc-100 py-2.5 text-sm font-medium text-brand-700 hover:bg-zinc-50">
+                <button onClick={() => setShowAll((s) => !s)} className="caps w-full border-y border-ink/20 py-3.5 text-ink transition hover:bg-ink hover:text-bone">
                   {showAll ? "Show fewer" : `Show all ${t.apartments.length}`}
                 </button>
               )}
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            </Reveal>
+            <Stagger className="grid content-start gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" step={90}>
               {floorPlans.slice(0, 4).map((f) => (
-                <Link key={f.key} href={`/floor-plans#floor-${f.key}`} className="card overflow-hidden hover:shadow-pop">
+                <Link key={f.key} href={`/floor-plans#floor-${f.key}`} className="group block border border-ink/10 bg-white transition duration-500 hover:border-ink/30">
                   <div className="relative aspect-[3/2] bg-white">
-                    <Image src={asset(f.plans[0])} alt={`${f.label} plan`} fill sizes="(min-width: 1280px) 20vw, 50vw" className="object-contain p-2" />
+                    <Image src={asset(f.plans[0])} alt={`${f.label} plan`} fill sizes="(min-width: 1280px) 20vw, (min-width: 640px) 50vw, 100vw" className="object-contain p-3" />
                   </div>
-                  <p className="border-t border-zinc-100 px-4 py-2 text-sm font-medium">{f.label} plan →</p>
+                  <p className="caps flex items-center justify-between gap-3 border-t border-ink/10 px-4 py-3.5 text-ink">
+                    {f.label} plan
+                    <ArrowUpRight className="h-4 w-4 transition duration-300 group-hover:rotate-45" />
+                  </p>
                 </Link>
               ))}
+            </Stagger>
+          </div>
+        </div>
+      </section>
+
+      {/* House rules */}
+      {property && (
+        <section id="rules" className="scroll-mt-32 border-t border-ink/10 py-20 sm:py-28">
+          <div className="container-page">
+            <SectionHeading label="Before you arrive" title="House rules">
+              Serene Heights takes special requests – add them in the next step.
+            </SectionHeading>
+            <Reveal delay={100}>
+              <dl className="mt-12 divide-y divide-ink/15 border-y border-ink/20">
+                {[
+                  { Icon: Clock, label: "Check-in", value: property.policies.checkIn },
+                  { Icon: Clock, label: "Check-out", value: property.policies.checkOut },
+                  { Icon: Check, label: "Cancellation / prepayment", value: "Free cancellation up to 48 hours before check-in on flexible rates. Non-refundable saver rates can't be refunded. No prepayment: pay at the property." },
+                  { Icon: Baby, label: "Children & beds", value: property.policies.children },
+                  { Icon: IdCard, label: "ID required", value: property.policies.id },
+                  { Icon: Cigarette, label: "Smoking", value: property.policies.smoking },
+                  { Icon: PawPrint, label: "Pets", value: property.policies.pets },
+                  { Icon: CreditCard, label: "Payment", value: property.policies.payment },
+                ].map(({ Icon, label, value }) => (
+                  <div key={label} className="grid gap-2 py-5 text-sm sm:grid-cols-[280px_1fr] sm:gap-8">
+                    <dt className="caps flex items-center gap-3 text-ink"><Icon className="h-4 w-4 text-ink/45" strokeWidth={1.5} />{label}</dt>
+                    <dd className="leading-relaxed text-ink/70">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
+        </section>
+      )}
+
+      {/* Location */}
+      {property && (
+        <section id="location" className="scroll-mt-32 border-t border-ink/10 py-20 sm:py-28">
+          <div className="container-page">
+            <SectionHeading label="Nathia Gali · 7,906 ft" title="Location" />
+            <div className="mt-12 grid gap-10 lg:grid-cols-12">
+              <Reveal className="min-h-[340px] overflow-hidden bg-sky-light lg:col-span-7">
+                <iframe title="Map of Serene Heights Nathia Gali" src={`https://maps.google.com/maps?q=${encodeURIComponent(property.mapsQuery)}&z=13&output=embed`} className="h-full min-h-[340px] w-full lg:min-h-[420px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              </Reveal>
+              <Reveal delay={150} className="lg:col-span-5">
+                <p className="caps text-ink/60">Distances</p>
+                <ul className="mt-4 divide-y divide-ink/15 border-y border-ink/20 text-sm">
+                  {property.distances.map((d) => (
+                    <li key={d.place} className="flex justify-between gap-4 py-3.5">
+                      <span className="text-ink/80">{d.place}</span>
+                      <span className="text-right text-ink/60">{d.distance}{d.drive ? ` · ${d.drive}` : ""}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
             </div>
           </div>
-        </Reveal>
+        </section>
+      )}
 
-        {/* House rules */}
-        {property && (
-          <Reveal as="section"id="rules" className="mt-12 scroll-mt-32">
-            <h2 className="text-2xl font-semibold">House rules</h2>
-            <p className="mt-1 text-sm text-zinc-500">Serene Heights takes special requests – add them in the next step.</p>
-            <dl className="mt-4 divide-y divide-zinc-200 rounded-2xl border border-zinc-200">
-              {[
-                { Icon: Clock, label: "Check-in", value: property.policies.checkIn },
-                { Icon: Clock, label: "Check-out", value: property.policies.checkOut },
-                { Icon: Check, label: "Cancellation / prepayment", value: "Free cancellation up to 48 hours before check-in on flexible rates. Non-refundable saver rates can't be refunded. No prepayment: pay at the property." },
-                { Icon: Baby, label: "Children & beds", value: property.policies.children },
-                { Icon: IdCard, label: "ID required", value: property.policies.id },
-                { Icon: Cigarette, label: "Smoking", value: property.policies.smoking },
-                { Icon: PawPrint, label: "Pets", value: property.policies.pets },
-                { Icon: CreditCard, label: "Payment", value: property.policies.payment },
-              ].map(({ Icon, label, value }) => (
-                <div key={label} className="grid gap-1 px-5 py-4 text-sm sm:grid-cols-[240px_1fr]">
-                  <dt className="flex items-center gap-2 font-semibold text-zinc-900"><Icon className="h-4 w-4 text-zinc-500" />{label}</dt>
-                  <dd className="text-zinc-700">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-        )}
-
-        {/* Location */}
-        {property && (
-          <Reveal as="section"id="location" className="mt-12 scroll-mt-32">
-            <h2 className="text-2xl font-semibold">Location</h2>
-            <div className="mt-4 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-              <div className="min-h-[340px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
-                <iframe title="Map of Serene Heights Nathia Gali" src={`https://maps.google.com/maps?q=${encodeURIComponent(property.mapsQuery)}&z=13&output=embed`} className="h-full min-h-[340px] w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-              </div>
-              <ul className="divide-y divide-zinc-100 rounded-2xl border border-zinc-200 text-sm">
-                {property.distances.map((d) => (
-                  <li key={d.place} className="flex justify-between gap-4 px-4 py-3">
-                    <span className="text-zinc-700">{d.place}</span>
-                    <span className="text-right text-zinc-500">{d.distance}{d.drive ? ` · ${d.drive}` : ""}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-        )}
-
-        {/* Reviews */}
-        <Reveal as="section"id="reviews" className="mt-12 scroll-mt-32">
-          <h2 className="text-2xl font-semibold">Guest reviews</h2>
+      {/* Reviews */}
+      <section id="reviews" className="scroll-mt-32 bg-sky py-20 sm:py-28">
+        <div className="container-page">
+          <SectionHeading
+            label="Reviews"
+            title="Guest reviews"
+            action={reviews && reviews.summary.total > 0 ? <ReviewScore average={reviews.summary.average} count={reviews.summary.total} /> : undefined}
+          />
           {reviews && reviews.summary.total > 0 ? (
-            <>
-              <ReviewScore average={reviews.summary.average} count={reviews.summary.total} className="mt-3" />
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {reviews.items.map((r) => (
-                  <figure key={r.id} className="card p-5">
-                    <figcaption className="text-sm font-semibold">{r.author}{r.country ? ` · ${r.country}` : ""}</figcaption>
-                    <p className="text-xs text-zinc-500">{r.roomType} · stayed {fmtDate(`${r.stayedMonth}-01`, "MMMM yyyy")}</p>
-                    <Stars rating={r.rating} className="mt-2" />
-                    <blockquote className="mt-2">
-                      <p className="font-medium">{r.title}</p>
-                      <p className="mt-1 text-sm text-zinc-600">{r.body}</p>
-                    </blockquote>
-                  </figure>
-                ))}
-              </div>
-            </>
+            <Stagger className="mt-12 grid gap-x-10 gap-y-12 md:grid-cols-2" step={90}>
+              {reviews.items.map((r) => (
+                <figure key={r.id} className="flex h-full flex-col border-t border-ink/30 pt-6">
+                  <Stars rating={r.rating} />
+                  <blockquote className="mt-4 flex-1">
+                    <p className="font-display text-2xl leading-tight text-ink">{r.title}</p>
+                    <p className="mt-3 text-[15px] leading-relaxed text-ink/75">{r.body}</p>
+                  </blockquote>
+                  <figcaption className="mt-6">
+                    <span className="caps block text-ink">{r.author}{r.country ? ` · ${r.country}` : ""}</span>
+                    <span className="mt-1 block text-xs text-ink/55">{r.roomType} · stayed {fmtDate(`${r.stayedMonth}-01`, "MMMM yyyy")}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </Stagger>
           ) : (
-            <p className="mt-3 rounded-2xl border border-dashed border-zinc-300 p-6 text-sm text-zinc-500">
+            <p className="mt-10 border border-dashed border-ink/30 p-6 text-sm text-ink/65">
               No reviews yet. Guests who stay with us can review their stay from their account after check-out.
             </p>
           )}
-        </Reveal>
-      </div>
+        </div>
+      </section>
     </div>
-  );
-}
-
-function Fact({ Icon, label, value }: { Icon: typeof Users; label: string; value: string }) {
-  return (
-    <li>
-      <span className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-zinc-500"><Icon className="h-3.5 w-3.5" />{label}</span>
-      <span className="mt-1 block font-medium text-zinc-900">{value}</span>
-    </li>
   );
 }

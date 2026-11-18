@@ -19,7 +19,7 @@ import type { Stay } from "@/global/api/types";
 import { activeFilterCount, applyFilters, DEFAULT_FILTERS, filtersToParams, parseFilters, type ResultFilters, type SortKey } from "../_lib/filters";
 import ResultCard from "./ResultCard";
 import FilterSidebar from "./FilterSidebar";
-import { Stagger } from "@/global/components/motion";
+import { RevealWords, Stagger } from "@/global/components/motion";
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "recommended", label: "Our top picks" },
@@ -47,18 +47,21 @@ export default function RoomsSearch() {
   };
 
   return (
-    <div className="bg-zinc-50/60">
+    <div className="min-h-screen bg-bone">
       {/* Sticky search under the site header, like Booking.com */}
-      <div className="sticky top-[84px] z-30 border-b border-zinc-200 bg-white sm:bg-white/90 sm:backdrop-blur">
+      <div className="sticky top-[84px] z-30 border-b border-ink/10 bg-bone sm:bg-bone/90 sm:backdrop-blur-md">
         <div className="container-page py-3">
           <SearchBar initial={stay} onSearch={(s) => setUrl(s, filters, true)} submitLabel="Search" />
         </div>
       </div>
-      <div className="container-page py-6">
-        <nav aria-label="Breadcrumb" className="text-xs text-zinc-500">
-          <Link href="/" className="text-brand-700 hover:underline">Home</Link> › Nathia Gali › Serene Heights › <span className="text-zinc-700">Apartments</span>
+      <div className="container-page pb-24 pt-10 sm:pt-14">
+        <nav aria-label="Breadcrumb" className="caps flex flex-wrap items-center gap-x-2 gap-y-1 text-ink/45">
+          <Link href="/" className="transition hover:text-ink">Home</Link>
+          <span aria-hidden className="text-ink/25">/</span> Nathia Gali
+          <span aria-hidden className="text-ink/25">/</span> Serene Heights
+          <span aria-hidden className="text-ink/25">/</span> <span className="text-ink">Apartments</span>
         </nav>
-        {pastStay && <Alert tone="warning" title="Those dates have passed" className="mt-4">Pick new dates above to see availability.</Alert>}
+        {pastStay && <Alert tone="warning" title="Those dates have passed" className="mt-6">Pick new dates above to see availability.</Alert>}
         {stay && !pastStay ? <Results stay={stay} filters={filters} onFilters={(f) => setUrl(stay, f)} /> : !pastStay && <Browse />}
       </div>
     </div>
@@ -73,18 +76,23 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
   const nActive = activeFilterCount(filters);
 
   return (
-    <div className="mt-4 grid gap-6 lg:grid-cols-[260px_1fr]">
+    <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr] xl:gap-12">
       <aside className="hidden lg:block">
         {data && <FilterSidebar results={data.results} filters={filters} onChange={onFilters} />}
       </aside>
 
       <div className="min-w-0">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold">
-              Serene Heights Nathia Gali: {data ? `${shown.length} apartment ${shown.length === 1 ? "type" : "types"} found` : "searching…"}
+        <div className="flex flex-wrap items-end justify-between gap-5 border-b border-ink/15 pb-6">
+          <div className="min-w-0">
+            <p className="caps flex items-center gap-4 text-ink/60">
+              Serene Heights Nathia Gali
+              <span className="block h-px w-14 bg-ink/30" aria-hidden />
+            </p>
+            <h1 className="mt-4 text-[2rem] leading-[1.05] sm:text-5xl">
+              <span className="sr-only">Serene Heights Nathia Gali: </span>
+              {data ? `${shown.length} apartment ${shown.length === 1 ? "type" : "types"} found` : "Searching…"}
             </h1>
-            <p className="mt-0.5 text-sm text-zinc-500" aria-live="polite">
+            <p className="mt-3 text-sm text-ink/60" aria-live="polite">
               {fmtDate(stay.checkIn, "EEE d MMM")} – {fmtDate(stay.checkOut, "EEE d MMM")} · {plural(data?.nights ?? 0, "night")} · {guestsLabel(stay.adults, stay.children)} · {plural(stay.rooms, "apartment")}
             </p>
           </div>
@@ -93,13 +101,14 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
         </div>
 
         {data && data.summary.bookedLast24h > 0 && (
-          <p className="mt-3 flex items-center gap-2 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
+          <p className="mt-5 flex items-center gap-2 border-l-2 border-red-700/50 bg-red-50/70 px-4 py-2.5 text-sm text-red-800">
             <Flame className="h-4 w-4" /> {plural(data.summary.bookedLast24h, "apartment")} booked at Serene Heights in the last 24 hours
           </p>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <button className="btn-secondary py-2 lg:hidden" onClick={() => setFiltersOpen(true)}>
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          <span className="caps mr-2 hidden text-ink/45 sm:inline">Sort</span>
+          <button className="btn-secondary py-2.5 lg:hidden" onClick={() => setFiltersOpen(true)}>
             <SlidersHorizontal className="h-4 w-4" /> Filters{nActive ? ` (${nActive})` : ""}
           </button>
           <div className="flex flex-wrap gap-2" role="tablist" aria-label="Sort results">
@@ -109,7 +118,7 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
                 role="tab"
                 aria-selected={filters.sort === s.key}
                 onClick={() => onFilters({ ...filters, sort: s.key })}
-                className={cn("chip", filters.sort === s.key && "chip-active")}
+                className={cn("chip rounded-none", filters.sort === s.key && "chip-active")}
               >
                 {s.label}
               </button>
@@ -119,8 +128,8 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
 
         {error && <Alert tone="error" className="mt-6">{errorMessage(error)}</Alert>}
 
-        <div className={cn("mt-5 space-y-4 transition-opacity", isFetching && data && "opacity-60")}>
-          {!data && isFetching && Array.from({ length: 3 }).map((_, i) => <div key={i} className="card h-60 animate-pulse bg-white" />)}
+        <div className={cn("mt-8 space-y-5 transition-opacity", isFetching && data && "opacity-60")}>
+          {!data && isFetching && Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-64 animate-pulse border border-ink/10 bg-white" />)}
           {data && shown.length === 0 && (
             <EmptyState
               icon={<CalendarSearch className="h-5 w-5" />}
@@ -131,7 +140,7 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
             </EmptyState>
           )}
           {shown.length > 0 && (
-            <Stagger className="space-y-4" step={80}>
+            <Stagger className="space-y-5" step={80}>
               {shown.map((r) => (
                 <ResultCard key={r.roomType.id} result={r} stay={stay} filters={filters} />
               ))}
@@ -142,7 +151,7 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
 
       <Modal open={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filters">
         {data && <FilterSidebar results={data.results} filters={filters} onChange={onFilters} />}
-        <button className="btn-primary mt-4 w-full" onClick={() => setFiltersOpen(false)}>
+        <button className="btn-primary mt-5 w-full" onClick={() => setFiltersOpen(false)}>
           Show {plural(shown.length, "result")}
         </button>
       </Modal>
@@ -153,12 +162,22 @@ function Results({ stay, filters, onFilters }: { stay: Stay; filters: ResultFilt
 function Browse() {
   const { data, isLoading, error } = useRoomTypesQuery();
   return (
-    <div className="mt-4">
-      <h1 className="text-2xl font-semibold">Apartments at Serene Heights</h1>
-      <Alert tone="info" title="Add your dates" className="mt-4">Prices change with dates and season. Choose check-in and check-out above to see live availability.</Alert>
+    <div className="mt-8">
+      <div className="grid gap-8 border-b border-ink/15 pb-10 lg:grid-cols-12 lg:items-end">
+        <div className="lg:col-span-8">
+          <p className="caps flex items-center gap-4 text-ink/60">
+            The apartments
+            <span className="block h-px w-14 bg-ink/30" aria-hidden />
+          </p>
+          <h1 className="mt-5 text-[2.3rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]">
+            <RevealWords text="Apartments at Serene Heights" />
+          </h1>
+        </div>
+        <Alert tone="info" title="Add your dates" className="lg:col-span-4">Prices change with dates and season. Choose check-in and check-out above to see live availability.</Alert>
+      </div>
       {error && <Alert tone="error" className="mt-6">{errorMessage(error)}</Alert>}
-      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="card h-96 animate-pulse bg-white" />)}
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-96 animate-pulse border border-ink/10 bg-white" />)}
         {data?.map((t) => <RoomTypeCard key={t.id} type={t} href={`/rooms/${t.slug}`} />)}
       </div>
     </div>

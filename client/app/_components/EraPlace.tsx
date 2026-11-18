@@ -14,9 +14,9 @@ export default function EraPlace() {
   return (
     <section data-theme="dark" className="relative isolate flex min-h-[110svh] flex-col overflow-hidden text-bone">
       <Parallax speed={-0.15} className="absolute inset-x-0 -top-[10%] -z-10 h-[120%]">
-        <Image src={asset("/images/resort/tower-sunset-forest.jpg")} alt="Serene Heights above a snowy pine forest at dusk" fill sizes="100vw" className="object-cover" />
+        <Image src={asset("/images/resort/rooftop-sunset.jpg")} alt="The rooftop terraces of Serene Heights glowing at sunset above the Galiyat hills" fill sizes="100vw" className="object-cover object-[50%_45%]" />
       </Parallax>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/50 via-ink/10 to-ink/70" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink/55 via-ink/35 to-ink/75" />
 
       <div className="container-page flex flex-1 flex-col items-center justify-center py-32 text-center">
         <Reveal>

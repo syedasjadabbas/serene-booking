@@ -27,35 +27,41 @@ export default function PaymentSection({
   ];
 
   return (
-    <section className="card p-5 sm:p-6">
-      <h2 className="text-lg font-medium">Payment</h2>
-      <p className="mt-1 text-sm text-zinc-500">Total {money(total, currency)}</p>
-      <div className="mt-4 space-y-3" role="radiogroup" aria-label="Payment method">
+    <section className="border border-ink/10 bg-white p-5 sm:p-8">
+      <p className="caps text-ink/50">02</p>
+      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+        <h2 className="text-2xl leading-tight sm:text-3xl">Payment</h2>
+        <p className="text-sm text-ink/60">
+          Total <span className="font-display text-xl text-ink">{money(total, currency)}</span>
+        </p>
+      </div>
+      <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10" role="radiogroup" aria-label="Payment method">
         {options.map((o) => (
           <label
             key={o.id}
             className={cn(
-              "flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition",
-              value === o.id ? "border-brand-600 bg-brand-50/60 ring-1 ring-brand-600" : "border-zinc-200 hover:border-zinc-300",
-              !o.enabled && "cursor-not-allowed opacity-60"
+              "relative flex cursor-pointer items-start gap-4 px-1 py-5 transition sm:px-4",
+              value === o.id ? "bg-sky-light/60" : "hover:bg-bone",
+              !o.enabled && "cursor-not-allowed opacity-55 hover:bg-transparent"
             )}
           >
-            <input type="radio" name="paymentMethod" className="mt-1 accent-brand-600" checked={value === o.id} disabled={!o.enabled} onChange={() => onChange(o.id)} />
-            <o.Icon className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
-            <span className="flex-1">
-              <span className="flex flex-wrap items-center gap-2 text-sm font-semibold text-zinc-900">
+            {value === o.id && <span className="absolute inset-y-0 left-0 w-0.5 bg-ink" aria-hidden />}
+            <input type="radio" name="paymentMethod" className="mt-1.5 accent-ink" checked={value === o.id} disabled={!o.enabled} onChange={() => onChange(o.id)} />
+            <o.Icon className="mt-0.5 h-5 w-5 shrink-0 text-ink/60" strokeWidth={1.5} />
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-display text-lg leading-tight text-ink">
                 {o.title}
-                {!o.enabled && <span className="pill bg-zinc-100 text-zinc-600">Coming soon</span>}
+                {!o.enabled && <span className="caps border border-ink/20 px-2 py-0.5 font-sans text-[10px] text-ink/60">Coming soon</span>}
               </span>
-              <span className="block text-sm text-zinc-500">{o.text}</span>
+              <span className="mt-1 block text-sm text-ink/60">{o.text}</span>
             </span>
           </label>
         ))}
       </div>
 
       {/* Preview of the card form for when a gateway is connected. Uncontrolled and disabled: values never leave the browser. */}
-      <fieldset disabled className="mt-4 rounded-xl border border-dashed border-zinc-300 p-4 opacity-70" aria-label="Card details (not yet available)">
-        <legend className="px-1 text-xs font-medium text-zinc-500">Card details · available when online payment launches</legend>
+      <fieldset disabled className="mt-6 border border-dashed border-ink/25 p-4 opacity-70 sm:p-5 [&_.input]:rounded-none" aria-label="Card details (not yet available)">
+        <legend className="caps px-2 text-[10px] text-ink/55">Card details · available when online payment launches</legend>
         <div className="grid gap-3 sm:grid-cols-4">
           <input className="input sm:col-span-4" placeholder="Card number" autoComplete="off" />
           <input className="input sm:col-span-2" placeholder="Name on card" autoComplete="off" />

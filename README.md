@@ -88,6 +88,7 @@ Administration (rates, inventory, booking operations) lives in **Serene Manageme
   - The architecture over a full-bleed photo of the tower.
   - Facts stacked in huge capitals.
   - A closing booking panel, then the footer with the reservations number set huge.
+- **Inner pages:** the same editorial language throughout: full-bleed photo banners with large capitals, small-caps section labels with hairline rules, ruled figure lists, square cards and forms, and numbered steps. This covers amenities, floor plans, contact, find a booking, the apartment search and apartment pages, checkout, the confirmation, sign in, register and the account pages.
 - **Motion:** word-by-word headline reveals, curtain-wipe photo reveals, parallax, a scaling arch, a rotating badge, slow-orbit button rings and page transitions. It is all hand-built in `global/components/motion.tsx`, with no animation library, and switches off for users who prefer reduced motion.
 - **Responsive:** checked at 320 px, 375 px and desktop widths, with no horizontal overflow.
 

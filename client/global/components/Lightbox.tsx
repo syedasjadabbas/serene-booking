@@ -35,27 +35,27 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
   const isPlan = photo?.src.includes("floor-plans");
 
   return (
-    <dialog ref={ref} onClose={onClose} aria-label="Photo gallery" className="m-0 h-full max-h-none w-full max-w-none bg-zinc-950 p-0 text-white backdrop:bg-black/90">
+    <dialog ref={ref} onClose={onClose} aria-label="Photo gallery" className="m-0 h-full max-h-none w-full max-w-none bg-pine p-0 text-bone backdrop:bg-pine/95">
       {photo && (
         <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between px-4 py-3 text-sm">
-            <span>{index! + 1} / {photos.length} · {photo.alt}</span>
-            <button onClick={onClose} className="rounded-lg p-2 hover:bg-white/10" aria-label="Close gallery">
-              <X className="h-6 w-6" />
+          <div className="flex items-center justify-between gap-4 border-b border-bone/15 px-4 py-3 sm:px-6">
+            <span className="caps min-w-0 truncate text-bone/75"><span className="font-display text-base tracking-normal text-bone">{index! + 1} / {photos.length}</span> · {photo.alt}</span>
+            <button onClick={onClose} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-bone/30 transition hover:border-bone hover:bg-bone hover:text-ink" aria-label="Close gallery">
+              <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
           <div className="relative flex-1">
             <Image src={asset(photo.src)} alt={photo.alt} fill sizes="100vw" className={cn("object-contain", isPlan && "bg-white")} priority />
-            <button onClick={() => go(-1)} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/15 p-3 hover:bg-white/25" aria-label="Previous photo">
-              <ChevronLeft className="h-6 w-6" />
+            <button onClick={() => go(-1)} className="absolute left-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-bone/40 bg-pine/40 backdrop-blur-sm transition hover:border-bone hover:bg-bone hover:text-ink sm:left-6" aria-label="Previous photo">
+              <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
             </button>
-            <button onClick={() => go(1)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/15 p-3 hover:bg-white/25" aria-label="Next photo">
-              <ChevronRight className="h-6 w-6" />
+            <button onClick={() => go(1)} className="absolute right-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-bone/40 bg-pine/40 backdrop-blur-sm transition hover:border-bone hover:bg-bone hover:text-ink sm:right-6" aria-label="Next photo">
+              <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
-          <div className="flex gap-2 overflow-x-auto px-4 py-3">
+          <div className="flex gap-2 overflow-x-auto border-t border-bone/15 px-4 py-3 sm:px-6">
             {photos.map((p, i) => (
-              <button key={p.src} onClick={() => onIndex(i)} className={cn("relative h-14 w-20 shrink-0 overflow-hidden rounded-md border-2", i === index ? "border-white" : "border-transparent opacity-60 hover:opacity-100")} aria-label={`Show photo ${i + 1}`}>
+              <button key={p.src} onClick={() => onIndex(i)} className={cn("relative h-14 w-20 shrink-0 overflow-hidden border transition", i === index ? "border-bone" : "border-transparent opacity-50 hover:opacity-100")} aria-label={`Show photo ${i + 1}`}>
                 <Image src={asset(p.src)} alt="" fill sizes="80px" className="object-cover" />
               </button>
             ))}

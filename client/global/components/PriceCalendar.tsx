@@ -71,7 +71,7 @@ export default function PriceCalendar({
   return (
     <div className={cn("transition-opacity", isFetching && !data && "opacity-60")}>
       <DayPicker
-        className="price-cal"
+        className="price-cal ![--rdp-accent-background-color:#DAE7EE] ![--rdp-accent-color:#17233B] ![--rdp-day_button-border-radius:0px] ![--rdp-range_middle-background-color:#DAE7EE] ![--rdp-range_middle-color:#17233B] ![--rdp-selected-border:1px_solid_#17233B]"
         mode="range"
         numberOfMonths={numberOfMonths}
         month={month}
@@ -92,8 +92,8 @@ export default function PriceCalendar({
         min={1}
         components={{ DayButton }}
       />
-      <p className="mt-1 max-w-[42rem] text-xs text-zinc-500">
-        Lowest price per night for one apartment, room only, before tax, in thousands of rupees. <span className="font-medium text-emerald-700">Green</span> = lower-priced nights.
+      <p className="mt-2 max-w-[42rem] text-xs leading-relaxed text-ink/55">
+        Lowest price per night for one apartment, room only, before tax, in thousands of rupees. <span className="font-semibold text-emerald-700">Green</span> = lower-priced nights.
       </p>
     </div>
   );

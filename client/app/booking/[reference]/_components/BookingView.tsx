@@ -31,35 +31,41 @@ export default function BookingView() {
   const booking = stored?.booking ?? mine;
 
   return (
-    <div className="bg-zinc-50/60">
-      <div className="container-page py-8">
+    <div className="min-h-screen bg-bone">
+      <div className="container-page pb-24 pt-10 sm:pt-14">
         {isNew && booking?.status === "CONFIRMED" && (
-          <div className="mb-6 max-w-2xl">
+          <div className="mb-10 max-w-2xl">
             <BookingSteps current={3} />
           </div>
         )}
         {isNew && booking?.status === "CONFIRMED" && (
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">
-            <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0" />
+          <div role="status" className="mb-10 flex items-start gap-4 border-l-2 border-emerald-700/60 bg-emerald-50/80 p-5 text-emerald-900 sm:p-6">
+            <CheckCircle2 className="mt-1 h-6 w-6 shrink-0" strokeWidth={1.5} />
             <div>
-              <p className="text-lg font-medium">Your booking is confirmed</p>
-              <p className="text-sm">
+              <p className="font-display text-2xl uppercase leading-tight">Your booking is confirmed</p>
+              <p className="mt-2 text-sm leading-relaxed">
                 Thank you, {booking.guest.firstName}. Keep your reference <strong>{booking.reference}</strong> to manage your booking. You&apos;ll pay at the property.
               </p>
             </div>
           </div>
         )}
-        <h1 className="mb-6 text-3xl font-medium">Booking {ref}</h1>
+        <div className="mb-10 border-b border-ink/15 pb-8">
+          <p className="caps flex items-center gap-4 text-ink/60">
+            Your booking
+            <span className="block h-px w-14 bg-ink/30" aria-hidden />
+          </p>
+          <h1 className="fade-up mt-5 break-words text-[2.3rem] leading-[1.02] sm:text-6xl">Booking {ref}</h1>
+        </div>
 
         {booking ? (
           <BookingDetails booking={booking} guestEmail={stored?.email} onChange={(b) => stored && remember(b)} />
         ) : (
-          <div className="max-w-lg">
+          <div className="max-w-lg [&_.input]:rounded-none">
             {useAccount && error && <Alert tone="warning" className="mb-4">{errorMessage(error)}</Alert>}
-            <Alert tone="info" className="mb-4">Enter the email address used for this booking to view it.</Alert>
+            <Alert tone="info" className="mb-6">Enter the email address used for this booking to view it.</Alert>
             <LookupForm defaultReference={ref} />
-            <p className="mt-4 text-sm text-zinc-500">
-              Have an account? <Link className="font-medium text-brand-700 underline" href={`/login?next=/booking/${ref}`}>Sign in</Link> to see all your bookings.
+            <p className="mt-5 text-sm text-ink/60">
+              Have an account? <Link className="font-semibold text-ink underline decoration-ink/30 underline-offset-4 transition hover:decoration-ink" href={`/login?next=/booking/${ref}`}>Sign in</Link> to see all your bookings.
             </p>
           </div>
         )}

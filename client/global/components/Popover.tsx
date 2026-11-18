@@ -42,7 +42,7 @@ export default function Popover({
       ref={ref}
       role="dialog"
       className={cn(
-        "absolute z-50 rounded-2xl border border-ink/10 bg-white p-4 text-ink shadow-pop",
+        "absolute z-50 border border-ink/10 bg-white p-4 text-ink shadow-pop",
         side === "top" ? "bottom-full mb-2" : "top-full mt-2",
         align === "right" ? "right-0" : "left-0",
         className

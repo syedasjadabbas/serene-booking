@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarCheck, Mail, Printer, Ticket } from "lucide-react";
 import PageHero from "@/global/components/PageHero";
+import SectionHeading from "@/global/components/SectionHeading";
 import { Reveal, Stagger } from "@/global/components/motion";
 import LookupForm from "./_components/LookupForm";
 
@@ -22,36 +23,49 @@ export default function ManagePage() {
         image="/images/interiors/living-room-wide.jpg"
         imageAlt="Apartment living room with sofa and dining area"
         eyebrow="Manage booking"
-        title="Find Your Booking"
+        title={"Find Your\nBooking"}
         subtitle="No account needed. Use your booking reference and email."
         crumbs={[{ label: "Find booking" }]}
       />
-      <section className="container-page grid gap-10 py-16 lg:grid-cols-[1fr_440px] lg:items-start">
-        <div>
-          <Reveal>
-            <h2 className="section-title">How it works</h2>
-          </Reveal>
-          <Stagger className="mt-8 grid gap-4 sm:grid-cols-2" step={90} itemClassName="h-full">
-            {STEPS.map(({ Icon, title, text }, i) => (
-              <div key={title} className="h-full rounded-3xl bg-mist p-5">
-                <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white text-ink shadow-card"><Icon className="h-5 w-5" /></span>
-                  <span className="text-xs font-bold text-zinc-400">0{i + 1}</span>
+      <section className="bg-bone py-24 sm:py-32">
+        <div className="container-page grid gap-16 lg:grid-cols-12 lg:items-start lg:gap-10">
+          <div className="lg:col-span-6">
+            <SectionHeading label="Manage booking" title="How It Works" />
+            <Stagger as="ol" itemAs="li" className="mt-12 border-t border-ink/20" step={90}>
+              {STEPS.map(({ Icon, title, text }, i) => (
+                <div key={title} className="grid grid-cols-[2.5rem_1fr_auto] items-start gap-4 border-b border-ink/20 py-7 sm:gap-6">
+                  <span className="caps pt-1.5 text-ink/50">0{i + 1}</span>
+                  <div className="min-w-0">
+                    <p className="font-display text-xl uppercase leading-tight sm:text-2xl">{title}</p>
+                    <p className="mt-2 max-w-md text-[15px] leading-relaxed text-ink/70">{text}</p>
+                  </div>
+                  <Icon className="mt-1 h-5 w-5 text-gold" strokeWidth={1.4} aria-hidden />
                 </div>
-                <p className="mt-4 font-bold text-ink">{title}</p>
-                <p className="mt-1 text-sm text-zinc-600">{text}</p>
+              ))}
+            </Stagger>
+            <Reveal delay={200}>
+              <p className="mt-10 text-[15px] text-ink/70">
+                Booked with an account?{" "}
+                <Link href="/login?next=/account" className="caps tap text-ink underline decoration-ink/30 underline-offset-[6px] transition hover:decoration-ink">
+                  Sign in
+                </Link>{" "}
+                to see every booking.
+              </p>
+            </Reveal>
+          </div>
+          <div className="lg:sticky lg:top-28 lg:col-span-5 lg:col-start-8">
+            <Reveal from="up" className="bg-sky-light p-6 sm:p-10">
+              <p className="caps flex items-center gap-4">
+                Look up a booking
+                <span className="block h-px w-14 bg-ink/30" aria-hidden />
+              </p>
+              <h2 className="mt-5 text-3xl leading-[1.05] sm:text-4xl">Reference &amp; Email</h2>
+              <div className="mt-8">
+                <LookupForm bare />
               </div>
-            ))}
-          </Stagger>
-          <Reveal delay={200}>
-            <p className="mt-8 text-sm text-zinc-500">
-              Booked with an account? <Link href="/login?next=/account" className="font-semibold text-brand-700 underline">Sign in</Link> to see every booking.
-            </p>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
-        <Reveal from="right" className="lg:sticky lg:top-28">
-          <LookupForm />
-        </Reveal>
       </section>
     </div>
   );

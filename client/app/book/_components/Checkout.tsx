@@ -20,6 +20,7 @@ import { ARRIVAL_TIMES, checkoutSchema, type CheckoutValues } from "../_lib/sche
 import PriceSummary from "./PriceSummary";
 import PaymentSection from "./PaymentSection";
 import BookingSteps from "@/global/components/BookingSteps";
+import RollText from "@/global/components/RollText";
 
 export default function Checkout() {
   const params = useSearchParams();
@@ -95,32 +96,39 @@ export default function Checkout() {
   });
 
   return (
-    <div className="bg-zinc-50/60">
-      <div className="container-page py-8">
-        <Link href={backHref} className="tap inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline">
+    <div className="min-h-screen bg-bone">
+      <div className="container-page pb-24 pt-10 sm:pt-14">
+        <Link href={backHref} className="tap caps inline-flex items-center gap-2 text-ink/60 transition hover:text-ink">
           <ArrowLeft className="h-4 w-4" /> Back to rates
         </Link>
-        <div className="mt-4 max-w-2xl">
+        <div className="mt-8 max-w-2xl">
           <BookingSteps current={2} />
         </div>
-        <h1 className="mt-6 text-3xl">Complete your booking</h1>
+        <div className="mt-12 border-b border-ink/15 pb-8">
+          <p className="caps flex items-center gap-4 text-ink/60">
+            Step 02 · Your details
+            <span className="block h-px w-14 bg-ink/30" aria-hidden />
+          </p>
+          <h1 className="fade-up mt-5 text-[2.3rem] leading-[1.02] sm:text-6xl">Complete your booking</h1>
+        </div>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px]">
-          <form onSubmit={onSubmit} noValidate className="space-y-6">
+        <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_400px] xl:gap-14">
+          <form onSubmit={onSubmit} noValidate className="min-w-0 space-y-8">
             {submitError && <Alert tone="error" title="We couldn't complete your booking">{errorMessage(submitError)}</Alert>}
             {unavailable && <Alert tone="warning" title="No longer available">This apartment just sold out for your dates. <Link href={`/rooms?${stayToQuery(stay)}`} className="underline">See other apartments</Link>.</Alert>}
 
             {status !== "authenticated" && (
-              <div className="card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4 bg-sky-light px-5 py-4 text-sm text-ink/80 sm:px-6">
                 <span>Sign in to book faster and see this booking in your account.</span>
-                <Link href={`/login?next=${encodeURIComponent(`/book?${paramsKey}`)}`} className="btn-secondary py-2">Sign in</Link>
+                <Link href={`/login?next=${encodeURIComponent(`/book?${paramsKey}`)}`} className="btn-secondary roll-host py-2.5"><RollText>Sign in</RollText></Link>
               </div>
             )}
 
-            <section className="card p-5 sm:p-6">
-              <h2 className="text-lg font-medium">Lead guest details</h2>
-              <p className="mt-1 text-sm text-zinc-500">The name must match the CNIC or passport shown at check-in.</p>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <section className="border border-ink/10 bg-white p-5 sm:p-8">
+              <p className="caps text-ink/50">01</p>
+              <h2 className="mt-2 text-2xl leading-tight sm:text-3xl">Lead guest details</h2>
+              <p className="mt-2 text-sm text-ink/60">The name must match the CNIC or passport shown at check-in.</p>
+              <div className="mt-7 grid gap-5 border-t border-ink/10 pt-7 sm:grid-cols-2">
                 <Field label="First name" error={errors.firstName?.message}>
                   <input className={cn("input", errors.firstName && "input-error")} autoComplete="given-name" {...register("firstName")} />
                 </Field>
@@ -142,7 +150,7 @@ export default function Checkout() {
                   </select>
                 </Field>
               </div>
-              <div className="mt-4">
+              <div className="mt-5">
                 <Field label="Special requests (optional)" hint="Subject to availability, e.g. high floor, extra bedding, celebration" error={errors.specialRequests?.message}>
                   <textarea rows={3} className={cn("input", errors.specialRequests && "input-error")} {...register("specialRequests")} />
                 </Field>
@@ -151,22 +159,24 @@ export default function Checkout() {
 
             <PaymentSection paymentsEnabled={config?.paymentsEnabled ?? false} value={watch("paymentMethod")} onChange={(m) => setValue("paymentMethod", m)} total={selected.quote.grandTotal} currency={selected.quote.currency} />
 
-            <section className="card p-5 sm:p-6">
-              <label className="flex items-start gap-3 text-sm">
-                <input type="checkbox" className="mt-0.5 h-4 w-4 accent-brand-600" {...register("acceptTerms")} />
+            <section className="border border-ink/10 bg-white p-5 sm:p-8">
+              <p className="caps text-ink/50">03</p>
+              <h2 className="mt-2 text-2xl leading-tight sm:text-3xl">Confirm</h2>
+              <label className="mt-6 flex items-start gap-3 border-t border-ink/10 pt-6 text-sm leading-relaxed text-ink/75">
+                <input type="checkbox" className="mt-1 h-4 w-4 shrink-0 rounded-none accent-ink" {...register("acceptTerms")} />
                 <span>
                   I agree to the booking conditions: {selected.ratePlan.refundable ? `free cancellation until ${selected.ratePlan.freeCancelHours} hours before check-in` : "this rate is non-refundable"}, and the house rules (check-in from 2:00 PM, check-out until 12:00 PM, valid ID required).
                 </span>
               </label>
               {errors.acceptTerms && <p className="field-error ml-7">{errors.acceptTerms.message}</p>}
-              <button type="submit" disabled={submitting || unavailable} className="btn-primary mt-5 w-full py-3.5 text-base">
+              <button type="submit" disabled={submitting || unavailable} className="btn-primary mt-6 w-full py-4">
                 <Lock className="h-4 w-4" /> {submitting ? "Confirming…" : "Confirm booking"}
               </button>
-              <p className="mt-2 text-center text-xs text-zinc-500">No payment is taken now. You&apos;ll pay at the property.</p>
+              <p className="mt-3 text-center text-xs text-ink/50">No payment is taken now. You&apos;ll pay at the property.</p>
             </section>
           </form>
 
-          <aside className="lg:sticky lg:top-28 lg:self-start">
+          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
             <PriceSummary stay={stay} roomName={rates.roomType.name} ratePlan={selected.ratePlan} quote={selected.quote} />
           </aside>
         </div>
@@ -177,10 +187,10 @@ export default function Checkout() {
 
 function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span className="label">{label}</span>
+    <label className="block min-w-0 [&_.input]:rounded-none">
+      <span className="caps mb-2 block text-ink/70">{label}</span>
       {children}
-      {error ? <span className="field-error block">{error}</span> : hint ? <span className="mt-1 block text-xs text-zinc-500">{hint}</span> : null}
+      {error ? <span className="field-error block">{error}</span> : hint ? <span className="mt-1.5 block text-xs text-ink/50">{hint}</span> : null}
     </label>
   );
 }

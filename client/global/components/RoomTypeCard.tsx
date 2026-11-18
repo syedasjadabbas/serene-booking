@@ -40,7 +40,7 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col overflow-hidden rounded-[10px] bg-white shadow-card ring-1 ring-ink/[0.06] transition duration-500 hover:-translate-y-1 hover:shadow-pop hover:ring-brand-300/60"
+      className="group flex h-full flex-col overflow-hidden rounded-none bg-white shadow-none ring-1 ring-ink/10 transition duration-500 hover:-translate-y-1 hover:shadow-pop hover:ring-brand-300/60"
     >
       {/* Photo with the name on it */}
       <div className={cn("relative overflow-hidden bg-brand-100", wide ? "aspect-[16/10] sm:aspect-[16/8]" : "aspect-[4/3.4]")}>
@@ -79,23 +79,23 @@ export default function RoomTypeCard({ type, href, wide = false }: { type: RoomT
 
       {/* Specs + price */}
       <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-        <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-zinc-600">
+        <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-ink/70">
           {specs.map(({ icon: Icon, label }) => (
             <li key={label} className="inline-flex items-center gap-1.5">
-              <Icon className="h-4 w-4 text-brand-500" />
+              <Icon className="h-4 w-4 text-ink/50" strokeWidth={1.5} />
               {label}
             </li>
           ))}
         </ul>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink/10 pt-5">
           <p className="leading-tight">
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">From</span>
-            <span className="text-2xl font-bold tracking-tight text-ink">{money(type.baseRate)}</span>
-            <span className="text-sm font-medium text-zinc-500"> / night</span>
+            <span className="caps block text-ink/50">From</span>
+            <span className="font-display text-2xl text-ink">{money(type.baseRate)}</span>
+            <span className="text-sm text-ink/50"> / night</span>
           </p>
           <span
-            className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-pine pl-4 pr-3 text-sm font-semibold text-white transition duration-300 group-hover:bg-pine-hover"
+            className="caps inline-flex h-11 shrink-0 items-center gap-2 bg-ink px-4 text-bone transition duration-300 group-hover:bg-pine"
             aria-hidden
           >
             View

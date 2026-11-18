@@ -48,35 +48,35 @@ export default function FilterSidebar({ results, filters, onChange }: { results:
   ];
 
   return (
-    <div className="divide-y divide-zinc-200 rounded-2xl border border-zinc-200 bg-white">
-      <div className="flex items-center justify-between px-4 py-3">
-        <h2 className="text-base font-semibold">Filter by</h2>
+    <div className="divide-y divide-ink/10 border border-ink/10 bg-white">
+      <div className="flex items-center justify-between px-5 py-4">
+        <h2 className="caps text-ink">Filter by</h2>
         {activeFilterCount(f) > 0 && (
-          <button className="text-sm font-medium text-brand-700 hover:underline" onClick={() => onChange({ ...DEFAULT_FILTERS, sort: f.sort })}>
+          <button className="caps tap text-ink/60 underline decoration-ink/30 underline-offset-4 transition hover:text-ink hover:decoration-ink" onClick={() => onChange({ ...DEFAULT_FILTERS, sort: f.sort })}>
             Clear all
           </button>
         )}
       </div>
       {groups.map((g) => (
-        <fieldset key={g.title} className="px-4 py-3">
+        <fieldset key={g.title} className="px-5 py-5">
           <legend className="sr-only">{g.title}</legend>
-          <p className="mb-2 text-sm font-semibold text-zinc-900">{g.title}</p>
-          <ul className="space-y-1.5">
+          <p className="mb-3 font-display text-lg leading-tight text-ink">{g.title}</p>
+          <ul className="space-y-2.5">
             {g.options.map((o) => {
               const count = countWith(results, f, o.patch);
               const disabled = !o.active && count === 0;
               return (
                 <li key={o.label}>
-                  <label className={cn("flex cursor-pointer items-center gap-2.5 text-sm", disabled && "cursor-default text-zinc-400")}>
+                  <label className={cn("flex cursor-pointer items-center gap-3 text-sm text-ink/80 transition hover:text-ink", disabled && "cursor-default text-ink/30 hover:text-ink/30")}>
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded accent-brand-600"
+                      className="h-4 w-4 rounded-none accent-ink"
                       checked={o.active}
                       disabled={disabled}
                       onChange={() => onChange({ ...f, ...(o.active ? o.off : o.patch) })}
                     />
                     <span className="flex-1">{o.label}</span>
-                    <span className="text-xs text-zinc-400">{count}</span>
+                    <span className="font-display text-sm tabular-nums text-ink/40">{count}</span>
                   </label>
                 </li>
               );

@@ -42,13 +42,13 @@
     @apply text-[11px] font-semibold uppercase tracking-[0.2em];
   }
   .card {
-    @apply rounded-3xl border border-ink/10 bg-white shadow-card;
+    @apply rounded-none border border-ink/10 bg-white;
   }
   .pill {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   .chip {
-    @apply inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 bg-white px-4 py-1.5 text-sm font-medium text-ink/80 transition hover:border-ink;
+    @apply inline-flex min-h-10 items-center gap-1.5 rounded-none border border-ink/20 bg-white px-4 py-1.5 text-sm font-medium text-ink/80 transition hover:border-ink;
   }
   /* Enlarges the touch area of small inline links/buttons to ~44px without changing layout. */
   .tap {
@@ -93,7 +93,7 @@
   }
   /* 16px text on phones: iOS Safari zooms the page when focusing inputs smaller than 16px. */
   .input {
-    @apply block w-full rounded-xl border border-ink/20 bg-white px-3.5 py-2.5 text-base text-ink placeholder:text-ink/40 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10 disabled:bg-mist sm:text-sm;
+    @apply block w-full rounded-none border border-ink/20 bg-white px-3.5 py-2.5 text-base text-ink placeholder:text-ink/40 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10 disabled:bg-mist sm:text-sm;
   }
   .input-error {
     @apply border-red-400 focus:border-red-500 focus:ring-red-500/20;

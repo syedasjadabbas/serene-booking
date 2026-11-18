@@ -17,16 +17,16 @@ export default function Modal({ open, onClose, title, children }: { open: boolea
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="w-[min(32rem,calc(100vw-2rem))] rounded-2xl p-0 shadow-pop backdrop:bg-zinc-900/50"
+      className="w-[min(34rem,calc(100vw-2rem))] rounded-none border border-ink/15 bg-bone p-0 text-ink shadow-pop backdrop:bg-ink/60"
     >
-      <div className="p-6">
-        <div className="flex items-start justify-between gap-4">
-          <h2 className="text-lg font-medium">{title}</h2>
-          <button onClick={onClose} className="rounded-lg p-1 text-zinc-500 hover:bg-zinc-100" aria-label="Close">
-            <X className="h-5 w-5" />
+      <div className="p-6 sm:p-8">
+        <div className="flex items-start justify-between gap-4 border-b border-ink/15 pb-5">
+          <h2 className="text-2xl leading-[1.1] sm:text-[1.75rem]">{title}</h2>
+          <button onClick={onClose} className="-mr-1 grid h-9 w-9 shrink-0 place-items-center border border-ink/20 text-ink transition hover:border-ink hover:bg-ink hover:text-bone" aria-label="Close">
+            <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="mt-4">{children}</div>
+        <div className="mt-6">{children}</div>
       </div>
     </dialog>
   );
